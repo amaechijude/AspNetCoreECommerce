@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Entities
+{
+    internal class Customer
+    {
+        [Key]
+        public int CustomerID { get; set; }
+        [EmailAddress]
+        [Required]
+        public string? CustomerEmail { get; set; }
+        [Required]
+        [PasswordPropertyText]
+        public string? PasswordHash { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerPhone { get; set; }
+        public ICollection<CartItem>? CarItems { get; set; }
+    }
+}
