@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities
 {
-    internal class CartItem
+    public class CartItem
     {
         public int CartId { get; set; }
         public ICollection<Product>? Products { get; set; }

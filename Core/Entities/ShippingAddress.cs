@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities
 {
-    internal class ShippingAddress
+    public class ShippingAddress
     {
         [Key]
         public int Id { get; set; }

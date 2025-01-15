@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Entities
 {
-    public enum OrderStatus
+    internal enum OrderStatus
     {
         Initiated = 1,
         Processing = 2,
         Shipped = 3,
     }
-    internal class Order
+    public class Order
     {
         public int OrderId { get; set; }
         public CartItem? CartItem { get; set; }
