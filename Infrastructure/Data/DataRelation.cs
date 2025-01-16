@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Entities;
+﻿using Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data
@@ -15,38 +9,41 @@ namespace Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Vendor relationships
+            // Vendor Product relationships
             modelBuilder.Entity<Vendor>()
                 .HasMany(v => v.Products)
                 .WithOne(p => p.Vendor)
                 .HasForeignKey(p => p.VendorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Product Relationship
+            // Product Category Relationship
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.Category)
                 .WithMany(cat => cat.Products)
-                .UsingEntity<Product>();
+                .UsingEntity(join => join.ToTable("ProductCategory"));
 
-            // Customer relationship
+            // Customer Cart relationship
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.CarItems)
                 .WithOne(cart => cart.Customer)
                 .HasForeignKey(cart => cart.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Customer Orders Relationship
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.Orders)
                 .WithOne(o => o.Customer)
                 .HasForeignKey(ord => ord.CustormerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Customer Payment Relationship
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.Payments)
                 .WithOne(p => p.Customer)
                 .HasForeignKey(p => p.CustormerId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            // Customer ShippingAddress Relationship
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.ShippingAddresses)
                 .WithOne(s => s.Customer)
