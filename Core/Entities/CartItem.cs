@@ -10,6 +10,9 @@ namespace Entities
     {
         public int CartId { get; set; }
         public ICollection<Product>? Products { get; set; }
-        public double? TotalPrice { get; set; }
+        public double TotalPrice { get; set; }
+        public int CustomerId { get; set; }
+        public Customer? Customer { get; set; }
+
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Entities
 {
@@ -30,6 +25,5 @@ namespace Entities
         public int CustormerId { get; set; }
         public Customer? Customer { get; set; }
 
-        public ShippingAddress() { }
     }
 }

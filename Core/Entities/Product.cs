@@ -17,6 +17,8 @@ namespace Entities
         public double Price { get; set; }
         public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }
-        public Category? Category { get; set; }
+        public ICollection<Category>? Category { get; set; }
+        public int VendorId { get; set; }
+        public Vendor? Vendor { get; set; }
     }
 }
