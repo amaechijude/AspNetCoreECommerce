@@ -49,6 +49,11 @@ namespace Data
                 .WithOne(s => s.Customer)
                 .HasForeignKey(s => s.CustormerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Customer Primary key
+            modelBuilder.Entity<Customer>()
+                .HasIndex(c => c.CustomerEmail)
+                .IsUnique();
         }
     }
 }
