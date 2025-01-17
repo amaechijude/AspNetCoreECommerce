@@ -22,11 +22,14 @@ namespace Data
                 .WithMany(cat => cat.Products)
                 .UsingEntity(join => join.ToTable("ProductCategory"));
 
+            modelBuilder.Entity<Product>()
+                .HasQueryFilter(p => !p.IsDeleted);
+
             // Customer Cart relationship
             modelBuilder.Entity<Customer>()
-                .HasMany(c => c.CarItems)
+                .HasOne(c => c.CarItems)
                 .WithOne(cart => cart.Customer)
-                .HasForeignKey(cart => cart.CustomerId)
+                .HasForeignKey<Customer>()
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Customer Orders Relationship

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Interfaces
+namespace DataTransferObjects
 {
-    internal interface IVendorRepository
+    public class CartDto
     {
     }
 }
