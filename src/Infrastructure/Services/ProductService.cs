@@ -2,6 +2,8 @@
 using DataTransferObjects;
 using Entities;
 using Microsoft.AspNetCore.Http;
+using System.Security.Cryptography.X509Certificates;
+using System.Numerics;
 
 
 namespace Services
@@ -27,7 +29,7 @@ namespace Services
                 Description = p.Description,
                 ImageUrl = p.ImageUrl,
                 VendorId = p.VendorId,
-                Category = p.Category,
+                // CategoryName = p.Category.Name;
 
                 // ... map other properties
             }).ToList();
@@ -47,7 +49,7 @@ namespace Services
                 Description = product.Description,
                 ImageUrl = product.ImageUrl,
                 VendorId = product.VendorId,
-                Category = product.Category,
+                // Category = product.Category,
             };
         }
 
@@ -77,7 +79,8 @@ namespace Services
                 ImageUrl = imageUrl
             };
 
-            var createdProduct = await _productRepository.CreateProductAsync(product);
+            var createdProduct = await _productRepository.CreateProductAsync(product, request);
+            // await _productRepository.SaveChangesAsync
             return new ProductViewDto
             {
                 ProductId = createdProduct.ProductId,
@@ -86,11 +89,14 @@ namespace Services
                 Description = createdProduct.Description,
                 ImageUrl = createdProduct.ImageUrl,
                 VendorId = createdProduct.VendorId,
-                CategoryName = createdProduct.Category.Name,
+                // CategoryName = createdProduct.Category.Name,
             };
         }
 
-        // Implement other methods (CreateProductAsync, UpdateProductAsync, DeleteProductAsync)
-        // with similar manual mapping logic
+        public async Task DeleteProductAsync(int productId)
+        {
+            var product  = await _productRepository.GetProductByIdAsync(curre)
+        }
     }
+
 }
