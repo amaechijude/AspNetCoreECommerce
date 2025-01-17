@@ -16,11 +16,15 @@ namespace Data
                 .HasForeignKey(p => p.VendorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Category>()
+                .HasIndex(cat => cat.Name)
+                .IsUnique();
+
             // Product Category Relationship
-            modelBuilder.Entity<Product>()
-                .HasMany(p => p.Category)
-                .WithMany(cat => cat.Products)
-                .UsingEntity(join => join.ToTable("ProductCategory"));
+            modelBuilder.Entity<Category>()
+                .HasMany(cat => cat.Products)
+                .WithOne(p => p.Category)
+                .HasForeignKey(p => p.CategoryId);
 
             modelBuilder.Entity<Product>()
                 .HasQueryFilter(p => !p.IsDeleted);

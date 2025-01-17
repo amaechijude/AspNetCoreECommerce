@@ -1,5 +1,8 @@
 ﻿using Repositories;
 using DataTransferObjects;
+using Entities;
+using Microsoft.AspNetCore.Http;
+
 
 namespace Services
 {
@@ -45,6 +48,45 @@ namespace Services
                 ImageUrl = product.ImageUrl,
                 VendorId = product.VendorId,
                 Category = product.Category,
+            };
+        }
+
+        public async Task<ProductViewDto> CreateProductAsync(CreateProductDto createProductDto, HttpRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(createProductDto.Name))
+                throw new ArgumentException("Product name cannot be empty.");
+
+            if (string.IsNullOrWhiteSpace(createProductDto.CategoryName))
+                throw new ArgumentException("Category name cannot be empty.");
+
+            if (createProductDto.Price <= 0)
+                throw new ArgumentException("Product price must be greater than zero.");
+            if (createProductDto.Image is null)
+                throw new Exception("Product Image is missing");
+
+            var imageUrl = await _productRepository.SaveProductImageAsync(createProductDto.Image, request);
+            var vendor = await _productRepository.GetVendorByIdAsync(createProductDto.VendorId) ?? throw new Exception("The vendor is not found. Contact the admin");
+            var category = await _productRepository.GetCategorytByNameAsync(createProductDto.CategoryName);
+            var product = new Product
+            {
+                Name = createProductDto.Name,
+                Price = createProductDto.Price,
+                Description = createProductDto.Description,
+                Category = category,
+                Vendor = vendor,
+                ImageUrl = imageUrl
+            };
+
+            var createdProduct = await _productRepository.CreateProductAsync(product);
+            return new ProductViewDto
+            {
+                ProductId = createdProduct.ProductId,
+                Name = createdProduct.Name,
+                Price = createdProduct.Price,
+                Description = createdProduct.Description,
+                ImageUrl = createdProduct.ImageUrl,
+                VendorId = createdProduct.VendorId,
+                CategoryName = createdProduct.Category.Name,
             };
         }
 
