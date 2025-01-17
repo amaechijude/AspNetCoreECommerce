@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Entities;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Entities
+namespace DataTransferObjects
 {
-    public class Customer
+    public class CustomerDTO
     {
-        public int CustomerID { get; set; }
         [EmailAddress]
-        [Required]
         public string? CustomerEmail { get; set; }
         [Required]
-        [PasswordPropertyText]
-        public string? PasswordHash { get; set; }
         public string? CustomerName { get; set; }
+        [Required]
         public string? CustomerPhone { get; set; }
         public ICollection<CartItem>? CarItems { get; set; }
         public ICollection<Order>? Orders { get; set; }

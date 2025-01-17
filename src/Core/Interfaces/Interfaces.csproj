@@ -19,4 +19,9 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\Data\Data.csproj" />
+    <ProjectReference Include="..\..\Presentation\DataTransferObjects\DataTransferObjects.csproj" />
+  </ItemGroup>
+
 </Project>
