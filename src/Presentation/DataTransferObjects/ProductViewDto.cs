@@ -15,7 +15,6 @@ namespace DataTransferObjects
         public string? ImageUrl { get; set; }
         public double Price { get; set; }
         public int? CategoryId { get; set; }
-        public string? CategoryName { get; set; }
         public ICollection<Category>? Category { get; set; }
         public int VendorId { get; set; }
     }

@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Entities;
 
-namespace Interfaces
+namespace Repositories
 {
     public interface IShippingAddressRepository
     {
+        Task AddShippingAddressAsync(ShippingAddress shippingAddress);
+        Task RemoveShippingAddressAsync(int shippingAddressId);
         
     }
 }

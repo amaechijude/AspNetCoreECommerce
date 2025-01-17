@@ -8,5 +8,6 @@ namespace DataTransferObjects
 {
     public class CartDto
     {
+        public List<ProductViewDto>? Products { get; set; }
     }
 }
