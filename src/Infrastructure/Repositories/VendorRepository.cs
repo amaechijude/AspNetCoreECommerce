@@ -9,7 +9,7 @@ namespace Repositories
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<Vendor> CreateVendorAsync(Vendor vendor)
+        public async Task<Vendor> CreateVendorAsync(Vendor vendor, HttpRequest request)
         {
             _context.Vendors.Add(vendor);
             await _context.SaveChangesAsync();

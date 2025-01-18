@@ -5,7 +5,7 @@ namespace Repositories
 {
     public interface IVendorRepository
     {
-        Task<Vendor> CreateVendorAsync(Vendor vendor);
+        Task<Vendor> CreateVendorAsync(Vendor vendor, HttpRequest request);
         Task<Vendor> GetVendorByIdAsync(int vendorId);
         Task<Vendor> UpdateVendorAsync(int vendorId, Vendor vendor);
         Task DeleteVendorAsync(int vendorId);
