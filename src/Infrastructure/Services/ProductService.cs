@@ -2,26 +2,19 @@
 using DataTransferObjects;
 using Entities;
 using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography.X509Certificates;
-using System.Numerics;
 
 
 namespace Services
 {
     // Services/ProductService.cs
-    public class ProductService : IProductService
+    public class ProductService(IProductRepository productRepository) : IProductService
     {
-        private readonly IProductRepository _productRepository;
-
-        public ProductService(IProductRepository productRepository)
-        {
-            _productRepository = productRepository;
-        }
+        private readonly IProductRepository _productRepository = productRepository;
 
         public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync()
         {
             var products = await _productRepository.GetAllProductsAsync();
-            return products.Select(p => new ProductViewDto
+            return [.. products.Select(p => new ProductViewDto
             {
                 ProductId = p.ProductId,
                 Name = p.Name,
@@ -32,15 +25,12 @@ namespace Services
                 // CategoryName = p.Category.Name;
 
                 // ... map other properties
-            }).ToList();
+            })];
         }
 
         public async Task<ProductViewDto> GetProductByIdAsync(int productId)
         {
-            var product = await _productRepository.GetProductByIdAsync(productId);
-            if (product == null)
-                throw new KeyNotFoundException("Product not found or is deleted");
-
+            var product = await _productRepository.GetProductByIdAsync(productId) ?? throw new KeyNotFoundException("Product not found or is deleted");
             return new ProductViewDto
             {
                 ProductId = product.ProductId,
@@ -80,7 +70,7 @@ namespace Services
             };
 
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
-            // await _productRepository.SaveChangesAsync
+            await _productRepository.SaveChangesAsync();
             return new ProductViewDto
             {
                 ProductId = createdProduct.ProductId,
@@ -95,7 +85,7 @@ namespace Services
 
         public async Task DeleteProductAsync(int productId)
         {
-            var product  = await _productRepository.GetProductByIdAsync(curre)
+            await _productRepository.DeleteProductAsync(productId);
         }
     }
 

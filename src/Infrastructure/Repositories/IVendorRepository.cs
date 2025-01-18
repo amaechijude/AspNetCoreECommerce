@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace Repositories
 {
@@ -6,7 +7,8 @@ namespace Repositories
     {
         Task<Vendor> CreateVendorAsync(Vendor vendor);
         Task<Vendor> GetVendorByIdAsync(int vendorId);
-        Task<Vendor> UpdateVendorIdAsync(int vendorId, Vendor vendor);
+        Task<Vendor> UpdateVendorAsync(int vendorId, Vendor vendor);
         Task DeleteVendorAsync(int vendorId);
+        Task<string?> SaveVendorBannerAsync(IFormFile imageFile, HttpRequest request);
     }
 }

@@ -12,6 +12,7 @@ namespace Entities
         public string? VendorPhone {  get; set; }
         public string? VendorBannerUrl { get; set; }
         public string? Location { get; set; }
+        public bool IsDeleted = false;
         [Url]
         public string? GoogleMapUrl { get; set; }
         [Url]

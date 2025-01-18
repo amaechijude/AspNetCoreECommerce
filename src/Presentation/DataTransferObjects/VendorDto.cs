@@ -12,11 +12,14 @@ namespace DataTransferObjects
     {
         [Required]
         public string? VendorName { get; set; }
+        [Required]
         [EmailAddress]
         public string? VendorEmail { get; set; }
+        [Required]
         [StringLength(16)]
         public string? VendorPhone { get; set; }
         public IFormFile? VendorBanner { get; set; }
+        [Required]
         public string? Location { get; set; }
         [Url]
         public string? GoogleMapUrl { get; set; }

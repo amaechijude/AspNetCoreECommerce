@@ -5,14 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository(ApplicationDbContext context) : IProductRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public ProductRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {

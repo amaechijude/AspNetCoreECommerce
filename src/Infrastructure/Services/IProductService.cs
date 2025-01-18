@@ -10,6 +10,5 @@ namespace Services
         Task<ProductViewDto> CreateProductAsync(CreateProductDto productDto, HttpRequest request);
         // Task<ProductViewDto> UpdateProductAsync(int productId, UpdateProductDto productDto);
         Task DeleteProductAsync(int productId);
-        Task SaveChangesAsync();
     }
 }
