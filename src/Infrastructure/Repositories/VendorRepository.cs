@@ -1,6 +1,6 @@
 using Data;
 using Entities;
-
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 
 namespace Repositories
@@ -16,16 +16,17 @@ namespace Repositories
             return vendor;
         }
 
-        public async Task<Vendor> GetVendorByIdAsync(int vendorId)
+        public async Task<Vendor?> GetVendorByIdAsync(int vendorId)
         {
-            var vendor = await _context.Vendors.FindAsync(vendorId) ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
-            return vendor;
+            var vendor = await _context.Vendors.FindAsync(vendorId);
+            return vendor is null? null : vendor;
         }
 
         public async Task<Vendor> UpdateVendorAsync(int vendorId, Vendor vendor)
         {
-            var existingVendor = await _context.Vendors.FindAsync(vendorId) ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
+            var existingVendor = await GetVendorByIdAsync(vendorId) ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
             existingVendor.DateUpdated = DateTime.UtcNow;
+            _context.Entry(vendor).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return existingVendor;
         }
@@ -37,7 +38,7 @@ namespace Repositories
              await _context.SaveChangesAsync();
         }
 
-        public async Task<string?> SaveProductImageAsync(IFormFile imageFile, HttpRequest request)
+        public async Task<string?> SaveVendorBannerAsync(IFormFile imageFile, HttpRequest request)
         {
             if (imageFile == null || imageFile.Length == 0)
                 return null;

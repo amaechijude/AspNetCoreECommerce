@@ -70,7 +70,6 @@ namespace Services
             };
 
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
-            await _productRepository.SaveChangesAsync();
             return new ProductViewDto
             {
                 ProductId = createdProduct.ProductId,

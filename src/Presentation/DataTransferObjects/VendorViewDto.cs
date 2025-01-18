@@ -5,13 +5,14 @@ namespace DataTransferObjects
 {
     public class VendorViewDto
     {
+        public int VendorId {get; set;}
         [Required]
         public string? VendorName { get; set; }
         [EmailAddress]
         public string? VendorEmail { get; set; }
         [StringLength(16)]
         public string? VendorPhone { get; set; }
-        public IFormFile? VendorBanner { get; set; }
+        public string? VendorBannerUrl { get; set; }
         public string? Location { get; set; }
         [Url]
         public string? GoogleMapUrl { get; set; }

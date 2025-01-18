@@ -1,0 +1,11 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace EcommerceAPi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class VendorController : ControllerBase
+    {
+    }
+}
