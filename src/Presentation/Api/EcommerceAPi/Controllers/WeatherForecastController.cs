@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Interfaces;
 namespace EcommerceAPi.Controllers
 {
     [ApiController]
