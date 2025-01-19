@@ -4,7 +4,8 @@ namespace Repositories
 {
     public interface ICartItemRepository
     {
-        Task ADddToCartAsync(Product product);
-        Task RemoveFromCartAsync(Product product);
+        Task<CartItem> GetOrCreateCartItemAsync(int customerId);
+        Task<CartItem> ADddToCartAsync(Customer customer, Product product);
+        Task RemoveFromCartAsync(Customer customer, Product product);
     }
 }

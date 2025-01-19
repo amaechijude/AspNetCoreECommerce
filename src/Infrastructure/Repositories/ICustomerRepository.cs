@@ -6,6 +6,6 @@ namespace Repositories
     {
         Task<Customer> CreateCustomerAsync(Customer customer);
         Task<Customer> GetCustomerByIdAsync(int id);
-        Task SaveChangesAsync();
+        Task DeleteCustomerAsync(int customerId);
     }
 }

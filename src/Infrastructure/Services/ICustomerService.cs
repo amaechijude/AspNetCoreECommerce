@@ -6,6 +6,6 @@ namespace Services
     {
         Task<CustomerDTO> CreateCustomerAsync(CustomerRegistrationDTO customer);
         Task<CustomerDTO> GetCustomerByIdAsync(int id);
-        Task SaveChangesAsync();
+        Task DeleteCustomerAsync(int customerId);
     }
 }
