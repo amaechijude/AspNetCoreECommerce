@@ -9,13 +9,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-.env
-*.env
-.config/
-Uploads
-Uploads/*
-/Uploads/
-Uploads/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -295,8 +288,8 @@ node_modules/
 # Visual Studio 6 build log
 *.plg
 
-*.opt
 # Visual Studio 6 workspace options file
+*.opt
 
 # Visual Studio 6 auto-generated workspace file (contains which files were open etc.)
 *.vbw
@@ -315,10 +308,6 @@ paket-files/
 
 # FAKE - F# Make
 .fake/
-Migrations/
-/Migrations/
-Migrations
-/Migrations
 
 # CodeRush personal settings
 .cr/personal
