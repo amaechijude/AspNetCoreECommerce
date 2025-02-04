@@ -1,6 +1,10 @@
-var builder = WebApplication.CreateBuilder(args);
+using AspNetCoreEcommerce.ErrorHandling;
 
+var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
+
+// Register Exception hanling Middleware
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -17,6 +21,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+// add middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

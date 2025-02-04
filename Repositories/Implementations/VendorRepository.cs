@@ -53,7 +53,7 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             using var stream = new FileStream(filePath, FileMode.Create);
             await imageFile.CopyToAsync(stream);
 
-            var imageUrl = $"{request.Scheme}://{request.Host}/Uploads/Posts/{fileName}";
+            var imageUrl = $"{filePath}";
             return imageUrl;
         }
 
