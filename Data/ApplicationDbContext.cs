@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreEcommerce.Data
 {
-    public partial class ApplicationDbContext : DbContext
+    public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
-
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }

@@ -1,7 +1,6 @@
-﻿using DataTransferObjects;
-using Microsoft.AspNetCore.Http;
+﻿using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 
 namespace EcommerceAPi.Controllers
 {

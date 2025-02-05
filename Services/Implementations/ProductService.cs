@@ -2,7 +2,6 @@
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using AspNetCoreEcommerce.Services.Contracts;
-using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {

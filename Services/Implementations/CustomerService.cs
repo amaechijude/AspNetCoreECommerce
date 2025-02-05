@@ -33,27 +33,21 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CustomerPhone = customer.CustomerPhone,
             };
         }
+
         public async Task<CustomerDTO> GetCustomerByIdAsync(int id)
         {
-            try
+            var customer = await _customerRepository.GetCustomerByIdAsync(id);
+            return new CustomerDTO
             {
-                var customer = await _customerRepository.GetCustomerByIdAsync(id);
-                return new CustomerDTO
-                {
-                    CustomerId = customer.CustomerID,
-                    CustomerEmail = customer.CustomerEmail,
-                    CustomerName = customer.CustomerName,
-                    CustomerPhone = customer.CustomerPhone,
-                };
-            }
-
-            catch (KeyNotFoundException ex) { throw new KeyNotFoundException($"{ex}"); }
+                CustomerId = customer.CustomerID,
+                CustomerEmail = customer.CustomerEmail,
+                CustomerName = customer.CustomerName,
+                CustomerPhone = customer.CustomerPhone,
+            };
         }
         public async Task DeleteCustomerAsync(int customerId)
         {
-            try { await _customerRepository.DeleteCustomerAsync(customerId); }
-
-            catch (KeyNotFoundException ex) { throw new KeyNotFoundException($"{ex}"); }
+             await _customerRepository.DeleteCustomerAsync(customerId);
         }
     }
 }

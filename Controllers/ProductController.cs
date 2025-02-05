@@ -1,7 +1,6 @@
-﻿using DataTransferObjects;
-using Microsoft.AspNetCore.Http;
+﻿using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 
 namespace EcommerceAPi.Controllers
 {
@@ -16,12 +15,7 @@ namespace EcommerceAPi.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            try
-            {
-                return Ok(await _productService.CreateProductAsync(createProduct, request));
-            }
-            catch (ArgumentException ex) {return BadRequest(ex);}
-            catch (KeyNotFoundException ex) {return BadRequest(ex);}
+            return Ok(await _productService.CreateProductAsync(createProduct, request));
         }
     }
 }

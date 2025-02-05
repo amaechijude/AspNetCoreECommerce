@@ -8,7 +8,7 @@ namespace AspNetCoreEcommerce.Entities
         public int CustomerID { get; set; }
         [EmailAddress]
         [Required]
-        public string? CustomerEmail { get; set; }
+        public required string CustomerEmail { get; set; }
         [Required]
         [PasswordPropertyText]
         public string? PasswordHash { get; set; }

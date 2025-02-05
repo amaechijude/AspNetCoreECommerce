@@ -72,7 +72,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
         }
         public async Task<VendorViewDto> UpdateVendorByIdAsync(int vendorId, VendorDto upvendor, HttpRequest request)
         {
-            var existingVendor = await _vendorRepository.GetVendorByIdAsync(vendorId) ?? throw new InvalidOperationException("");
+            var existingVendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
+                ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
+
             var bannerUrl = upvendor.VendorBanner != null
                     ? await _vendorRepository.SaveVendorBannerAsync(upvendor.VendorBanner, request)
                     : null;
@@ -104,7 +106,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
         }
         public async Task DeleteVendorAsync(int vendorId)
         {
-            await _vendorRepository.DeleteVendorAsync(vendorId);
+            var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
+                ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
+            await _vendorRepository.DeleteVendorAsync(vendor);
         }
     }
 }

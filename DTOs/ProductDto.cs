@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AspNetCoreEcommerce.DTOs
+﻿namespace AspNetCoreEcommerce.DTOs
 {
     public class ProductDto
     {

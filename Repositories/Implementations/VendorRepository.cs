@@ -19,21 +19,19 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
         public async Task<Vendor?> GetVendorByIdAsync(int vendorId)
         {
             var vendor = await _context.Vendors.FindAsync(vendorId);
-            return vendor is null? null : vendor;
+            return vendor;
         }
 
-        public async Task<Vendor> UpdateVendorAsync(int vendorId, Vendor vendor)
-        {
-            var existingVendor = await GetVendorByIdAsync(vendorId) ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
+        public async Task<Vendor> UpdateVendorAsync(int vendorId, Vendor existingVendor)
+        {;
             existingVendor.DateUpdated = DateTime.UtcNow;
-            _context.Entry(vendor).State = EntityState.Modified;
+            _context.Entry(existingVendor).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return existingVendor;
         }
 
-        public async Task DeleteVendorAsync(int vendorId)
+        public async Task DeleteVendorAsync(Vendor vendor)
         {
-             var vendor = await _context.Vendors.FindAsync(vendorId) ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
              vendor.IsDeleted = true;
              await _context.SaveChangesAsync();
         }

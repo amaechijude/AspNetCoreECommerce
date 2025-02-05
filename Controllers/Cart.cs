@@ -1,8 +1,6 @@
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.DataProtection.Repositories;
 using AspNetCoreEcommerce.Services.Contracts;
-using AspNetCoreEcommerce.Respositories.Implementations;
 using AspNetCoreEcommerce.DTOs;
 
 namespace EcommerceAPi.Controllers
@@ -18,17 +16,9 @@ namespace EcommerceAPi.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            await _cartItemService.ADddToCartAsync(cart.CustomerId, cart.ProductId);
 
-            try
-            {
-                await _cartItemService.ADddToCartAsync(cart.CustomerId, cart.ProductId);
-
-                return Ok(new {message = "added to cart"});
-            }
-            
-            catch (ProductNotFoundException ex) { return BadRequest(ex);}
-            catch (ItemAlreadyInCartException ex) { return BadRequest(ex);}
-            catch (CustomerNotFoundException ex) { return BadRequest(ex);}
+            return Ok(new { message = "added to cart" });
         }
 
     }
