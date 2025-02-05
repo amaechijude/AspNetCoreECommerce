@@ -61,6 +61,10 @@ namespace AspNetCoreEcommerce.Data
             modelBuilder.Entity<Customer>()
                 .HasIndex(c => c.CustomerEmail)
                 .IsUnique();
+
+            //Cart items
+            modelBuilder.Entity<CartItem>()
+                .HasKey(c => c.CartId);
         }
     }
 }

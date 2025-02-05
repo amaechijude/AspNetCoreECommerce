@@ -27,8 +27,20 @@ namespace EcommerceAPi.Controllers
             return Ok(await _productService.CreateProductAsync(vendorId, createProduct, Request));
         }
 
-        // [Authorize(Roles = GlobalConstants.vendorRole)]
-        // [HttpPatch("update")]
-        // public async Task<IActionResult> UpdateProductAsync([FromForm] UpdateProductDto updateProduct)
+        [Authorize(Roles = GlobalConstants.vendorRole)]
+        [HttpPatch("update{productId}")]
+        public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productId , [FromForm] UpdateProductDto updateProduct)
+        {
+            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (vendorId is null)
+                return Unauthorized("Invalid token");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var vId = Guid.Parse(vendorId);
+            var data = await _productService.UpdateProductAsync(productId, vId, updateProduct, Request);
+            return Ok(data);
+        }
     }
 }

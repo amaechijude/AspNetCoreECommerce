@@ -4,7 +4,7 @@ namespace AspNetCoreEcommerce.DTOs
 {
     public class VendorViewDto
     {
-        public int VendorId {get; set;}
+        public Guid VendorId {get; set;}
         [Required]
         public string? VendorName { get; set; }
         [EmailAddress]

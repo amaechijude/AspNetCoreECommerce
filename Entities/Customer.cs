@@ -5,7 +5,7 @@ namespace AspNetCoreEcommerce.Entities
 {
     public class Customer
     {
-        public int CustomerID { get; set; }
+        public Guid CustomerID { get; set; }
         [EmailAddress]
         [Required]
         public required string CustomerEmail { get; set; }

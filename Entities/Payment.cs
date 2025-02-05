@@ -5,7 +5,7 @@ namespace AspNetCoreEcommerce.Entities
     public class Payment
     {
         [Key]
-        public int PaymentId { get; set; }
+        public Guid PaymentId { get; set; }
         public Order? Order { get; set; }
         public double TotalAmount { get; set; }
         public string? TransactionReference { get; set; }

@@ -5,7 +5,7 @@ namespace AspNetCoreEcommerce.Entities
 {
     public class Vendor
     {
-        public int VendorId { get; set; }
+        public Guid VendorId { get; set; }
         public string? VendorName { get; set; }
         [EmailAddress]
         public required string VendorEmail { get; set; }

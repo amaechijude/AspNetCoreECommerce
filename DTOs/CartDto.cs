@@ -10,10 +10,8 @@ namespace AspNetCoreEcommerce.DTOs
     public class CartDto
     {
         [Required]
-        [Range(1, int.MaxValue)]
-        public int CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
         [Required]
-        [Range(1, int.MaxValue)]
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
     }
 }

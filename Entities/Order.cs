@@ -8,7 +8,7 @@
     }
     public class Order
     {
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public CartItem? CartItem { get; set; }
         public string OrderRefrence = $"order{Guid.CreateVersion7()}".Replace(" ", "");
         public double Discount { get; set; }

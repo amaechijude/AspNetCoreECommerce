@@ -18,14 +18,14 @@ namespace AspNetCoreEcommerce.DTOs
 
     public class VendorLoginViewDto
     {
-        public int VendorId {get; set;}
+        public Guid VendorId {get; set;}
         public required string VendorEmail {get; set;}
         public required string Token {get; set;}
     }
     
     public class CustomerLoginViewDto
     {
-        public int CustomerId {get; set;}
+        public Guid CustomerId {get; set;}
         public required string CustomerEmail {get; set;}
         public required string Token {get; set;}
     }

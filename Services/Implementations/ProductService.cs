@@ -72,8 +72,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Price = createdProduct.Price,
                 Description = createdProduct.Description,
                 ImageUrl = createdProduct.ImageUrl,
-                VendorId = createdProduct.VendorId,
+                CategoryId = createdProduct.CategoryId,
                 // CategoryName = createdProduct.Category.Name,
+                VendorId = createdProduct.VendorId,
             };
         }
 
@@ -86,14 +87,30 @@ namespace AspNetCoreEcommerce.Services.Implementations
             await _productRepository.DeleteProductAsync(productId);
         }
 
-        // public async Task<ProductViewDto> UpdateProductAsync(Guid productId, Guid vendorId, UpdateProductDto updateProduct)
-        // {
-        //     var product = await _productRepository.GetProductByIdAsync(productId);
-        //     if (vendorId != product.VendorId)
-        //         throw new UnauthorizedAccessException("You are not authorized for this action");
+        public async Task<ProductViewDto> UpdateProductAsync(Guid productId, Guid vendorId, UpdateProductDto updateProduct, HttpRequest request)
+        {
+            var product = await _productRepository.GetProductByIdAsync(productId);
+            if (vendorId != product.VendorId)
+                throw new UnauthorizedAccessException("You are not authorized for this action");
 
-        //     product.UpdateProduct(updateProduct.Name,)
-        // }
+            var imageUrl = updateProduct.Image == null
+                ? null
+                : await _productRepository.SaveProductImageAsync(updateProduct.Image, request);
+
+            product.UpdateProduct(updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
+            await _productRepository.UpdateProductAsync();
+
+            return new ProductViewDto
+            {
+                ProductId = product.ProductId,
+                Name = product.Name,
+                Price = product.Price,
+                Description = product.Description,
+                ImageUrl = product.ImageUrl,
+                CategoryId = product.CategoryId,
+                VendorId = product.VendorId
+            };
+        }
     }
 
 }
