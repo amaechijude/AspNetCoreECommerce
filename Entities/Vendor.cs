@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace AspNetCoreEcommerce.Entities
 {
@@ -8,6 +9,9 @@ namespace AspNetCoreEcommerce.Entities
         public string? VendorName { get; set; }
         [EmailAddress]
         public required string VendorEmail { get; set; }
+        [Required]
+        [PasswordPropertyText]
+        public string? PasswordHash {get; set;}
         [StringLength(16)]
         public string? VendorPhone {  get; set; }
         public string? VendorBannerUrl { get; set; }
@@ -22,9 +26,26 @@ namespace AspNetCoreEcommerce.Entities
         public string? InstagramUrl { get; set; }
         [Url]
         public string? FacebookUrl { get; set; }
-        public DateTime DateJoined { get; set; }
-        public DateTime? DateUpdated { get; set; }
+        public DateTimeOffset DateJoined { get; set; }
+        public DateTimeOffset DateUpdated { get; private set; }
         public ICollection<Product>? Products { get; set; }
 
+        public void UpdateVendor(string? vphone, string? location, string? gmap, string? xurl, string? igurl, string? fburl)
+        {
+            if (!string.IsNullOrWhiteSpace(vphone))
+                VendorPhone = vphone;
+            if (!string.IsNullOrWhiteSpace(location))
+                Location = location;
+            if (!string.IsNullOrWhiteSpace(gmap))
+                GoogleMapUrl = gmap;
+            if (!string.IsNullOrWhiteSpace(xurl))
+                TwitterUrl = xurl;
+            if (!string.IsNullOrWhiteSpace(igurl))
+                InstagramUrl = igurl;
+            if (!string.IsNullOrWhiteSpace(fburl))
+                FacebookUrl = fburl;
+
+            DateUpdated = DateTimeOffset.UtcNow;
+        }
     }
 }

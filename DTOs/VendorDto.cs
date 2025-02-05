@@ -9,6 +9,8 @@ namespace AspNetCoreEcommerce.DTOs
         [EmailAddress]
         public string? VendorEmail { get; set; }
         [Required]
+        public string? Password {get; set; }
+        [Required]
         [StringLength(16)]
         public string? VendorPhone { get; set; }
         public IFormFile? VendorBanner { get; set; }

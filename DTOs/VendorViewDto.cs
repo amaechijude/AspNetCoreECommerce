@@ -21,8 +21,8 @@ namespace AspNetCoreEcommerce.DTOs
         public string? InstagramUrl { get; set; }
         [Url]
         public string? FacebookUrl { get; set; }
-        public DateTime DateJoined { get; set; }
-        public DateTime? DateUpdated { get; set; }
+        public DateTimeOffset DateJoined { get; set; }
+        public DateTimeOffset? DateUpdated { get; set; }
         public ICollection<ProductViewDto>? Products { get; set; }
 
     }

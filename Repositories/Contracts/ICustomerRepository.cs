@@ -7,5 +7,6 @@ namespace AspNetCoreEcommerce.Respositories.Contracts
         Task<Customer> CreateCustomerAsync(Customer customer);
         Task<Customer> GetCustomerByIdAsync(int id);
         Task DeleteCustomerAsync(int customerId);
+        Task<Customer> GetCustomerByEmailAsync(string email);
     }
 }

@@ -8,5 +8,6 @@ namespace AspNetCoreEcommerce.Services.Contracts
         Task<VendorViewDto?> GetVendorByIdAsync(int vendorId);
         Task<VendorViewDto> UpdateVendorByIdAsync(int vendorId, VendorDto vendor, HttpRequest request);
         Task DeleteVendorAsync(int vendorId);
+        Task<VendorLoginViewDto> LoginVendorAsync(LoginDto login);
     }
 }

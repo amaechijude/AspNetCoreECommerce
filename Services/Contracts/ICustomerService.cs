@@ -7,5 +7,6 @@ namespace AspNetCoreEcommerce.Services.Contracts
         Task<CustomerDTO> CreateCustomerAsync(CustomerRegistrationDTO customer);
         Task<CustomerDTO> GetCustomerByIdAsync(int id);
         Task DeleteCustomerAsync(int customerId);
+        Task<CustomerLoginViewDto> LoginCustomerAsync(LoginDto login);
     }
 }

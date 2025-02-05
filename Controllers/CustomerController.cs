@@ -1,10 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
 
-namespace EcommerceAPi.Controllers
+namespace AspNetCoreEcommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomerController(ICustomerService customerService) : ControllerBase
     {
+        private readonly ICustomerService _customerService = customerService;
+
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterCustomer([FromBody] CustomerRegistrationDTO registrationDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(await _customerService.CreateCustomerAsync(registrationDTO));
+        }
+
+        public async Task<IActionResult> LoginCustomerAsync(LoginDto login)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(await _customerService.LoginCustomerAsync(login));
+        }
     }
 }

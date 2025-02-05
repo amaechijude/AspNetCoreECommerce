@@ -16,18 +16,16 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             return vendor;
         }
 
-        public async Task<Vendor?> GetVendorByIdAsync(int vendorId)
+        public async Task<Vendor> GetVendorByIdAsync(int vendorId)
         {
-            var vendor = await _context.Vendors.FindAsync(vendorId);
+            var vendor = await _context.Vendors.FindAsync(vendorId)
+                ?? throw new ArgumentException("Inavlid User Id");
             return vendor;
         }
 
-        public async Task<Vendor> UpdateVendorAsync(int vendorId, Vendor existingVendor)
-        {;
-            existingVendor.DateUpdated = DateTime.UtcNow;
-            _context.Entry(existingVendor).State = EntityState.Modified;
+        public async Task SaveUpdateVendorAsync()
+        {
             await _context.SaveChangesAsync();
-            return existingVendor;
         }
 
         public async Task DeleteVendorAsync(Vendor vendor)
@@ -53,6 +51,14 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
 
             var imageUrl = $"{filePath}";
             return imageUrl;
+        }
+
+        public async Task<Vendor> GetVendorByEmailAsync(string vendorEmail)
+        {
+            var vendor = await _context.Vendors.SingleOrDefaultAsync(v => v.VendorEmail == vendorEmail)
+                ?? throw new ArgumentException("Invalid Vendor Emai");
+
+            return vendor;
         }
 
     }

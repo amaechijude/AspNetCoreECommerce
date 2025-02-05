@@ -1,6 +1,7 @@
 ﻿using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreEcommerce.Respositories.Implementations
 {
@@ -23,6 +24,14 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             var cs = await _context.Customers.FindAsync(id) ?? throw new KeyNotFoundException("Customer is does not exist or is deleted");
             cs.IsDeleted = true;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Customer> GetCustomerByEmailAsync(string email)
+        {
+            var customer = await _context.Customers.SingleOrDefaultAsync(c => c.CustomerEmail == email)
+                ?? throw new ArgumentException("Invalid Email");
+
+            return customer;
         }
     }
 }

@@ -1,20 +1,28 @@
+using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using AspNetCoreEcommerce.Services.Contracts;
+using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
-    public class VendorService(IVendorRepository repository) : IVendorService
+    public class VendorService(IVendorRepository repository, TokenProvider tokenProvider) : IVendorService
     {
         private readonly IVendorRepository _vendorRepository = repository;
+        private readonly TokenProvider _tokenProvider = tokenProvider;
+        private readonly PasswordHasher<Vendor> _passwordHasher = new();
+
         public async Task<VendorViewDto> CreateVendorAsync(VendorDto vendorDto1, HttpRequest request)
         {   
-            if (string.IsNullOrWhiteSpace(vendorDto1.VendorName) || string.IsNullOrWhiteSpace(vendorDto1.VendorEmail))
-                throw new Exception("Vendor name and Email cannot be empty");
+            if (string.IsNullOrWhiteSpace(vendorDto1.VendorName))
+                throw new ArgumentException("Vendor Name cannot be empty");
+
+            if (string.IsNullOrWhiteSpace(vendorDto1.VendorEmail) || string.IsNullOrEmpty(vendorDto1.Password))
+                throw new ArgumentException("Email and Password Cannont be empty");
 
             if (string.IsNullOrWhiteSpace(vendorDto1.VendorPhone) || string.IsNullOrWhiteSpace(vendorDto1.Location))
-                throw new Exception("Vendor Phone and location cannot be empty");
+                throw new ArgumentException("Vendor Phone and location cannot be empty");
 
             var bannerUrl = vendorDto1.VendorBanner != null 
                     ? await _vendorRepository.SaveVendorBannerAsync(vendorDto1.VendorBanner, request)
@@ -30,9 +38,12 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 GoogleMapUrl = vendorDto1.GoogleMapUrl,
                 TwitterUrl = vendorDto1.TwitterUrl,
                 FacebookUrl = vendorDto1.FacebookUrl,
-                DateJoined = DateTime.UtcNow,
+                DateJoined = DateTimeOffset.UtcNow,
             };
+            newVendor.PasswordHash = _passwordHasher.HashPassword(newVendor, vendorDto1.Password);
+
             var createVendor = await _vendorRepository.CreateVendorAsync(newVendor, request);
+
             var vendorView = new VendorViewDto
             {
                 VendorId = createVendor.VendorId,
@@ -78,17 +89,11 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var bannerUrl = upvendor.VendorBanner != null
                     ? await _vendorRepository.SaveVendorBannerAsync(upvendor.VendorBanner, request)
                     : null;
+            
+            existingVendor.UpdateVendor(upvendor.VendorPhone, upvendor.Location, upvendor.GoogleMapUrl, upvendor.TwitterUrl, upvendor.InstagramUrl, upvendor.FacebookUrl);
+            await _vendorRepository.SaveUpdateVendorAsync();
 
-            existingVendor.VendorName = upvendor.VendorName;
-            existingVendor.VendorEmail = upvendor.VendorEmail;
-            existingVendor.VendorPhone = upvendor.VendorPhone;
-            existingVendor.VendorBannerUrl = bannerUrl;
-            existingVendor.TwitterUrl = upvendor.TwitterUrl;
-            existingVendor.FacebookUrl = upvendor.FacebookUrl;
-            existingVendor.InstagramUrl = upvendor.InstagramUrl;
-            existingVendor.DateUpdated = DateTime.UtcNow;
-
-            var vendor = await _vendorRepository.UpdateVendorAsync(vendorId, existingVendor);
+            var vendor = existingVendor;
             var vendorView = new VendorViewDto
             {
                 VendorId = vendor.VendorId,
@@ -109,6 +114,23 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
                 ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
             await _vendorRepository.DeleteVendorAsync(vendor);
+        }
+
+        public async Task<VendorLoginViewDto> LoginVendorAsync(LoginDto login)
+        {
+            var vendor = await _vendorRepository.GetVendorByEmailAsync(login.Email);
+            var verifyLogin = _passwordHasher.VerifyHashedPassword(vendor, vendor.PasswordHash, login.Password);
+
+            if (verifyLogin == PasswordVerificationResult.Failed)
+                throw new ArgumentException("Invalid Password");
+
+            var token = _tokenProvider.Create(vendor);
+
+            return new VendorLoginViewDto {
+                VendorId = vendor.VendorId,
+                VendorEmail = vendor.VendorEmail,
+                Token = token
+            };
         }
     }
 }
