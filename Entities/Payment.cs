@@ -9,9 +9,9 @@ namespace AspNetCoreEcommerce.Entities
         public Order? Order { get; set; }
         public double TotalAmount { get; set; }
         public string? TransactionReference { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime? VerificationDate { get; set; }
-        public int CustormerId { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
+        public DateTimeOffset VerificationDate { get; set; }
+        public Guid CustormerId { get; set; }
         public Customer? Customer { get; set; }
     }
 }

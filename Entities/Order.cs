@@ -16,7 +16,7 @@
         public OrderStatus OrderStatus { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public int CustormerId { get; set; }
+        public Guid CustormerId { get; set; }
         public Customer? Customer { get; set; }
     }
 }
