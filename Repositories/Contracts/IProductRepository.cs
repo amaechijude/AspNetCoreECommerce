@@ -1,16 +1,17 @@
-﻿using AspNetCoreEcommerce.Entities;
+﻿using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.Entities;
 
 namespace AspNetCoreEcommerce.Respositories.Contracts
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
-        Task<Product> GetProductByIdAsync(int productId);
+        Task<IEnumerable<ProductViewDto>> GetAllProductsAsync();
+        Task<Product> GetProductByIdAsync(Guid productId);
         Task<Product> CreateProductAsync(Product product, HttpRequest request);
-        Task<Product> UpdateProductAsync(int productId, Product product);
-        Task DeleteProductAsync(int productId);
+        Task UpdateProductAsync();
+        Task DeleteProductAsync(Guid productId);
         Task<Category> GetCategorytByNameAsync(string catName);
-        Task<Vendor?> GetVendorByIdAsync(int vendorId);
+        Task<Vendor> GetVendorByIdAsync(Guid vendorId);
         Task<string?> SaveProductImageAsync(IFormFile imageFile, HttpRequest request);
     }
 }

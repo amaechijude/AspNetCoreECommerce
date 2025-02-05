@@ -12,24 +12,14 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
         public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync()
         {
-            var products = await _productRepository.GetAllProductsAsync();
-            return [.. products.Select(p => new ProductViewDto
-            {
-                ProductId = p.ProductId,
-                Name = p.Name,
-                Price = p.Price,
-                Description = p.Description,
-                ImageUrl = p.ImageUrl,
-                VendorId = p.VendorId,
-                // CategoryName = p.Category.Name;
-
-                // ... map other properties
-            })];
+            return await _productRepository.GetAllProductsAsync();
         }
 
-        public async Task<ProductViewDto> GetProductByIdAsync(int productId)
+        public async Task<ProductViewDto> GetProductByIdAsync(Guid productId)
         {
-            var product = await _productRepository.GetProductByIdAsync(productId) ?? throw new KeyNotFoundException("Product not found or is deleted");
+            var product = await _productRepository.GetProductByIdAsync(productId)
+                ?? throw new KeyNotFoundException("Product not found or is deleted");
+
             return new ProductViewDto
             {
                 ProductId = product.ProductId,
@@ -37,12 +27,12 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Price = product.Price,
                 Description = product.Description,
                 ImageUrl = product.ImageUrl,
-                VendorId = product.VendorId,
-                // Category = product.Category,
+                CategoryId = product.CategoryId,
+                VendorId = product.VendorId
             };
         }
 
-        public async Task<ProductViewDto> CreateProductAsync(CreateProductDto createProductDto, HttpRequest request)
+        public async Task<ProductViewDto> CreateProductAsync(string vendorId,CreateProductDto createProductDto, HttpRequest request)
         {
             if (string.IsNullOrWhiteSpace(createProductDto.Name))
                 throw new ArgumentException("Product name cannot be empty.");
@@ -52,19 +42,25 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             if (createProductDto.Price <= 0)
                 throw new ArgumentException("Product price must be greater than zero.");
+
             if (createProductDto.Image is null)
                 throw new ArgumentException("Product Image is missing");
 
             var imageUrl = await _productRepository.SaveProductImageAsync(createProductDto.Image, request);
-            var vendor = await _productRepository.GetVendorByIdAsync(createProductDto.VendorId) ?? throw new KeyNotFoundException("The vendor is not found. Contact the admin");
+
+            var vendor = Guid.TryParse(vendorId, out Guid exactVendorId);
+            if (!vendor)
+                throw new KeyNotFoundException("The vendor is can't create product Contact the admin");
+
             var category = await _productRepository.GetCategorytByNameAsync(createProductDto.CategoryName);
             var product = new Product
             {
+                ProductId = Guid.CreateVersion7(),
                 Name = createProductDto.Name,
                 Price = createProductDto.Price,
                 Description = createProductDto.Description,
-                Category = category,
-                Vendor = vendor,
+                CategoryId = category.CategoryId,
+                VendorId = exactVendorId,
                 ImageUrl = imageUrl
             };
 
@@ -81,10 +77,23 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
         }
 
-        public async Task DeleteProductAsync(int productId)
+        public async Task DeleteProductAsync(Guid vendorId, Guid productId)
         {
+            var product = await _productRepository.GetProductByIdAsync(productId);
+            if (vendorId != product.VendorId)
+                throw new UnauthorizedAccessException("You are not authorized for this action");
+            
             await _productRepository.DeleteProductAsync(productId);
         }
+
+        // public async Task<ProductViewDto> UpdateProductAsync(Guid productId, Guid vendorId, UpdateProductDto updateProduct)
+        // {
+        //     var product = await _productRepository.GetProductByIdAsync(productId);
+        //     if (vendorId != product.VendorId)
+        //         throw new UnauthorizedAccessException("You are not authorized for this action");
+
+        //     product.UpdateProduct(updateProduct.Name,)
+        // }
     }
 
 }

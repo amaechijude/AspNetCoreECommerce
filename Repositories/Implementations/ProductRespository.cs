@@ -1,4 +1,5 @@
 ﻿using AspNetCoreEcommerce.Data;
+using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,27 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products
+                .Select(p => new ProductViewDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price,
+                    CategoryId = p.CategoryId,
+                    VendorId = p.VendorId
+                })
+                .ToListAsync();
         }
 
-        public async Task<Product> GetProductByIdAsync(int productId)
+        public async Task<Product> GetProductByIdAsync(Guid productId)
         {
-            var product = await _context.Products.FindAsync(productId);
-            return product ?? throw new KeyNotFoundException($"Product with ID {productId} not found.");
+            var product = await _context.Products.FindAsync(productId)
+                ?? throw new KeyNotFoundException($"Product with ID {productId} not found.");
+            return product;
         }
 
         public async Task<Product> CreateProductAsync(Product product, HttpRequest request)
@@ -26,16 +39,15 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             await _context.SaveChangesAsync();
             return product;
         }
-        public async Task<Product> UpdateProductAsync(int productId, Product product)
+        public async Task UpdateProductAsync()
         {
-            _ = await _context.Products.FindAsync(productId) ?? throw new KeyNotFoundException($"Product with ID {productId} not found or deleted.");
             await _context.SaveChangesAsync();
-            return product;
         }
 
-        public async Task DeleteProductAsync(int productId)
+        public async Task DeleteProductAsync(Guid productId)
         {
-            var product = await _context.Products.FindAsync(productId) ?? throw new KeyNotFoundException($"Product with ID {productId} not found or deleted."); ;
+            var product = await _context.Products.FindAsync(productId)
+                ?? throw new KeyNotFoundException($"Product with ID {productId} not found or deleted."); ;
             product.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
@@ -46,16 +58,17 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
 
             if (category == null)
             {
-                var newCategory = new Category { Name = name}; 
+                var newCategory = new Category { CategoryId = Guid.CreateVersion7(), Name = name}; 
                 return newCategory;
             }
             return category;
         }
 
-        public async Task<Vendor?> GetVendorByIdAsync(int vendorId)
+        public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
         {
-            var vendor = await _context.Vendors.FindAsync(vendorId);
-            return vendor is null ? null : vendor;
+            var vendor = await _context.Vendors.FindAsync(vendorId)
+                ?? throw new KeyNotFoundException("Vendor does not exist");
+            return vendor;
         }
 
         public async Task<string?> SaveProductImageAsync(IFormFile imageFile, HttpRequest request)
@@ -73,7 +86,7 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             using var stream = new FileStream(filePath, FileMode.Create);
             await imageFile.CopyToAsync(stream);
 
-            var imageUrl = $"{request.Scheme}://{request.Host}/Uploads/Posts/{fileName}";
+            var imageUrl = $"{filePath}";
             return imageUrl;
         }
     }
