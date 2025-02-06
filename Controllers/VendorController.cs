@@ -20,5 +20,20 @@ namespace AspNetCoreEcommerce.Controllers
             return Ok(vendor);
         }
 
+        [HttpGet("get/{vendorid}")]
+        public async Task<IActionResult> GetVendorByIdAsync(Guid vendorid)
+        {
+            return Ok(await _vendorService.GetVendorByIdAsync(vendorid, Request));
+        }
+
+        [HttpPost("update/{vendorId}")]
+        public async Task<IActionResult> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(await _vendorService.UpdateVendorByIdAsync(vendorId, updateVendor, Request));
+        }
+
     }
 }

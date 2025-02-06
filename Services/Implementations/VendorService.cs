@@ -44,20 +44,19 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             var createVendor = await _vendorRepository.CreateVendorAsync(newVendor, request);
 
-            var vendorView = new VendorViewDto
+            return new VendorViewDto
             {
                 VendorId = createVendor.VendorId,
                 VendorName = createVendor.VendorName,
                 VendorEmail = createVendor.VendorEmail,
                 VendorPhone = createVendor.VendorPhone,
-                VendorBannerUrl = $"{request.Scheme}://{request.Host}/{createVendor.VendorBanner}",
+                VendorBannerUrl = GeImagetUrl(request, createVendor.VendorBanner),
                 Location = createVendor.Location,
                 TwitterUrl = createVendor.TwitterUrl,
                 FacebookUrl = createVendor.FacebookUrl,
                 DateJoined = createVendor.DateJoined,
                 InstagramUrl = createVendor.InstagramUrl,
             };
-            return vendorView;
             
         }
         public async Task<VendorViewDto> GetVendorByIdAsync(Guid vendorId, HttpRequest request)
@@ -71,7 +70,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = $"{request.Scheme}://{request.Host}/{vendor.VendorBanner}",
+                VendorBannerUrl = GeImagetUrl(request, vendor.VendorBanner),
                 Location = vendor.Location,
                 TwitterUrl = vendor.TwitterUrl,
                 FacebookUrl = vendor.FacebookUrl,
@@ -80,7 +79,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
             return vendorView;
         }
-        public async Task<VendorViewDto> UpdateVendorByIdAsync(Guid vendorId, VendorDto upvendor, HttpRequest request)
+        public async Task<VendorViewDto> UpdateVendorByIdAsync(Guid vendorId, UpdateVendorDto upvendor, HttpRequest request)
         {
             var existingVendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
                 ?? throw new KeyNotFoundException($"Vendor was not found");
@@ -103,7 +102,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = $"{request.Scheme}://{request.Host}/{vendor.VendorBanner}",
+                VendorBannerUrl = GeImagetUrl(request, vendor.VendorBanner),
                 Location = vendor.Location,
                 TwitterUrl = vendor.TwitterUrl,
                 FacebookUrl = vendor.FacebookUrl,
@@ -137,6 +136,13 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorEmail = vendor.VendorEmail,
                 Token = token
             };
+        }
+
+        private static string GeImagetUrl(HttpRequest request, string? imgUrl)
+        {
+            if (string.IsNullOrWhiteSpace(imgUrl))
+                return "";
+            return $"{request.Scheme}://{request.Host}/{GlobalConstants.uploadPath}/{imgUrl}";
         }
     }
 }

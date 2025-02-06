@@ -22,7 +22,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                     ProductId = p.ProductId,
                     Name = p.Name,
                     Description = p.Description,
-                    ImageUrl = $"{request.Scheme}://{request.Host}/{p.ImageName}",
+                    ImageUrl = GetImagetUrl(request, p.ImageName),
                     Price = p.Price,
                     CategoryId = p.CategoryId,
                     VendorId = p.VendorId
@@ -40,7 +40,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = product.Name,
                 Price = product.Price,
                 Description = product.Description,
-                ImageUrl = $"{request.Scheme}://{request.Host}/{product.ImageName}",
+                ImageUrl = GetImagetUrl(request, product.ImageName),
                 CategoryId = product.CategoryId,
                 VendorId = product.VendorId
             };
@@ -85,7 +85,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = createdProduct.Name,
                 Price = createdProduct.Price,
                 Description = createdProduct.Description,
-                ImageUrl = $"{request.Scheme}://{request.Host}/{createdProduct.ImageName}",
+                ImageUrl = GetImagetUrl(request, createdProduct.ImageName),
                 CategoryId = createdProduct.CategoryId,
                 // CategoryName = createdProduct.Category.Name,
                 VendorId = createdProduct.VendorId,
@@ -120,10 +120,17 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = product.Name,
                 Price = product.Price,
                 Description = product.Description,
-                ImageUrl = $"{request.Scheme}://{request.Host}/{product.ImageName}",
+                ImageUrl = GetImagetUrl(request, product.ImageName),
                 CategoryId = product.CategoryId,
                 VendorId = product.VendorId
             };
+        }
+
+        private string GetImagetUrl(HttpRequest request, string? imgUrl)
+        {
+            if (string.IsNullOrWhiteSpace(imgUrl))
+                return "";
+            return $"{request.Scheme}://{request.Host}/{GlobalConstants.uploadPath}/{imgUrl}";
         }
     }
 

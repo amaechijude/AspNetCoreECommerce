@@ -77,7 +77,8 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             using var stream = new FileStream(filePath, FileMode.Create);
             await imageFile.CopyToAsync(stream);
 
-            return $"{subPath}/{fileName}";
+            return $"{GlobalConstants.uploadPath}/{subPath}/{fileName}";
         }
+
     }
 }

@@ -3,6 +3,7 @@ namespace AspNetCoreEcommerce.DTOs
 {
     public class UpdateVendorDto
     {
+        public string? VendorPhone {get; set;}
         public IFormFile? VendorBanner { get; set; }
         public string? Location { get; set; }
         [Url]

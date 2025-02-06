@@ -51,7 +51,7 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             using var stream = new FileStream(filePath, FileMode.Create);
             await imageFile.CopyToAsync(stream);
 
-            return $"{subPath}/{fileName}";
+            return $"{GlobalConstants.uploadPath}/{subPath}/{fileName}";
         }
 
         public async Task<Vendor?> GetVendorByEmailAsync(string vendorEmail)
