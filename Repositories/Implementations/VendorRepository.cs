@@ -16,7 +16,7 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             return vendor;
         }
 
-        public async Task<Vendor> GetVendorByIdAsync(int vendorId)
+        public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
         {
             var vendor = await _context.Vendors.FindAsync(vendorId)
                 ?? throw new ArgumentException("Inavlid User Id");
@@ -39,7 +39,9 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             if (imageFile == null || imageFile.Length == 0)
                 return null;
 
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Products");
+            var subPath = GlobalConstants.vendorSubPath;
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), GlobalConstants.uploadPath, subPath);
+
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
 
@@ -49,16 +51,13 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             using var stream = new FileStream(filePath, FileMode.Create);
             await imageFile.CopyToAsync(stream);
 
-            var imageUrl = $"{filePath}";
-            return imageUrl;
+            return $"{subPath}/{fileName}";
         }
 
-        public async Task<Vendor> GetVendorByEmailAsync(string vendorEmail)
+        public async Task<Vendor?> GetVendorByEmailAsync(string vendorEmail)
         {
-            var vendor = await _context.Vendors.SingleOrDefaultAsync(v => v.VendorEmail == vendorEmail)
-                ?? throw new ArgumentException("Invalid Vendor Emai");
-
-            return vendor;
+            var vendor = await _context.Vendors.SingleOrDefaultAsync(v => v.VendorEmail == vendorEmail);
+            return vendor ?? null;
         }
 
     }

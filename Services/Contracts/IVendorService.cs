@@ -5,9 +5,9 @@ namespace AspNetCoreEcommerce.Services.Contracts
     public interface IVendorService
     {
         Task<VendorViewDto> CreateVendorAsync(VendorDto vendorDto, HttpRequest request);
-        Task<VendorViewDto?> GetVendorByIdAsync(int vendorId);
-        Task<VendorViewDto> UpdateVendorByIdAsync(int vendorId, VendorDto vendor, HttpRequest request);
-        Task DeleteVendorAsync(int vendorId);
+        Task<VendorViewDto> GetVendorByIdAsync(Guid vendorId, HttpRequest request);
+        Task<VendorViewDto> UpdateVendorByIdAsync(Guid vendorId, VendorDto vendor, HttpRequest request);
+        Task DeleteVendorAsync(Guid vendorId);
         Task<VendorLoginViewDto> LoginVendorAsync(LoginDto login);
     }
 }

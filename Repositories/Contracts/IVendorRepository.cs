@@ -5,8 +5,8 @@ namespace AspNetCoreEcommerce.Respositories.Contracts
     public interface IVendorRepository
     {
         Task<Vendor> CreateVendorAsync(Vendor vendor, HttpRequest request);
-        Task<Vendor> GetVendorByIdAsync(int vendorId);
-        Task<Vendor> GetVendorByEmailAsync(string vendorEmail);
+        Task<Vendor> GetVendorByIdAsync(Guid vendorId);
+        Task<Vendor?> GetVendorByEmailAsync(string vendorEmail);
         Task SaveUpdateVendorAsync();
         Task DeleteVendorAsync(Vendor vendor);
         Task<string?> SaveVendorBannerAsync(IFormFile imageFile, HttpRequest request);

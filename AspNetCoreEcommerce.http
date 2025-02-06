@@ -1,6 +1,11 @@
 @AspNetCoreEcommerce_HostAddress = http://localhost:5209
 
-GET {{AspNetCoreEcommerce_HostAddress}}/weatherforecast/
+GET {{AspNetCoreEcommerce_HostAddress}}/api/vendor/create
+Accept: application/json
+
+###
+
+POST {{AspNetCoreEcommerce_HostAddress}}/api/vendor/create
 Accept: application/json
 
 ###

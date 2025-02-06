@@ -3,13 +3,16 @@ using AspNetCoreEcommerce;
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.ErrorHandling;
+using AspNetCoreEcommerce.Repositories.Implementations;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using AspNetCoreEcommerce.Respositories.Implementations;
 using AspNetCoreEcommerce.Services.Contracts;
 using AspNetCoreEcommerce.Services.Implementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -53,14 +56,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 // Register Repositories
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-
+// builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+// builder.Services.AddScoped<>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 
 // Register Services
-builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
 
 
 builder.Services.AddControllers();
@@ -73,12 +78,22 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
+// Image folder storage
+var imageFilePath = Path.Combine(Directory.GetCurrentDirectory(), GlobalConstants.uploadPath);
+if (!Directory.Exists(imageFilePath))
+    Directory.CreateDirectory(imageFilePath);
+
+app.UseStaticFiles(new StaticFileOptions{
+    FileProvider = new PhysicalFileProvider(imageFilePath),
+    RequestPath = $"/{GlobalConstants.uploadPath}"
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 // add middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();

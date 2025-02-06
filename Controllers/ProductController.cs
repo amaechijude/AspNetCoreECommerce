@@ -15,7 +15,7 @@ namespace EcommerceAPi.Controllers
 
         [Authorize(Roles = GlobalConstants.vendorRole)]
         [HttpPost("create")]
-        public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct, HttpRequest request)
+        public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {
             var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (vendorId is null)
@@ -28,7 +28,7 @@ namespace EcommerceAPi.Controllers
         }
 
         [Authorize(Roles = GlobalConstants.vendorRole)]
-        [HttpPatch("update{productId}")]
+        [HttpPatch("update/{productId}")]
         public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productId , [FromForm] UpdateProductDto updateProduct)
         {
             var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -41,6 +41,18 @@ namespace EcommerceAPi.Controllers
             var vId = Guid.Parse(vendorId);
             var data = await _productService.UpdateProductAsync(productId, vId, updateProduct, Request);
             return Ok(data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllProductAsync()
+        {
+            return Ok(await _productService.GetAllProductsAsync(Request));
+        }
+
+        [HttpGet("{productId}")]
+        public async Task<IActionResult> GetAllProductByIdAsync([FromRoute] Guid productId)
+        {
+            return Ok(await _productService.GetProductByIdAsync(productId, Request));
         }
     }
 }

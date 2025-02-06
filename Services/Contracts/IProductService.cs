@@ -4,8 +4,8 @@ namespace AspNetCoreEcommerce.Services.Contracts
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductViewDto>> GetAllProductsAsync();
-        Task<ProductViewDto> GetProductByIdAsync(Guid productId);
+        Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request);
+        Task<ProductViewDto> GetProductByIdAsync(Guid productId, HttpRequest request);
         Task<ProductViewDto> CreateProductAsync(string vendorId, CreateProductDto productDto, HttpRequest request);
         // Task<ProductViewDto> UpdateProductAsync(int productId, UpdateProductDto productDto);
         Task DeleteProductAsync(Guid vendorId, Guid productId);

@@ -18,7 +18,7 @@ namespace AspNetCoreEcommerce.Controllers
 
             return Ok(await _customerService.CreateCustomerAsync(registrationDTO));
         }
-
+        [HttpPost("login")]
         public async Task<IActionResult> LoginCustomerAsync(LoginDto login)
         {
             if (!ModelState.IsValid)

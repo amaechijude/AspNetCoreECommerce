@@ -4,26 +4,16 @@ using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
-namespace AspNetCoreEcommerce.Respositories.Implementations
+namespace AspNetCoreEcommerce.Repositories.Implementations
 {
     public class ProductRepository(ApplicationDbContext context) : IProductRepository
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync()
+        public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
-            return await _context.Products
-                .Select(p => new ProductViewDto
-                {
-                    ProductId = p.ProductId,
-                    Name = p.Name,
-                    Description = p.Description,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price,
-                    CategoryId = p.CategoryId,
-                    VendorId = p.VendorId
-                })
-                .ToListAsync();
+            var products = await _context.Products.ToListAsync();
+            return products;
         }
 
         public async Task<Product> GetProductByIdAsync(Guid productId)
@@ -58,7 +48,7 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
 
             if (category == null)
             {
-                var newCategory = new Category { CategoryId = Guid.CreateVersion7(), Name = name}; 
+                var newCategory = new Category { CategoryId = Guid.CreateVersion7(), Name = name };
                 return newCategory;
             }
             return category;
@@ -76,7 +66,8 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             if (imageFile == null || imageFile.Length == 0)
                 return null;
 
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Products");
+            var subPath = GlobalConstants.productSubPath;
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), GlobalConstants.uploadPath, subPath);
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
 
@@ -86,8 +77,7 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
             using var stream = new FileStream(filePath, FileMode.Create);
             await imageFile.CopyToAsync(stream);
 
-            var imageUrl = $"{filePath}";
-            return imageUrl;
+            return $"{subPath}/{fileName}";
         }
     }
 }

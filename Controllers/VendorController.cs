@@ -2,7 +2,7 @@
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EcommerceAPi.Controllers
+namespace AspNetCoreEcommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -11,11 +11,11 @@ namespace EcommerceAPi.Controllers
         private readonly IVendorService _vendorService = vendorService;
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateVendorAsync([FromForm] VendorDto vendorDto, HttpRequest request)
+        public async Task<IActionResult> CreateVendorAsync([FromForm] VendorDto vendorDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var vendor = await _vendorService.CreateVendorAsync(vendorDto, request);
+            var vendor = await _vendorService.CreateVendorAsync(vendorDto, Request);
 
             return Ok(vendor);
         }

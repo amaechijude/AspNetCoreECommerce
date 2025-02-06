@@ -6,7 +6,6 @@ namespace AspNetCoreEcommerce.ErrorHandling
     public class ExceptionHandlingMiddleware(RequestDelegate next)
     {
         private readonly RequestDelegate _next = next;
-        private readonly JsonSerializerOptions _jsonOption = new() { PropertyNameCaseInsensitive = true };
 
         public async Task InvokeAsync(HttpContext context)
         {
@@ -23,12 +22,13 @@ namespace AspNetCoreEcommerce.ErrorHandling
                 {
                     StatusCode = (int)HttpStatusCode.InternalServerError,
                     Message = ex.Message,
-                    Timestamp = DateTime.UtcNow
+                    Timestamp = DateTimeOffset.UtcNow
                 };
 
-                var jsonResponse = JsonSerializer.Serialize(respose, _jsonOption);
+                var jsonResponse = JsonSerializer.Serialize(respose);
 
-                await context.Response.WriteAsJsonAsync(jsonResponse);
+                await context.Response.WriteAsync(jsonResponse);
+                return;
                 
             }
 
@@ -40,6 +40,6 @@ namespace AspNetCoreEcommerce.ErrorHandling
         public int StatusCode {get; set;}
         public bool Success {get; set;} = false;
         public string? Message {get; set;}
-        public DateTime Timestamp {get; set;}
+        public DateTimeOffset Timestamp {get; set;}
     }
 }

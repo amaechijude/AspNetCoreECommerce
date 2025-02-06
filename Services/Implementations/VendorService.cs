@@ -33,7 +33,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = vendorDto1.VendorName,
                 VendorEmail = vendorDto1.VendorEmail,
                 VendorPhone = vendorDto1.VendorPhone,
-                VendorBannerUrl = bannerUrl,
+                VendorBanner = bannerUrl,
                 Location = vendorDto1.Location,
                 GoogleMapUrl = vendorDto1.GoogleMapUrl,
                 TwitterUrl = vendorDto1.TwitterUrl,
@@ -50,7 +50,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = createVendor.VendorName,
                 VendorEmail = createVendor.VendorEmail,
                 VendorPhone = createVendor.VendorPhone,
-                VendorBannerUrl = createVendor.VendorBannerUrl,
+                VendorBannerUrl = $"{request.Scheme}://{request.Host}/{createVendor.VendorBanner}",
                 Location = createVendor.Location,
                 TwitterUrl = createVendor.TwitterUrl,
                 FacebookUrl = createVendor.FacebookUrl,
@@ -60,11 +60,10 @@ namespace AspNetCoreEcommerce.Services.Implementations
             return vendorView;
             
         }
-        public async Task<VendorViewDto?> GetVendorByIdAsync(int vendorId)
+        public async Task<VendorViewDto> GetVendorByIdAsync(Guid vendorId, HttpRequest request)
         {
-            var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId);
-            if (vendor == null)
-                return null;
+            var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
+                ?? throw new KeyNotFoundException("Invalid or Non Existing Vendor");
 
             var vendorView = new VendorViewDto
             {
@@ -72,7 +71,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = vendor.VendorBannerUrl,
+                VendorBannerUrl = $"{request.Scheme}://{request.Host}/{vendor.VendorBanner}",
                 Location = vendor.Location,
                 TwitterUrl = vendor.TwitterUrl,
                 FacebookUrl = vendor.FacebookUrl,
@@ -81,16 +80,20 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
             return vendorView;
         }
-        public async Task<VendorViewDto> UpdateVendorByIdAsync(int vendorId, VendorDto upvendor, HttpRequest request)
+        public async Task<VendorViewDto> UpdateVendorByIdAsync(Guid vendorId, VendorDto upvendor, HttpRequest request)
         {
             var existingVendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
-                ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
+                ?? throw new KeyNotFoundException($"Vendor was not found");
 
             var bannerUrl = upvendor.VendorBanner != null
                     ? await _vendorRepository.SaveVendorBannerAsync(upvendor.VendorBanner, request)
                     : null;
             
-            existingVendor.UpdateVendor(upvendor.VendorPhone, upvendor.Location, upvendor.GoogleMapUrl, upvendor.TwitterUrl, upvendor.InstagramUrl, upvendor.FacebookUrl);
+            existingVendor.UpdateVendor(
+                upvendor.VendorPhone, upvendor.Location, upvendor.GoogleMapUrl,
+                upvendor.TwitterUrl, upvendor.InstagramUrl, upvendor.FacebookUrl
+                );
+
             await _vendorRepository.SaveUpdateVendorAsync();
 
             var vendor = existingVendor;
@@ -100,7 +103,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = vendor.VendorBannerUrl,
+                VendorBannerUrl = $"{request.Scheme}://{request.Host}/{vendor.VendorBanner}",
                 Location = vendor.Location,
                 TwitterUrl = vendor.TwitterUrl,
                 FacebookUrl = vendor.FacebookUrl,
@@ -109,7 +112,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
             return vendorView;
         }
-        public async Task DeleteVendorAsync(int vendorId)
+        public async Task DeleteVendorAsync(Guid vendorId)
         {
             var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
                 ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
@@ -118,7 +121,10 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
         public async Task<VendorLoginViewDto> LoginVendorAsync(LoginDto login)
         {
-            var vendor = await _vendorRepository.GetVendorByEmailAsync(login.Email);
+            var vendor = await _vendorRepository.GetVendorByEmailAsync(login.Email)
+                ?? throw new KeyNotFoundException("Invalid vendor email");
+
+#pragma warning disable CS8604 // Possible null reference argument.
             var verifyLogin = _passwordHasher.VerifyHashedPassword(vendor, vendor.PasswordHash, login.Password);
 
             if (verifyLogin == PasswordVerificationResult.Failed)

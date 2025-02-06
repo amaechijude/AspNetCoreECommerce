@@ -33,8 +33,12 @@ namespace AspNetCoreEcommerce.Data
             modelBuilder.Entity<Customer>()
                 .HasOne(c => c.CarItems)
                 .WithOne(cart => cart.Customer)
-                .HasForeignKey<Customer>()
+                .HasForeignKey<CartItem>(cc => cc.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CartItem>()
+                .HasIndex(cc => cc.CustomerId)
+                .IsUnique();
 
             // Customer Orders Relationship
             modelBuilder.Entity<Customer>()

@@ -5,7 +5,7 @@ namespace AspNetCoreEcommerce.Respositories.Contracts
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<ProductViewDto>> GetAllProductsAsync();
+        Task<IEnumerable<Product>> GetAllProductsAsync();
         Task<Product> GetProductByIdAsync(Guid productId);
         Task<Product> CreateProductAsync(Product product, HttpRequest request);
         Task UpdateProductAsync();

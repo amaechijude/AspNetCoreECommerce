@@ -10,12 +10,26 @@ namespace AspNetCoreEcommerce.Services.Implementations
     {
         private readonly IProductRepository _productRepository = productRepository;
 
-        public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request)
         {
-            return await _productRepository.GetAllProductsAsync();
+            var products = await _productRepository.GetAllProductsAsync();
+            if (!products.Any())
+                return [];
+
+            return products
+                .Select(p => new ProductViewDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    ImageUrl = $"{request.Scheme}://{request.Host}/{p.ImageName}",
+                    Price = p.Price,
+                    CategoryId = p.CategoryId,
+                    VendorId = p.VendorId
+            });
         }
 
-        public async Task<ProductViewDto> GetProductByIdAsync(Guid productId)
+        public async Task<ProductViewDto> GetProductByIdAsync(Guid productId, HttpRequest request)
         {
             var product = await _productRepository.GetProductByIdAsync(productId)
                 ?? throw new KeyNotFoundException("Product not found or is deleted");
@@ -26,7 +40,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = product.Name,
                 Price = product.Price,
                 Description = product.Description,
-                ImageUrl = product.ImageUrl,
+                ImageUrl = $"{request.Scheme}://{request.Host}/{product.ImageName}",
                 CategoryId = product.CategoryId,
                 VendorId = product.VendorId
             };
@@ -61,7 +75,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Description = createProductDto.Description,
                 CategoryId = category.CategoryId,
                 VendorId = exactVendorId,
-                ImageUrl = imageUrl
+                ImageName = imageUrl
             };
 
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
@@ -71,7 +85,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = createdProduct.Name,
                 Price = createdProduct.Price,
                 Description = createdProduct.Description,
-                ImageUrl = createdProduct.ImageUrl,
+                ImageUrl = $"{request.Scheme}://{request.Host}/{createdProduct.ImageName}",
                 CategoryId = createdProduct.CategoryId,
                 // CategoryName = createdProduct.Category.Name,
                 VendorId = createdProduct.VendorId,
@@ -106,7 +120,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = product.Name,
                 Price = product.Price,
                 Description = product.Description,
-                ImageUrl = product.ImageUrl,
+                ImageUrl = $"{request.Scheme}://{request.Host}/{product.ImageName}",
                 CategoryId = product.CategoryId,
                 VendorId = product.VendorId
             };

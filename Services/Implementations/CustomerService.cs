@@ -2,29 +2,32 @@ using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
+using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
-    public class CustomerService(ICustomerRepository customerRepository, TokenProvider tokenProvider)
+    public class CustomerService(ICustomerRepository customerRepository, TokenProvider tokenProvider) : ICustomerService
     {
         private readonly ICustomerRepository _customerRepository = customerRepository;
         private readonly PasswordHasher<Customer> _passwordhasher = new();
         private readonly TokenProvider _tokenProvider = tokenProvider;
 
-        public async Task<CustomerDTO?> CreateCustomerAsync(CustomerRegistrationDTO customerDto)
+        public async Task<CustomerDTO> CreateCustomerAsync(CustomerRegistrationDTO customerDto)
         {
             if (string.IsNullOrWhiteSpace(customerDto.CustomerEmail) || string.IsNullOrWhiteSpace(customerDto.Password))
                 throw new ArgumentException("Email and Password cannot be empty");
 
             var newCustomer = new Customer
             {
+                CustomerID = Guid.CreateVersion7(),
                 CustomerEmail = customerDto.CustomerEmail,
                 CustomerName = customerDto.CustomerPhone,
                 CustomerPhone = customerDto.CustomerPhone,
                 DateJoined = DateTimeOffset.UtcNow
             };
+            newCustomer.CarItems = new CartItem {CartId = Guid.CreateVersion7(), CustomerId = newCustomer.CustomerID};
             newCustomer.PasswordHash = _passwordhasher.HashPassword(newCustomer, customerDto.Password);
             var customer = await _customerRepository.CreateCustomerAsync(newCustomer);
 

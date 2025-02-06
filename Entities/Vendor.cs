@@ -14,7 +14,7 @@ namespace AspNetCoreEcommerce.Entities
         public string? PasswordHash {get; set;}
         [StringLength(16)]
         public string? VendorPhone {  get; set; }
-        public string? VendorBannerUrl { get; set; }
+        public string? VendorBanner { get; set; }
         public string? Location { get; set; }
         public string Role = GlobalConstants.vendorRole;
         public bool IsDeleted = false;
