@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AspNetCoreEcommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250206145310_InitialMigrations")]
+    [Migration("20250206153316_InitialMigrations")]
     partial class InitialMigrations
     {
         /// <inheritdoc />
