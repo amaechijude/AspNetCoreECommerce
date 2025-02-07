@@ -1,7 +1,7 @@
 ﻿using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 
-namespace AspNetCoreEcommerce.Respositories.Contracts
+namespace AspNetCoreEcommerce.Repositories.Contracts
 {
     public interface IProductRepository
     {

@@ -58,6 +58,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
         public async Task<CustomerLoginViewDto> LoginCustomerAsync(LoginDto login)
         {
+            if (string.IsNullOrWhiteSpace(login.Email))
+                throw new ArgumentException("Email cannot be empty");
+
             var customer = await _customerRepository.GetCustomerByEmailAsync(login.Email);
 
 #pragma warning disable CS8604 // Possible null reference argument.

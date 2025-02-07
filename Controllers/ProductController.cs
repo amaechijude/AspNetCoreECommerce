@@ -5,7 +5,7 @@ using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EcommerceAPi.Controllers
+namespace AspNetCoreEcommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -13,18 +13,18 @@ namespace EcommerceAPi.Controllers
     {
         private readonly IProductService _productService = productService;
 
-        [Authorize(Roles = GlobalConstants.vendorRole)]
+        //[Authorize(Roles = GlobalConstants.vendorRole)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {
-            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (vendorId is null)
-                return BadRequest(vendorId);
-        
+            //var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //if (vendorId is null)
+            //    return BadRequest(vendorId);
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(await _productService.CreateProductAsync(Guid.Parse(vendorId), createProduct, Request));
+            return Ok(await _productService.CreateProductAsync(Guid.Parse("0194e2af-a2e9-7004-950a-2c1912b999b7"), createProduct, Request));
         }
 
         // [Authorize(Roles = GlobalConstants.vendorRole)]

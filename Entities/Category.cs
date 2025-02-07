@@ -6,7 +6,7 @@ namespace AspNetCoreEcommerce.Entities
     {
         public Guid CategoryId { get; set; }
         [Required]
-        public required string Name { get; set; }
-        public ICollection<Product>? Products { get; set; }
+        public string? Name { get; set; }
+        public ICollection<Product>? Products { get; set; } = [];
     }
 }

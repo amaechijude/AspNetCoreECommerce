@@ -1,6 +1,6 @@
 ﻿using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
-using AspNetCoreEcommerce.Respositories.Contracts;
+using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Mvc.Routing;
 
@@ -63,14 +63,14 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             var imageUrl = await GlobalConstants.SaveImageAsync(createProductDto.Image, GlobalConstants.productSubPath);
 
-            var category = await _productRepository.GetCategorytByNameAsync(createProductDto.CategoryName);
+            // var category = await _productRepository.GetCategorytByNameAsync(createProductDto.CategoryName);
             var product = new Product
             {
                 ProductId = Guid.CreateVersion7(),
                 Name = createProductDto.Name,
                 Price = createProductDto.Price,
                 Description = createProductDto.Description,
-                CategoryId = category.CategoryId,
+                // CategoryId = category.CategoryId,
                 VendorId = vendorId,
                 ImageName = imageUrl
             };

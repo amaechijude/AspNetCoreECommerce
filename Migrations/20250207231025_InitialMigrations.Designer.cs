@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AspNetCoreEcommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250207213543_InitialMigrations")]
+    [Migration("20250207231025_InitialMigrations")]
     partial class InitialMigrations
     {
         /// <inheritdoc />
@@ -61,6 +61,13 @@ namespace AspNetCoreEcommerce.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = new Guid("0194e26c-4fec-7f9d-b01a-fc0e577fcb71"),
+                            Name = "Cloth"
+                        });
                 });
 
             modelBuilder.Entity("AspNetCoreEcommerce.Entities.Customer", b =>

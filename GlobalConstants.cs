@@ -19,8 +19,8 @@ namespace AspNetCoreEcommerce
             if (!allowedExtensions.Contains(extension))
                 throw new ArgumentException("Invalid Image Format");
 
-            if (imageFile.Length / 1024 * 1024 > 10)
-                throw new ArgumentException("Image File cannot be greater than 10 mb");
+            //if (imageFile.Length / 1024 * 1024 > 10)
+            //    throw new ArgumentException("Image File cannot be greater than 10 mb");
 
             var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), GlobalConstants.uploadPath, subPath);
             if (!Directory.Exists(uploadPath))

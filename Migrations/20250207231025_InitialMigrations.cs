@@ -204,6 +204,11 @@ namespace AspNetCoreEcommerce.Migrations
                         principalColumn: "OrderId");
                 });
 
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "CategoryId", "Name" },
+                values: new object[] { new Guid("0194e26c-4fec-7f9d-b01a-fc0e577fcb71"), "Cloth" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CustomerId",
                 table: "CartItems",

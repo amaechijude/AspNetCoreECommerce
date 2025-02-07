@@ -26,6 +26,28 @@ namespace AspNetCoreEcommerce.Data
                 .WithOne(p => p.Category)
                 .HasForeignKey(p => p.CategoryId);
 
+           
+            modelBuilder.Entity<Category>()
+                .HasData(
+                    new Category()
+                    {
+                        CategoryId = Guid.Parse("0194e26c-4fec-7f9d-b01a-fc0e577fcb71"),
+                        Name = "Cloth",
+                        // Products = [
+                        //     new Product()
+                        //     {
+                        //         ProductId = Guid.CreateVersion7(),
+                        //         Name = "product one",
+                        //         Description = "Product one description",
+                        //         ImageName = "google.com",
+                        //         CategoryId = Catid,
+
+                        //     }
+                        // ]
+                        
+                    }
+                );
+
             modelBuilder.Entity<Product>()
                 .HasQueryFilter(p => !p.IsDeleted);
 

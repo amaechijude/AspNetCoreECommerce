@@ -83,10 +83,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
         {
             var existingVendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
                 ?? throw new KeyNotFoundException($"Vendor was not found");
-
-            var bannerUrl = upvendor.VendorBanner != null
-                    ? await _vendorRepository.SaveVendorBannerAsync(upvendor.VendorBanner, request)
-                    : null;
+            if (upvendor.VendorBanner != null)
+                existingVendor.VendorBanner = await GlobalConstants.SaveImageAsync(upvendor.VendorBanner, GlobalConstants.vendorSubPath);
             
             existingVendor.UpdateVendor(
                 upvendor.VendorPhone, upvendor.Location, upvendor.GoogleMapUrl,

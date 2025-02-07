@@ -3,6 +3,7 @@ using AspNetCoreEcommerce;
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.ErrorHandling;
+using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Repositories.Implementations;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using AspNetCoreEcommerce.Respositories.Implementations;

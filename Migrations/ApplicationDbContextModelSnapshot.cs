@@ -58,6 +58,13 @@ namespace AspNetCoreEcommerce.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = new Guid("0194e26c-4fec-7f9d-b01a-fc0e577fcb71"),
+                            Name = "Cloth"
+                        });
                 });
 
             modelBuilder.Entity("AspNetCoreEcommerce.Entities.Customer", b =>
