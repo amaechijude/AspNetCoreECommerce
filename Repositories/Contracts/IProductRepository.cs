@@ -12,6 +12,6 @@ namespace AspNetCoreEcommerce.Respositories.Contracts
         Task DeleteProductAsync(Guid productId);
         Task<Category> GetCategorytByNameAsync(string catName);
         Task<Vendor> GetVendorByIdAsync(Guid vendorId);
-        Task<string?> SaveProductImageAsync(IFormFile imageFile, HttpRequest request);
+        // Task<string?> SaveProductImageAsync(IFormFile imageFile, HttpRequest request);
     }
 }

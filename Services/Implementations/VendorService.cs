@@ -50,7 +50,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = createVendor.VendorName,
                 VendorEmail = createVendor.VendorEmail,
                 VendorPhone = createVendor.VendorPhone,
-                VendorBannerUrl = GeImagetUrl(request, createVendor.VendorBanner),
+                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, createVendor.VendorBanner),
                 Location = createVendor.Location,
                 TwitterUrl = createVendor.TwitterUrl,
                 FacebookUrl = createVendor.FacebookUrl,
@@ -70,7 +70,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = GeImagetUrl(request, vendor.VendorBanner),
+                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorBanner),
                 Location = vendor.Location,
                 TwitterUrl = vendor.TwitterUrl,
                 FacebookUrl = vendor.FacebookUrl,
@@ -102,7 +102,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = GeImagetUrl(request, vendor.VendorBanner),
+                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorBanner),
                 Location = vendor.Location,
                 TwitterUrl = vendor.TwitterUrl,
                 FacebookUrl = vendor.FacebookUrl,
@@ -120,6 +120,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
         public async Task<VendorLoginViewDto> LoginVendorAsync(LoginDto login)
         {
+            if (string.IsNullOrEmpty(login.Email))
+                throw new ArgumentException("Email cannot be empty");
+                
             var vendor = await _vendorRepository.GetVendorByEmailAsync(login.Email)
                 ?? throw new KeyNotFoundException("Invalid vendor email");
 
@@ -129,7 +132,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             if (verifyLogin == PasswordVerificationResult.Failed)
                 throw new ArgumentException("Invalid Password");
 
-            var token = _tokenProvider.Create(vendor);
+            var token = _tokenProvider.CreateVendorToken(vendor);
 
             return new VendorLoginViewDto {
                 VendorId = vendor.VendorId,
@@ -137,12 +140,6 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Token = token
             };
         }
-
-        private static string GeImagetUrl(HttpRequest request, string? imgUrl)
-        {
-            if (string.IsNullOrWhiteSpace(imgUrl))
-                return "";
-            return $"{request.Scheme}://{request.Host}/{GlobalConstants.uploadPath}/{imgUrl}";
-        }
+    
     }
 }

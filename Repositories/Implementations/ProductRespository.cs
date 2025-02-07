@@ -61,24 +61,5 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             return vendor;
         }
 
-        public async Task<string?> SaveProductImageAsync(IFormFile imageFile, HttpRequest request)
-        {
-            if (imageFile == null || imageFile.Length == 0)
-                return null;
-
-            var subPath = GlobalConstants.productSubPath;
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), GlobalConstants.uploadPath, subPath);
-            if (!Directory.Exists(uploadPath))
-                Directory.CreateDirectory(uploadPath);
-
-            var fileName = $"{Guid.NewGuid()}_{Path.GetExtension(imageFile.FileName)}".Replace(" ", "");
-            var filePath = Path.Combine(uploadPath, fileName);
-
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await imageFile.CopyToAsync(stream);
-
-            return $"{GlobalConstants.uploadPath}/{subPath}/{fileName}";
-        }
-
     }
 }

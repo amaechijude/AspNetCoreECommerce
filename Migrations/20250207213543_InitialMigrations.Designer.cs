@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AspNetCoreEcommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250206153316_InitialMigrations")]
+    [Migration("20250207213543_InitialMigrations")]
     partial class InitialMigrations
     {
         /// <inheritdoc />
@@ -285,6 +285,10 @@ namespace AspNetCoreEcommerce.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 

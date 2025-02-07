@@ -2,6 +2,7 @@
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using AspNetCoreEcommerce.Services.Contracts;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
@@ -22,7 +23,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                     ProductId = p.ProductId,
                     Name = p.Name,
                     Description = p.Description,
-                    ImageUrl = GetImagetUrl(request, p.ImageName),
+                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageName),
                     Price = p.Price,
                     CategoryId = p.CategoryId,
                     VendorId = p.VendorId
@@ -40,13 +41,13 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = product.Name,
                 Price = product.Price,
                 Description = product.Description,
-                ImageUrl = GetImagetUrl(request, product.ImageName),
+                ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageName),
                 CategoryId = product.CategoryId,
                 VendorId = product.VendorId
             };
         }
 
-        public async Task<ProductViewDto> CreateProductAsync(string vendorId,CreateProductDto createProductDto, HttpRequest request)
+        public async Task<ProductViewDto> CreateProductAsync(Guid vendorId,CreateProductDto createProductDto, HttpRequest request)
         {
             if (string.IsNullOrWhiteSpace(createProductDto.Name))
                 throw new ArgumentException("Product name cannot be empty.");
@@ -60,11 +61,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             if (createProductDto.Image is null)
                 throw new ArgumentException("Product Image is missing");
 
-            var imageUrl = await _productRepository.SaveProductImageAsync(createProductDto.Image, request);
-
-            var vendor = Guid.TryParse(vendorId, out Guid exactVendorId);
-            if (!vendor)
-                throw new KeyNotFoundException("The vendor is can't create product Contact the admin");
+            var imageUrl = await GlobalConstants.SaveImageAsync(createProductDto.Image, GlobalConstants.productSubPath);
 
             var category = await _productRepository.GetCategorytByNameAsync(createProductDto.CategoryName);
             var product = new Product
@@ -74,7 +71,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Price = createProductDto.Price,
                 Description = createProductDto.Description,
                 CategoryId = category.CategoryId,
-                VendorId = exactVendorId,
+                VendorId = vendorId,
                 ImageName = imageUrl
             };
 
@@ -85,7 +82,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = createdProduct.Name,
                 Price = createdProduct.Price,
                 Description = createdProduct.Description,
-                ImageUrl = GetImagetUrl(request, createdProduct.ImageName),
+                ImageUrl = GlobalConstants.GetImagetUrl(request, createdProduct.ImageName),
                 CategoryId = createdProduct.CategoryId,
                 // CategoryName = createdProduct.Category.Name,
                 VendorId = createdProduct.VendorId,
@@ -109,7 +106,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             var imageUrl = updateProduct.Image == null
                 ? null
-                : await _productRepository.SaveProductImageAsync(updateProduct.Image, request);
+                : await GlobalConstants.SaveImageAsync(updateProduct.Image, GlobalConstants.productSubPath);
 
             product.UpdateProduct(updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
             await _productRepository.UpdateProductAsync();
@@ -120,18 +117,12 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = product.Name,
                 Price = product.Price,
                 Description = product.Description,
-                ImageUrl = GetImagetUrl(request, product.ImageName),
+                ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageName),
                 CategoryId = product.CategoryId,
                 VendorId = product.VendorId
             };
         }
 
-        private string GetImagetUrl(HttpRequest request, string? imgUrl)
-        {
-            if (string.IsNullOrWhiteSpace(imgUrl))
-                return "";
-            return $"{request.Scheme}://{request.Host}/{GlobalConstants.uploadPath}/{imgUrl}";
-        }
     }
 
 }

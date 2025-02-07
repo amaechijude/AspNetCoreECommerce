@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AspNetCoreEcommerce.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
@@ -24,7 +25,8 @@ namespace AspNetCoreEcommerce.Authentication
                 Subject = new ClaimsIdentity(
                     [
                         new Claim(JwtRegisteredClaimNames.Sub, customer.CustomerID.ToString()),
-                        new Claim(JwtRegisteredClaimNames.Email, customer.CustomerEmail)
+                        new Claim(JwtRegisteredClaimNames.Email, customer.CustomerEmail),
+                        new Claim(ClaimTypes.Role, GlobalConstants.customerRole)
                     ]
                 ),
                 Expires = DateTime.UtcNow.AddMinutes(60),
@@ -39,7 +41,7 @@ namespace AspNetCoreEcommerce.Authentication
             return token;
         }
 
-        public string Create(Vendor vendor)
+        public string CreateVendorToken(Vendor vendor)
         {
             DotNetEnv.Env.Load();
             var secretKey = $"{Environment.GetEnvironmentVariable("JWT_SECRET_KEY")}";
@@ -51,7 +53,8 @@ namespace AspNetCoreEcommerce.Authentication
                 Subject = new ClaimsIdentity(
                     [
                         new Claim(JwtRegisteredClaimNames.Sub, vendor.VendorId.ToString()),
-                        new Claim(JwtRegisteredClaimNames.Email, vendor.VendorEmail)
+                        new Claim(JwtRegisteredClaimNames.Email, vendor.VendorEmail),
+                       new Claim(ClaimTypes.Role, GlobalConstants.vendorRole)
                     ]
                 ),
                 Expires = DateTime.UtcNow.AddMinutes(60),

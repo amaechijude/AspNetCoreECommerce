@@ -23,7 +23,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             {
                 CustomerID = Guid.CreateVersion7(),
                 CustomerEmail = customerDto.CustomerEmail,
-                CustomerName = customerDto.CustomerPhone,
+                CustomerName = customerDto.CustomerName,
                 CustomerPhone = customerDto.CustomerPhone,
                 DateJoined = DateTimeOffset.UtcNow
             };
@@ -59,6 +59,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
         public async Task<CustomerLoginViewDto> LoginCustomerAsync(LoginDto login)
         {
             var customer = await _customerRepository.GetCustomerByEmailAsync(login.Email);
+
 #pragma warning disable CS8604 // Possible null reference argument.
             var verifyLogin = _passwordhasher.VerifyHashedPassword(customer, customer.PasswordHash, login.Password);
 #pragma warning restore CS8604 // Possible null reference argument.

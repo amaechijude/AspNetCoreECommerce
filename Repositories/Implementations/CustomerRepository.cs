@@ -3,16 +3,19 @@ using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
-namespace AspNetCoreEcommerce.Respositories.Implementations
+namespace AspNetCoreEcommerce.Repositories.Implementations
 {
     public class CustomerRepository(ApplicationDbContext context) : ICustomerRepository
     {
         private readonly ApplicationDbContext _context = context;
         public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
-                _context.Customers.Add(customer);
-                await _context.SaveChangesAsync();
-                return customer;
+            var customerExists = await _context.Customers.AnyAsync(c => c.CustomerEmail == customer.CustomerEmail);
+            if (customerExists)
+                throw new DuplicateEmailException("Email already exists");
+            _context.Customers.Add(customer);
+             await _context.SaveChangesAsync();
+              return customer;
         }
         public async Task<Customer> GetCustomerByIdAsync(int id)
         {
@@ -28,10 +31,11 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
 
         public async Task<Customer> GetCustomerByEmailAsync(string email)
         {
-            var customer = await _context.Customers.SingleOrDefaultAsync(c => c.CustomerEmail == email)
-                ?? throw new ArgumentException("Invalid Email");
-
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerEmail == email)
+               ?? throw new ArgumentException("Invalid Email");
             return customer;
         }
+
+        public class DuplicateEmailException(string message) : Exception(message);
     }
 }

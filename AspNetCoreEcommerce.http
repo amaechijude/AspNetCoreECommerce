@@ -5,7 +5,7 @@ Accept: application/json
 
 ###
 
-POST {{AspNetCoreEcommerce_HostAddress}}/api/vendor/create
+POST {{AspNetCoreEcommerce_HostAddress}}/api/product/create
 Accept: application/json
 
 ###

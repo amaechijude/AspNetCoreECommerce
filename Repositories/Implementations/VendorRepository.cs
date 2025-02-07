@@ -2,8 +2,9 @@ using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+using static AspNetCoreEcommerce.Repositories.Implementations.CustomerRepository;
 
-namespace AspNetCoreEcommerce.Respositories.Implementations
+namespace AspNetCoreEcommerce.Repositories.Implementations
 {
     public class VendorRepository(ApplicationDbContext context) : IVendorRepository
     {
@@ -11,6 +12,9 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
 
         public async Task<Vendor> CreateVendorAsync(Vendor vendor, HttpRequest request)
         {
+            var vendorExists = await _context.Vendors.AnyAsync(v => v.VendorEmail == vendor.VendorEmail);
+            if (vendorExists)
+                throw new DuplicateEmailException("Email already exists");
             _context.Vendors.Add(vendor);
             await _context.SaveChangesAsync();
             return vendor;
@@ -30,8 +34,8 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
 
         public async Task DeleteVendorAsync(Vendor vendor)
         {
-             vendor.IsDeleted = true;
-             await _context.SaveChangesAsync();
+            vendor.IsDeleted = true;
+            await _context.SaveChangesAsync();
         }
 
         public async Task<string?> SaveVendorBannerAsync(IFormFile imageFile, HttpRequest request)

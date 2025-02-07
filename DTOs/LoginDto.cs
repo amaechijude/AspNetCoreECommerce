@@ -10,10 +10,10 @@ namespace AspNetCoreEcommerce.DTOs
     {
         [EmailAddress]
         [Required]
-        public required string Email {get; set;}
+        public string? Email {get; set;}
 
         [Required]
-        public required string Password {get; set;}
+        public string? Password {get; set;}
     }
 
     public class VendorLoginViewDto

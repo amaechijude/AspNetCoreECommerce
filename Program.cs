@@ -66,6 +66,7 @@ builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 // Register Services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 
 builder.Services.AddControllers();
@@ -82,7 +83,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Image folder storage
-var imageFilePath = Path.Combine(Directory.GetCurrentDirectory(), GlobalConstants.uploadPath);
+var imageFilePath = Path.Combine(builder.Environment.ContentRootPath, GlobalConstants.uploadPath);
 if (!Directory.Exists(imageFilePath))
     Directory.CreateDirectory(imageFilePath);
 

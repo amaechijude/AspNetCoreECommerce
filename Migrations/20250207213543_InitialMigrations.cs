@@ -52,6 +52,7 @@ namespace AspNetCoreEcommerce.Migrations
                     VendorPhone = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: true),
                     VendorBanner = table.Column<string>(type: "text", nullable: true),
                     Location = table.Column<string>(type: "text", nullable: true),
+                    Role = table.Column<string>(type: "text", nullable: false),
                     GoogleMapUrl = table.Column<string>(type: "text", nullable: true),
                     TwitterUrl = table.Column<string>(type: "text", nullable: true),
                     InstagramUrl = table.Column<string>(type: "text", nullable: true),

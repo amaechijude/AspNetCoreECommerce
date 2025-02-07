@@ -16,7 +16,7 @@ namespace AspNetCoreEcommerce.Entities
         public string? VendorPhone {  get; set; }
         public string? VendorBanner { get; set; }
         public string? Location { get; set; }
-        public string Role = GlobalConstants.vendorRole;
+        public string Role {get; set;} = GlobalConstants.vendorRole;
         public bool IsDeleted = false;
         [Url]
         public string? GoogleMapUrl { get; set; }

@@ -1,39 +1,112 @@
 using System.Net;
 using System.Text.Json;
+using static AspNetCoreEcommerce.Repositories.Implementations.CustomerRepository;
 
 namespace AspNetCoreEcommerce.ErrorHandling
 {
     public class ExceptionHandlingMiddleware(RequestDelegate next)
     {
         private readonly RequestDelegate _next = next;
+        private readonly string httpContentType = GlobalConstants.httpContentType;
 
         public async Task InvokeAsync(HttpContext context)
         {
-            try
+            try 
             {
                 await _next(context);
+                return;
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                context.Response.ContentType = GlobalConstants.httpContentType;
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Response.ContentType = httpContentType;
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
-                var respose = new ErroResponse
+                var errorResponse = new 
                 {
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = ex.Message,
-                    Timestamp = DateTimeOffset.UtcNow
+                    code = (int)HttpStatusCode.NotFound,
+                    status = "failed",
+                    message = $"{ex.Message}"
                 };
 
-                var jsonResponse = JsonSerializer.Serialize(respose);
-
-                await context.Response.WriteAsync(jsonResponse);
-                return;
+                var jsonRespose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonRespose);
                 
+                return;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                context.Response.ContentType = httpContentType;
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+                var errorResponse = new 
+                {
+                    code = (int)HttpStatusCode.Forbidden,
+                    status = "failed",
+                    message = $"{ex.Message}"
+                };
+
+                var jsonRespose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonRespose);
+
+                return;
+            }
+            catch (InvalidOperationException ex)
+            {
+                context.Response.ContentType = httpContentType;
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+                var errorResponse = new 
+                {
+                    code = (int)HttpStatusCode.Forbidden,
+                    status = "failed",
+                    message = $"{ex.Message}"
+                };
+
+                var jsonRespose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonRespose);
+
+                return;
+            }
+            catch (ArgumentException ex)
+            {
+                context.Response.ContentType = httpContentType;
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                var errorResponse = new 
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    status = "failed",
+                    message = $"{ex.Message}"
+                };
+
+                var jsonRespose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonRespose);
+                
+                return;
+            }
+            catch(DuplicateEmailException ex)
+            {
+                context.Response.ContentType = httpContentType;
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                var errorResponse = new 
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    status = "failed",
+                    message = $"{ex.Message}"
+                };
+
+                var jsonRespose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonRespose);
+                
+                return;
             }
 
         }
-    }
+
+        
+
+}
 
     public class ErroResponse
     {
