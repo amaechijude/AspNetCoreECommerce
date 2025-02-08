@@ -9,5 +9,6 @@
         public double Price { get; set; }
         public Guid CategoryId { get; set; }
         public Guid VendorId { get; set; }
+        public string? VendorName {get; set;}
     }
 }

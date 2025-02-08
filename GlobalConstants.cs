@@ -39,7 +39,7 @@ namespace AspNetCoreEcommerce
         {
             if (string.IsNullOrWhiteSpace(imgUrl))
                 return "";
-            return $"{request.Scheme}://{request.Host}/{imgUrl}";
+            return $"{request.Scheme}://{request.Host}/{GlobalConstants.uploadPath}/{imgUrl}";
         }
 
     }

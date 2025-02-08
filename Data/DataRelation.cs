@@ -16,38 +16,6 @@ namespace AspNetCoreEcommerce.Data
                 .HasForeignKey(p => p.VendorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Category>()
-                .HasIndex(cat => cat.Name)
-                .IsUnique();
-
-            // Product Category Relationship
-            modelBuilder.Entity<Category>()
-                .HasMany(cat => cat.Products)
-                .WithOne(p => p.Category)
-                .HasForeignKey(p => p.CategoryId);
-
-           
-            modelBuilder.Entity<Category>()
-                .HasData(
-                    new Category()
-                    {
-                        CategoryId = Guid.Parse("0194e26c-4fec-7f9d-b01a-fc0e577fcb71"),
-                        Name = "Cloth",
-                        // Products = [
-                        //     new Product()
-                        //     {
-                        //         ProductId = Guid.CreateVersion7(),
-                        //         Name = "product one",
-                        //         Description = "Product one description",
-                        //         ImageName = "google.com",
-                        //         CategoryId = Catid,
-
-                        //     }
-                        // ]
-                        
-                    }
-                );
-
             modelBuilder.Entity<Product>()
                 .HasQueryFilter(p => !p.IsDeleted);
 

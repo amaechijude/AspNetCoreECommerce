@@ -6,7 +6,6 @@ namespace AspNetCoreEcommerce.Data
     public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
         public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Payment> Payments { get; set; }

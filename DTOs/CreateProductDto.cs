@@ -11,7 +11,5 @@ namespace AspNetCoreEcommerce.DTOs
         public IFormFile? Image { get; set; }
         [Required]
         public double Price { get; set; }
-        [Required]
-        public string? CategoryName { get; set; }
     }
 }

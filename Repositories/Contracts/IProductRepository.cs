@@ -5,13 +5,11 @@ namespace AspNetCoreEcommerce.Repositories.Contracts
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
+        Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request);
         Task<Product> GetProductByIdAsync(Guid productId);
         Task<Product> CreateProductAsync(Product product, HttpRequest request);
         Task UpdateProductAsync();
         Task DeleteProductAsync(Guid productId);
-        Task<Category> GetCategorytByNameAsync(string catName);
         Task<Vendor> GetVendorByIdAsync(Guid vendorId);
-        // Task<string?> SaveProductImageAsync(IFormFile imageFile, HttpRequest request);
     }
 }

@@ -1,8 +1,10 @@
-﻿using AspNetCoreEcommerce.Data;
+﻿using System.Text;
+using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 
 namespace AspNetCoreEcommerce.Repositories.Implementations
 {
@@ -10,10 +12,20 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request)
         {
-            var products = await _context.Products.ToListAsync();
-            return products;
+            return await _context.Products
+                .Select(p => new ProductViewDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageName),
+                    Price = p.Price,
+                    // VendorId = p.VendorId,
+                    VendorName = p.Vendor.VendorName
+                })
+                .ToListAsync();
         }
 
         public async Task<Product> GetProductByIdAsync(Guid productId)
@@ -41,22 +53,6 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             product.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
-
-        public async Task<Category> GetCategorytByNameAsync(string name)
-        {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(cat => cat.Name.ToLower() == name.ToLower());
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-
-            if (category == null)
-            {
-                var newCategory = new Category { CategoryId = Guid.NewGuid(), Name = name };
-                return newCategory;
-            }
-            return category;
-        }
-
 
         public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
         {

@@ -7,12 +7,9 @@
         public string? Description { get; set; }
         public string? ImageName { get; set; }
         public double Price { get; set; }
-        public Guid CategoryId { get; set; }
         public bool IsDeleted { get; set; } = false;
-        public Category? Category { get; set; }
         public Guid VendorId { get; set; }
-        public Vendor? Vendor { get; set; }
-
+        public required Vendor Vendor { get; set; }
 
         public void UpdateProduct(string? name, string? description, string? imageName, double? price)
         {

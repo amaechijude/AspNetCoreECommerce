@@ -13,21 +13,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
         public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request)
         {
-            var products = await _productRepository.GetAllProductsAsync();
-            if (!products.Any())
-                return [];
-
-            return products
-                .Select(p => new ProductViewDto
-                {
-                    ProductId = p.ProductId,
-                    Name = p.Name,
-                    Description = p.Description,
-                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageName),
-                    Price = p.Price,
-                    CategoryId = p.CategoryId,
-                    VendorId = p.VendorId
-            });
+            return await _productRepository.GetAllProductsAsync(request);
         }
 
         public async Task<ProductViewDto> GetProductByIdAsync(Guid productId, HttpRequest request)
@@ -42,18 +28,15 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Price = product.Price,
                 Description = product.Description,
                 ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageName),
-                CategoryId = product.CategoryId,
-                VendorId = product.VendorId
+                VendorId = product.VendorId,
+                // VendorName = product.Vendor.VendorName
             };
         }
 
-        public async Task<ProductViewDto> CreateProductAsync(Guid vendorId,CreateProductDto createProductDto, HttpRequest request)
+        public async Task<ProductViewDto> CreateProductAsync(Guid vendorId, CreateProductDto createProductDto, HttpRequest request)
         {
             if (string.IsNullOrWhiteSpace(createProductDto.Name))
                 throw new ArgumentException("Product name cannot be empty.");
-
-            if (string.IsNullOrWhiteSpace(createProductDto.CategoryName))
-                throw new ArgumentException("Category name cannot be empty.");
 
             if (createProductDto.Price <= 0)
                 throw new ArgumentException("Product price must be greater than zero.");
@@ -62,19 +45,18 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 throw new ArgumentException("Product Image is missing");
 
             var imageUrl = await GlobalConstants.SaveImageAsync(createProductDto.Image, GlobalConstants.productSubPath);
+            var vendor = await _productRepository.GetVendorByIdAsync(vendorId);
 
-            // var category = await _productRepository.GetCategorytByNameAsync(createProductDto.CategoryName);
             var product = new Product
             {
                 ProductId = Guid.CreateVersion7(),
                 Name = createProductDto.Name,
                 Price = createProductDto.Price,
                 Description = createProductDto.Description,
-                // CategoryId = category.CategoryId,
-                VendorId = vendorId,
+                Vendor = vendor,
                 ImageName = imageUrl
             };
-
+            // category.Products.Add(product);
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
             return new ProductViewDto
             {
@@ -83,9 +65,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Price = createdProduct.Price,
                 Description = createdProduct.Description,
                 ImageUrl = GlobalConstants.GetImagetUrl(request, createdProduct.ImageName),
-                CategoryId = createdProduct.CategoryId,
-                // CategoryName = createdProduct.Category.Name,
                 VendorId = createdProduct.VendorId,
+                VendorName = createdProduct.Vendor.VendorName
             };
         }
 
@@ -118,8 +99,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Price = product.Price,
                 Description = product.Description,
                 ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageName),
-                CategoryId = product.CategoryId,
-                VendorId = product.VendorId
+                VendorId = product.VendorId,
+                // VendorName = product.Vendor.VendorName
             };
         }
 
