@@ -53,6 +53,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Name = createProductDto.Name,
                 Price = createProductDto.Price,
                 Description = createProductDto.Description,
+                VendorId = vendor.VendorId,
                 Vendor = vendor,
                 ImageName = imageUrl
             };
