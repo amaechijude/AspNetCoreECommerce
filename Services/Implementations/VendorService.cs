@@ -25,11 +25,12 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 throw new ArgumentException("Vendor Phone and location cannot be empty");
 
             var bannerUrl = vendorDto1.VendorBanner != null 
-                    ? await _vendorRepository.SaveVendorBannerAsync(vendorDto1.VendorBanner, request)
+                    ? await GlobalConstants.SaveImageAsync(vendorDto1.VendorBanner, GlobalConstants.vendorSubPath)
                     : null;
 
             var newVendor = new Vendor
             {
+                VendorId = Guid.CreateVersion7(),
                 VendorName = vendorDto1.VendorName,
                 VendorEmail = vendorDto1.VendorEmail,
                 VendorPhone = vendorDto1.VendorPhone,
@@ -44,19 +45,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             var createVendor = await _vendorRepository.CreateVendorAsync(newVendor, request);
 
-            return new VendorViewDto
-            {
-                VendorId = createVendor.VendorId,
-                VendorName = createVendor.VendorName,
-                VendorEmail = createVendor.VendorEmail,
-                VendorPhone = createVendor.VendorPhone,
-                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, createVendor.VendorBanner),
-                Location = createVendor.Location,
-                TwitterUrl = createVendor.TwitterUrl,
-                FacebookUrl = createVendor.FacebookUrl,
-                DateJoined = createVendor.DateJoined,
-                InstagramUrl = createVendor.InstagramUrl,
-            };
+            return MapVendorToDto(createVendor, request);
             
         }
         public async Task<VendorViewDto> GetVendorByIdAsync(Guid vendorId, HttpRequest request)
@@ -64,20 +53,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
                 ?? throw new KeyNotFoundException("Invalid or Non Existing Vendor");
 
-            var vendorView = new VendorViewDto
-            {
-                VendorId = vendor.VendorId,
-                VendorName = vendor.VendorName,
-                VendorEmail = vendor.VendorEmail,
-                VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorBanner),
-                Location = vendor.Location,
-                TwitterUrl = vendor.TwitterUrl,
-                FacebookUrl = vendor.FacebookUrl,
-                DateJoined = vendor.DateJoined,
-                InstagramUrl = vendor.InstagramUrl,
-            };
-            return vendorView;
+            return MapVendorToDto(vendor, request);
         }
         public async Task<VendorViewDto> UpdateVendorByIdAsync(Guid vendorId, UpdateVendorDto upvendor, HttpRequest request)
         {
@@ -93,21 +69,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             await _vendorRepository.SaveUpdateVendorAsync();
 
-            var vendor = existingVendor;
-            var vendorView = new VendorViewDto
-            {
-                VendorId = vendor.VendorId,
-                VendorName = vendor.VendorName,
-                VendorEmail = vendor.VendorEmail,
-                VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorBanner),
-                Location = vendor.Location,
-                TwitterUrl = vendor.TwitterUrl,
-                FacebookUrl = vendor.FacebookUrl,
-                DateJoined = vendor.DateJoined,
-                InstagramUrl = vendor.InstagramUrl,
-            };
-            return vendorView;
+            return MapVendorToDto(existingVendor, request);
         }
         public async Task DeleteVendorAsync(Guid vendorId)
         {
@@ -136,6 +98,32 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 VendorId = vendor.VendorId,
                 VendorEmail = vendor.VendorEmail,
                 Token = token
+            };
+        }
+
+        private static VendorViewDto MapVendorToDto(Vendor vendor, HttpRequest request)
+        {
+            return new VendorViewDto
+            {
+                VendorId = vendor.VendorId,
+                VendorName = vendor.VendorName,
+                VendorEmail = vendor.VendorEmail,
+                VendorPhone = vendor.VendorPhone,
+                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorBanner),
+                Location = vendor.Location,
+                TwitterUrl = vendor.TwitterUrl,
+                FacebookUrl = vendor.FacebookUrl,
+                DateJoined = vendor.DateJoined,
+                InstagramUrl = vendor.InstagramUrl,
+                Products = [.. vendor.Products.Select(p => new ProductViewDto {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageName),
+                    Price = p.Price,
+                    VendorId = p.VendorId,
+                    VendorName = p.Vendor.VendorName
+                })]
             };
         }
     

@@ -28,7 +28,7 @@ namespace AspNetCoreEcommerce.Entities
         public string? FacebookUrl { get; set; }
         public DateTimeOffset DateJoined { get; set; }
         public DateTimeOffset DateUpdated { get; private set; }
-        public ICollection<Product>? Products { get; set; }
+        public ICollection<Product> Products { get; set; } = [];
 
         public void UpdateVendor(string? vphone, string? location, string? gmap, string? xurl, string? igurl, string? fburl)
         {

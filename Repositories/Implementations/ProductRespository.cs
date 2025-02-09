@@ -1,10 +1,8 @@
-﻿using System.Text;
-using AspNetCoreEcommerce.Data;
+﻿using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Extensions;
 
 namespace AspNetCoreEcommerce.Repositories.Implementations
 {
@@ -22,7 +20,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
                     Description = p.Description,
                     ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageName),
                     Price = p.Price,
-                    // VendorId = p.VendorId,
+                    VendorId = p.VendorId,
                     VendorName = p.Vendor.VendorName
                 })
                 .ToListAsync();

@@ -22,7 +22,9 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
         public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
         {
-            var vendor = await _context.Vendors.FindAsync(vendorId)
+            var vendor = await _context.Vendors
+                .Include(p => p.Products)
+                .FirstOrDefaultAsync(v => v.VendorId == vendorId)
                 ?? throw new ArgumentException("Inavlid User Id");
             return vendor;
         }
@@ -38,29 +40,9 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<string?> SaveVendorBannerAsync(IFormFile imageFile, HttpRequest request)
-        {
-            if (imageFile == null || imageFile.Length == 0)
-                return null;
-
-            var subPath = GlobalConstants.vendorSubPath;
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), GlobalConstants.uploadPath, subPath);
-
-            if (!Directory.Exists(uploadPath))
-                Directory.CreateDirectory(uploadPath);
-
-            var fileName = $"{Guid.NewGuid()}_{Path.GetExtension(imageFile.FileName)}".Replace(" ", "");
-            var filePath = Path.Combine(uploadPath, fileName);
-
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await imageFile.CopyToAsync(stream);
-
-            return $"{GlobalConstants.uploadPath}/{subPath}/{fileName}";
-        }
-
         public async Task<Vendor?> GetVendorByEmailAsync(string vendorEmail)
         {
-            var vendor = await _context.Vendors.SingleOrDefaultAsync(v => v.VendorEmail == vendorEmail);
+            var vendor = await _context.Vendors.FirstOrDefaultAsync(v => v.VendorEmail == vendorEmail);
             return vendor ?? null;
         }
 

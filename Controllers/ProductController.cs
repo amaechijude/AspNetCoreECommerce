@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using AspNetCoreEcommerce;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -13,18 +12,18 @@ namespace AspNetCoreEcommerce.Controllers
     {
         private readonly IProductService _productService = productService;
 
-        //[Authorize(Roles = GlobalConstants.vendorRole)]
+        [Authorize( Roles = GlobalConstants.vendorRole)]
         [HttpPost("create")]
-        public async Task<IActionResult> CreateProductAsync([FromQuery] Guid vendorId,[FromForm] CreateProductDto createProduct)
+        public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {
-            //var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //if (vendorId is null)
-            //    return BadRequest(vendorId);
+            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(vendorId))
+               return BadRequest("Invalid Authentication");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(await _productService.CreateProductAsync(vendorId, createProduct, Request));
+            return Ok(await _productService.CreateProductAsync(Guid.Parse(vendorId), createProduct, Request));
         }
 
         // [Authorize(Roles = GlobalConstants.vendorRole)]

@@ -2,7 +2,6 @@
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Services.Contracts;
-using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
@@ -21,16 +20,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var product = await _productRepository.GetProductByIdAsync(productId)
                 ?? throw new KeyNotFoundException("Product not found or is deleted");
 
-            return new ProductViewDto
-            {
-                ProductId = product.ProductId,
-                Name = product.Name,
-                Price = product.Price,
-                Description = product.Description,
-                ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageName),
-                VendorId = product.VendorId,
-                // VendorName = product.Vendor.VendorName
-            };
+            return MapProductToDto(product, request);
         }
 
         public async Task<ProductViewDto> CreateProductAsync(Guid vendorId, CreateProductDto createProductDto, HttpRequest request)
@@ -59,16 +49,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
             // category.Products.Add(product);
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
-            return new ProductViewDto
-            {
-                ProductId = createdProduct.ProductId,
-                Name = createdProduct.Name,
-                Price = createdProduct.Price,
-                Description = createdProduct.Description,
-                ImageUrl = GlobalConstants.GetImagetUrl(request, createdProduct.ImageName),
-                VendorId = createdProduct.VendorId,
-                VendorName = createdProduct.Vendor.VendorName
-            };
+
+            return MapProductToDto(createdProduct, request);
         }
 
         public async Task DeleteProductAsync(Guid vendorId, Guid productId)
@@ -93,6 +75,11 @@ namespace AspNetCoreEcommerce.Services.Implementations
             product.UpdateProduct(updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
             await _productRepository.UpdateProductAsync();
 
+            return MapProductToDto(product, request);
+        }
+
+        private static ProductViewDto MapProductToDto (Product product, HttpRequest request)
+        {
             return new ProductViewDto
             {
                 ProductId = product.ProductId,
@@ -101,7 +88,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Description = product.Description,
                 ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageName),
                 VendorId = product.VendorId,
-                // VendorName = product.Vendor.VendorName
+                VendorName = product.Vendor.VendorName
             };
         }
 

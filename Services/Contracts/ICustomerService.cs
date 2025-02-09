@@ -1,5 +1,4 @@
 ﻿using AspNetCoreEcommerce.DTOs;
-using AspNetCoreEcommerce.Entities;
 
 namespace AspNetCoreEcommerce.Services.Contracts
 {

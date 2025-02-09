@@ -9,6 +9,5 @@ namespace AspNetCoreEcommerce.Respositories.Contracts
         Task<Vendor?> GetVendorByEmailAsync(string vendorEmail);
         Task SaveUpdateVendorAsync();
         Task DeleteVendorAsync(Vendor vendor);
-        Task<string?> SaveVendorBannerAsync(IFormFile imageFile, HttpRequest request);
     }
 }

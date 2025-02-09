@@ -1,5 +1,7 @@
 using System.Net;
+using System.Security.Authentication;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using static AspNetCoreEcommerce.Repositories.Implementations.CustomerRepository;
 
 namespace AspNetCoreEcommerce.ErrorHandling
@@ -40,7 +42,7 @@ namespace AspNetCoreEcommerce.ErrorHandling
 
                 var errorResponse = new 
                 {
-                    code = (int)HttpStatusCode.Forbidden,
+                    code = (int)HttpStatusCode.Unauthorized,
                     status = "failed",
                     message = $"{ex.Message}"
                 };
@@ -53,11 +55,11 @@ namespace AspNetCoreEcommerce.ErrorHandling
             catch (InvalidOperationException ex)
             {
                 context.Response.ContentType = httpContentType;
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
                 var errorResponse = new 
                 {
-                    code = (int)HttpStatusCode.Forbidden,
+                    code = (int)HttpStatusCode.BadRequest,
                     status = "failed",
                     message = $"{ex.Message}"
                 };
@@ -92,6 +94,23 @@ namespace AspNetCoreEcommerce.ErrorHandling
                 var errorResponse = new 
                 {
                     code = (int)HttpStatusCode.BadRequest,
+                    status = "failed",
+                    message = $"{ex.Message}"
+                };
+
+                var jsonRespose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonRespose);
+                
+                return;
+            }
+            catch(InvalidCredentialException ex)
+            {
+                context.Response.ContentType = httpContentType;
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+
+                var errorResponse = new 
+                {
+                    code = (int)HttpStatusCode.Unauthorized,
                     status = "failed",
                     message = $"{ex.Message}"
                 };

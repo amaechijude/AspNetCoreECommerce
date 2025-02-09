@@ -1,6 +1,8 @@
 ﻿
+using System.Security.Claims;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCoreEcommerce.Controllers
@@ -20,10 +22,15 @@ namespace AspNetCoreEcommerce.Controllers
             return Ok(await _vendorService.CreateVendorAsync(vendorDto, Request));
         }
 
-        [HttpGet("get/{vendorid}")]
-        public async Task<IActionResult> GetVendorByIdAsync(Guid vendorid)
+        [Authorize( Roles = GlobalConstants.vendorRole)]
+        [HttpGet("get")]
+        public async Task<IActionResult> GetVendorByIdAsync()
         {
-            return Ok(await _vendorService.GetVendorByIdAsync(vendorid, Request));
+            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(vendorId))
+                return BadRequest("Invalid Authorisation");
+
+            return Ok(await _vendorService.GetVendorByIdAsync(Guid.Parse(vendorId), Request));
         }
 
         [HttpPost("login")]
@@ -34,7 +41,6 @@ namespace AspNetCoreEcommerce.Controllers
 
             return Ok(await _vendorService.LoginVendorAsync(login));
         }
-
 
         // [HttpPost("update/{vendorId}")]
         // public async Task<IActionResult> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor)
