@@ -42,14 +42,20 @@ namespace AspNetCoreEcommerce.Controllers
             return Ok(await _vendorService.LoginVendorAsync(login));
         }
 
-        // [HttpPost("update/{vendorId}")]
-        // public async Task<IActionResult> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor)
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(ModelState);
+        [Authorize(Roles = GlobalConstants.vendorRole)]
+        [HttpPatch("update")]
+        public async Task<IActionResult> UpdateVendorAsync(UpdateVendorDto updateVendor)
+        {
+            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        //     return Ok(await _vendorService.UpdateVendorByIdAsync(vendorId, updateVendor, Request));
-        // }
+            if (string.IsNullOrWhiteSpace(vendorId))
+                return BadRequest("Invalid Authentication");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(await _vendorService.UpdateVendorByIdAsync(Guid.Parse(vendorId) , updateVendor, Request));
+        }
 
     }
 }

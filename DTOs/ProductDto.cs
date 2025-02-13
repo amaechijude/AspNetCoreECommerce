@@ -7,8 +7,6 @@
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public double Price { get; set; }
-        public Guid CategoryId { get; set; }
-        public string? Categories { get; set; }
         public Guid VendorId { get; set; }
     }
 }

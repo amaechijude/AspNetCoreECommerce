@@ -11,7 +11,7 @@
         public Guid VendorId { get; set; }
         public required Vendor Vendor { get; set; }
 
-        public void UpdateProduct(string? name, string? description, string? imageName, double? price)
+        public void UpdateProduct(Vendor vendor, Guid vendorId, string? name, string? description, string? imageName, double? price)
         {
             if (!string.IsNullOrWhiteSpace(name))
                 Name = name;
@@ -24,6 +24,9 @@
 
             if (price != null)
                 Price = (double)price;
+
+            Vendor = vendor;
+            VendorId = vendorId;
         }
     }
 }

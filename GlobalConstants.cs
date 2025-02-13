@@ -42,5 +42,23 @@ namespace AspNetCoreEcommerce
             return $"{request.Scheme}://{request.Host}/{GlobalConstants.uploadPath}/{imgUrl}";
         }
 
+        public static void DeletePreviuosImageOnUpdate(string? imageFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(imageFilePath))
+                return;
+            try
+            {
+                File.Delete(imageFilePath);
+            }
+            catch (ArgumentException)
+            {
+                throw new ArgumentException("Invalid Argument");
+            }
+            catch (IOException)
+            {
+                throw new IOException("File in use");
+            }
+        }
+
     }
 }

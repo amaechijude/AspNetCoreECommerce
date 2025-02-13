@@ -30,8 +30,10 @@ namespace AspNetCoreEcommerce.Entities
         public DateTimeOffset DateUpdated { get; private set; }
         public ICollection<Product> Products { get; set; } = [];
 
-        public void UpdateVendor(string? vphone, string? location, string? gmap, string? xurl, string? igurl, string? fburl)
+        public void UpdateVendor(string? banner, string? vphone, string? location, string? gmap, string? xurl, string? igurl, string? fburl)
         {
+            if (!string.IsNullOrWhiteSpace(banner))
+                VendorBanner = banner;
             if (!string.IsNullOrWhiteSpace(vphone))
                 VendorPhone = vphone;
             if (!string.IsNullOrWhiteSpace(location))

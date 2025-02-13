@@ -9,6 +9,6 @@ namespace AspNetCoreEcommerce.Services.Contracts
         Task<ProductViewDto> CreateProductAsync(Guid vendorId, CreateProductDto productDto, HttpRequest request);
         // Task<ProductViewDto> UpdateProductAsync(int productId, UpdateProductDto productDto);
         Task DeleteProductAsync(Guid vendorId, Guid productId);
-        Task<ProductViewDto> UpdateProductAsync(Guid productId, Guid vendorId, UpdateProductDto updateProduct, HttpRequest request);
+        Task<ProductViewDto> UpdateProductAsync(Guid vendorId, Guid productId, UpdateProductDto updateProduct, HttpRequest request);
     }
 }

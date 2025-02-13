@@ -26,21 +26,17 @@ namespace AspNetCoreEcommerce.Controllers
             return Ok(await _productService.CreateProductAsync(Guid.Parse(vendorId), createProduct, Request));
         }
 
-        // [Authorize(Roles = GlobalConstants.vendorRole)]
-        // [HttpPatch("update/{productId}")]
-        // public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productId , [FromForm] UpdateProductDto updateProduct)
-        // {
-        //     var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //     if (vendorId is null)
-        //         return Unauthorized("Invalid token");
-
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(ModelState);
-
-        //     var vId = Guid.Parse(vendorId);
-        //     var data = await _productService.UpdateProductAsync(productId, vId, updateProduct, Request);
-        //     return Ok(data);
-        // }
+        [Authorize( Roles = GlobalConstants.vendorRole)]
+        [HttpPatch("update/{productID}")]
+        public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productID, [FromForm] UpdateProductDto updateProduct)
+        {
+            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(vendorId))
+                return BadRequest("Invalid Authentication");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return Ok(await _productService.UpdateProductAsync(Guid.Parse(vendorId), productID, updateProduct, Request));
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllProductAsync()

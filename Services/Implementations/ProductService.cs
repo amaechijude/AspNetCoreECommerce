@@ -62,21 +62,27 @@ namespace AspNetCoreEcommerce.Services.Implementations
             await _productRepository.DeleteProductAsync(productId);
         }
 
-        public async Task<ProductViewDto> UpdateProductAsync(Guid productId, Guid vendorId, UpdateProductDto updateProduct, HttpRequest request)
+        public async Task<ProductViewDto> UpdateProductAsync(Guid vendorId, Guid productId, UpdateProductDto updateProduct, HttpRequest request)
         {
-            var product = await _productRepository.GetProductByIdAsync(productId);
-            if (vendorId != product.VendorId)
+            var product = await _productRepository.GetProductByIdAsync(productId)
+                ?? throw new ArgumentException("Product not found");
+
+            var vendor = await _productRepository.GetVendorByIdAsync(vendorId)
+                ?? throw new KeyNotFoundException("Action Restricted. Contact admin");
+
+            if (vendor.VendorId != product.VendorId)
                 throw new UnauthorizedAccessException("You are not authorized for this action");
 
             var imageUrl = updateProduct.Image == null
                 ? null
                 : await GlobalConstants.SaveImageAsync(updateProduct.Image, GlobalConstants.productSubPath);
 
-            product.UpdateProduct(updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
+            product.UpdateProduct(vendor, vendorId, updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
             await _productRepository.UpdateProductAsync();
 
             return MapProductToDto(product, request);
         }
+
 
         private static ProductViewDto MapProductToDto (Product product, HttpRequest request)
         {
