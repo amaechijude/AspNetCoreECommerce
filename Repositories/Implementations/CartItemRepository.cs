@@ -8,57 +8,67 @@ namespace AspNetCoreEcommerce.Respositories.Implementations
     {
         private readonly ApplicationDbContext _context = context;
 
-        private async Task<CartItem> GetOrCreateCartItemAsync(Guid customerId)
-        {
-            var customer = await _context.Customers.FindAsync(customerId)
-                ?? throw new CustomerNotFoundException();
-
-            var cart = _context.CartItems.FirstOrDefaultAsync(c => c.Customer == customer);
-            if (cart is null)
-            {
-                var newCart = new CartItem
-                {
-                    CartId = Guid.CreateVersion7(),
-            
-                    
-                }
-            }
-
-            var cart = new CartItem { Customer = customer };
-            _context.CartItems.Add(cart);
-            await _context.SaveChangesAsync();
-            return cart;
-        }
-        public async Task<CartItem> ADddToCartAsync(int customerID, int productId)
+        public async Task<CartItem> ADddToCartAsync(Guid customerID, Guid productId)
         {
             var userCart = await GetOrCreateCartItemAsync(customerID);
+
             var product = await _context.Products.FindAsync(productId)
-                ?? throw new ProductNotFoundException();
+                ?? throw new KeyNotFoundException("Product no longer exists");
 
             if (userCart.Products.Contains(product))
-                throw new ItemAlreadyInCartException();
+                throw new ItemAlreadyInCartException("Item alredy in the cart");
 
             userCart.Products.Add(product);
+            userCart.TotalPrice += product.Price;
             await _context.SaveChangesAsync();
             return userCart;
         }
-        public async Task RemoveFromCartAsync(int customerID, int productId)
+        public async Task<CartItem> RemoveFromCartAsync(Guid customerID, Guid productId)
         {
             var userCart = await GetOrCreateCartItemAsync(customerID);
             var product = await _context.Products.FindAsync(productId)
-                ?? throw new ProductNotFoundException();
+                ?? throw new KeyNotFoundException("Product does nor exist or is deleted");
                 
             if (!userCart.Products.Contains(product))
-                throw new ItemNotFoundException();
+                throw new ItemNotFoundException("Product Already removed");
 
             userCart.Products.Remove(product);
+            userCart.TotalPrice -= product.Price;
+
             await _context.SaveChangesAsync();
+
+            return userCart;
+        }
+
+        private async Task<CartItem> GetOrCreateCartItemAsync(Guid customerId)
+        {
+            var customer = await _context.Customers.FindAsync(customerId)
+                ?? throw new KeyNotFoundException("Customer is disabled");
+
+            var cart = await _context.CartItems.FindAsync(customer.CustomerID);
+
+            if (cart is null)
+            {
+                var userCart = new CartItem
+                {
+                    CartId = customer.CustomerID,
+                    CustomerId = customer.CustomerID,
+                    Customer = customer,
+                    Products = []
+                };
+
+                _context.CartItems.Add(userCart);
+                await _context.SaveChangesAsync();
+
+                return userCart;
+            }
+            return cart;
         }
     }
 
 
-    public class CustomerNotFoundException() : Exception("Customer does not exist or is deleted.");
-    public class ItemAlreadyInCartException() : Exception("The item is already in the cart.");
-    public class ItemNotFoundException() : Exception("The item is not in the cart.");
-    public class ProductNotFoundException() : Exception("Product not found");
+    public class CustomerNotFoundException(string message) : Exception(message);
+    public class ItemAlreadyInCartException(string message) : Exception(message);
+    public class ItemNotFoundException(string message) : Exception(message);
+    public class ProductNotFoundException(string message) : Exception(message);
 }
