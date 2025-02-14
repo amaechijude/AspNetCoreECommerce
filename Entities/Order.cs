@@ -1,6 +1,6 @@
 ﻿namespace AspNetCoreEcommerce.Entities
 {
-    public enum OrderStatus
+    public enum OrderStatusEnum
     {
         Initiated = 1,
         Processing = 2,
@@ -10,13 +10,18 @@
     {
         public Guid OrderId { get; set; }
         public CartItem? CartItem { get; set; }
-        public string OrderRefrence = $"order{Guid.CreateVersion7()}".Replace(" ", "");
-        public double Discount { get; set; }
+        public required string OrderRefrence {get; set;}
         public double TotalOrderPrice { get; set; }
-        public OrderStatus OrderStatus { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime DateUpdated { get; set; }
+        public OrderStatusEnum OrderStatus { get; set; }
+        public DateTimeOffset DateCreated { get; set; }
+        public DateTimeOffset? DateUpdated { get; set; }
         public Guid CustormerId { get; set; }
-        public Customer? Customer { get; set; }
+        public required Customer Customer { get; set; }
+
+        public void UpdateOrderStatus(OrderStatusEnum statusEnum)
+        {
+            OrderStatus = statusEnum;
+            DateUpdated = DateTimeOffset.UtcNow;
+        }
     }
 }

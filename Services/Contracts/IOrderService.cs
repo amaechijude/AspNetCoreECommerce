@@ -4,9 +4,9 @@ namespace AspNetCoreEcommerce.Services.Contracts
 {
     public interface IOrderSevice
     {
-        Task<OrderViewDto> CreateOrderAsync(int orderId);
-        Task<IEnumerable<OrderViewDto>> GetOrdersByCustomerIdAsync(int customerId);
-        Task<OrderViewDto> GetOrderByOrderIdAsync(int orderId);
-        Task UpdateOrderStatusAsync(int orderId);
+        Task<OrderViewDto> CreateOrderAsync(Guid customerId);
+        Task<IEnumerable<OrderViewDto>> GetOrdersByCustomerIdAsync(Guid customerId);
+        Task<OrderViewDto> GetOrderByOrderIdAsync(Guid orderId);
+        Task UpdateOrderStatusAsync(Guid orderId);
     }
 }
