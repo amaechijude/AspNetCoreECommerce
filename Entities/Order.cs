@@ -9,14 +9,14 @@
     public class Order
     {
         public Guid OrderId { get; set; }
-        public CartItem? CartItem { get; set; }
+        public Guid CustomerId {get; set;}
+        public required Customer Customer {get; set;}
         public required string OrderRefrence {get; set;}
+        public required Cart Cart {get; set;}
         public double TotalOrderPrice { get; set; }
         public OrderStatusEnum OrderStatus { get; set; }
         public DateTimeOffset DateCreated { get; set; }
         public DateTimeOffset? DateUpdated { get; set; }
-        public Guid CustormerId { get; set; }
-        public required Customer Customer { get; set; }
 
         public void UpdateOrderStatus(OrderStatusEnum statusEnum)
         {

@@ -34,7 +34,7 @@ namespace AspNetCoreEcommerce.Data
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.Orders)
                 .WithOne(o => o.Customer)
-                .HasForeignKey(ord => ord.CustormerId)
+                .HasForeignKey(ord => ord.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Customer Payment Relationship
@@ -58,7 +58,12 @@ namespace AspNetCoreEcommerce.Data
 
             //Cart items
             modelBuilder.Entity<CartItem>()
-                .HasKey(c => c.CartId);
+                .HasKey(c => c.CartItemId);
+
+            modelBuilder.Entity<Cart>()
+                .HasMany(c => c.CartItems)
+                .WithOne(c => c.Cart)
+                .HasForeignKey(c => c.CartItemId);
         }
     }
 }
