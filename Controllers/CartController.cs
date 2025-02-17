@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,19 +13,19 @@ namespace AspNetCoreEcommerce.Controllers
     [ApiController]
     [Authorize(Roles = GlobalConstants.customerRole)]
     [Route("api/[controller]")]
-    public class CartController(ICartItemService cartItemService) : ControllerBase
+    public class CartController(ICartService cartItemService) : ControllerBase
     {
-        private readonly ICartItemService _cartItemService = cartItemService;
+        private readonly ICartService _cartItemService = cartItemService;
 
-        [HttpPost("add/{productId}")]
-        public async Task<IActionResult> AddToCartAsync([FromRoute] Guid productId)
+        [HttpPost("add")]
+        public async Task<IActionResult> AddToCartAsync([FromBody] CartItemDto cartItem)
         {
             var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrWhiteSpace(customerId))
                 return BadRequest("Invalid Authentication");
 
-            return Ok( await _cartItemService.ADddToCartAsync(Guid.Parse(customerId), productId, Request));
+            return Ok( await _cartItemService.ADddToCartAsync(Guid.Parse(customerId), cartItem));
         }
 
         [HttpPost("remove/{productId}")]
@@ -35,7 +36,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (string.IsNullOrWhiteSpace(customerId))
                 return BadRequest("Invalid Authentication");
 
-            return Ok( await _cartItemService.RemoveFromCartAsync(Guid.Parse(customerId), productId, Request));
+            return Ok( await _cartItemService.RemoveFromCartAsync(Guid.Parse(customerId), productId));
         }
     }
 }

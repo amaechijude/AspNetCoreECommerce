@@ -1,7 +1,7 @@
 using System.Net;
 using System.Security.Authentication;
 using System.Text.Json;
-using AspNetCoreEcommerce.Respositories.Implementations;
+using AspNetCoreEcommerce.Repositories.Implementations;
 using static AspNetCoreEcommerce.Repositories.Implementations.CustomerRepository;
 
 namespace AspNetCoreEcommerce.ErrorHandling
@@ -120,21 +120,20 @@ namespace AspNetCoreEcommerce.ErrorHandling
                 
                 return;
             }
-            catch(ItemAlreadyInCartException ex)
+            catch(ProductNotFoundException ex)
             {
                 context.Response.ContentType = httpContentType;
-                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
-                var errorResponse = new 
+                var errorResponse = new
                 {
-                    code = (int)HttpStatusCode.Unauthorized,
+                    code = (int)HttpStatusCode.NotFound,
                     status = "failed",
                     message = $"{ex.Message}"
                 };
 
-                var jsonRespose = JsonSerializer.Serialize(errorResponse);
-                await context.Response.WriteAsync(jsonRespose);
-                
+                var jsonResponseose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonResponseose);
                 return;
             }
 

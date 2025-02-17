@@ -16,8 +16,10 @@ namespace AspNetCoreEcommerce.Entities
         public string? CustomerPhone { get; set; }
         public bool IsDeleted { get; set; } = false;
         public string Role {get; set;} = GlobalConstants.customerRole;
-        public DateTimeOffset DateJoined {get; set;}
-        public CartItem? CarItems { get; set; }
+        public DateTimeOffset SignupDate {get; set;}
+        public DateTimeOffset LastLogin { get; set; }
+        public ICollection<CartItem>? CartItems { get; set; }
+        public Cart? Cart { get; set; }
         public ICollection<Order>? Orders { get; set; }
         public ICollection<Payment>? Payments { get; set; }
         public ICollection<ShippingAddress>? ShippingAddresses { get; set; }

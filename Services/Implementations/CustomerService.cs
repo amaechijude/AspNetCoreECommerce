@@ -26,7 +26,6 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CustomerPhone = customerDto.CustomerPhone,
                 DateJoined = DateTimeOffset.UtcNow
             };
-            newCustomer.CarItems = new CartItem {CartId = Guid.CreateVersion7(), CustomerId = newCustomer.CustomerID};
             newCustomer.PasswordHash = _passwordhasher.HashPassword(newCustomer, customerDto.Password);
             var customer = await _customerRepository.CreateCustomerAsync(newCustomer);
 

@@ -32,11 +32,6 @@
   <ItemGroup>
     <Folder Include="Entities\" />
     <Folder Include="Data\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Repositories\Contracts\" />
-    <Folder Include="Repositories\Implementations\" />
-    <Folder Include="Services\Contracts\" />
-    <Folder Include="Services\Implementations\" />
   </ItemGroup>
 
 </Project>

@@ -10,8 +10,8 @@ namespace AspNetCoreEcommerce.Entities
         public double ProductPrice { get; set; }
         public required Product Product { get; set; }
         public Guid CartId {get; set;}
-        public Cart? Cart {get; set;}
+        public required Cart Cart {get; set;}
         public int Quantity { get; set; }
-        public double TotalPrice => ProductPrice * Quantity;
+        public double CartItemTotalPrice => ProductPrice * Quantity;
     }
 }

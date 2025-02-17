@@ -7,7 +7,7 @@
         public string? Description { get; set; }
         public string? ImageName { get; set; }
         public double Price { get; set; }
-        public bool IsDeleted { get; set; } = false;
+        // public bool IsDeleted { get; set; } = false;
         public Guid VendorId { get; set; }
         public required Vendor Vendor { get; set; }
 

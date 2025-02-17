@@ -11,6 +11,7 @@ namespace AspNetCoreEcommerce.Entities
         public Guid CustomerId {get; set;}
         public required Customer Customer {get; set;}
         public required ICollection<CartItem> CartItems {get; set;} = [];
+        public int CartCount {get; set;}
         public double CartPrice {get; set;}
     }
 }

@@ -6,7 +6,6 @@ using AspNetCoreEcommerce.ErrorHandling;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Repositories.Implementations;
 using AspNetCoreEcommerce.Respositories.Contracts;
-using AspNetCoreEcommerce.Respositories.Implementations;
 using AspNetCoreEcommerce.Services.Contracts;
 using AspNetCoreEcommerce.Services.Implementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -58,7 +57,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 // Register Repositories
-builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 // builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 // builder.Services.AddScoped<>();
