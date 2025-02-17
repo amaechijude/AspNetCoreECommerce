@@ -44,11 +44,16 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteProductAsync(Guid productId)
+        public async Task DeleteProductAsync(Guid vendorId, Guid productId)
         {
+            var vendor = await GetVendorByIdAsync(vendorId);
             var product = await _context.Products.FindAsync(productId)
-                ?? throw new KeyNotFoundException($"Product with ID {productId} not found or deleted."); ;
-            product.IsDeleted = true;
+                ?? throw new KeyNotFoundException($"Product with ID {productId} not found or deleted.");
+
+            if (vendor.VendorId != product.VendorId)
+                throw new UnauthorizedAccessException("You are non authorized");
+
+            _context.Products.Remove(product);
             await _context.SaveChangesAsync();
         }
 

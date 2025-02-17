@@ -29,8 +29,9 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
             if (cartItem != null && userCart.CartItems.Contains(cartItem))
             {
-                userCart.CartPrice -= cartItem.CartItemTotalPrice; 
+                userCart.CartPrice -= (cartItem.Product.Price * cartItem.Quantity); 
                 userCart.CartCount -= 1;
+                userCart.CartItems.Remove(cartItem);
                 _context.CartItems.Remove(cartItem);
                 await _context.SaveChangesAsync();
 

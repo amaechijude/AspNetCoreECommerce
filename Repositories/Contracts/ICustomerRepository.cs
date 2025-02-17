@@ -8,5 +8,6 @@ namespace AspNetCoreEcommerce.Respositories.Contracts
         Task<Customer> GetCustomerByIdAsync(int id);
         Task DeleteCustomerAsync(int customerId);
         Task<Customer> GetCustomerByEmailAsync(string email);
+        Task SaveLastLoginDate();
     }
 }

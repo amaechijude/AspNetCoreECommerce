@@ -24,7 +24,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CustomerEmail = customerDto.CustomerEmail,
                 CustomerName = customerDto.CustomerName,
                 CustomerPhone = customerDto.CustomerPhone,
-                DateJoined = DateTimeOffset.UtcNow
+                SignupDate = DateTimeOffset.UtcNow
             };
             newCustomer.PasswordHash = _passwordhasher.HashPassword(newCustomer, customerDto.Password);
             var customer = await _customerRepository.CreateCustomerAsync(newCustomer);
@@ -69,10 +69,15 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 throw new ArgumentException("Incorrect Password");
             
             var token = _tokenProvider.Create(customer);
+            
+            customer.LastLogin = DateTimeOffset.UtcNow;
+            await _customerRepository.SaveLastLoginDate();
+
             return new CustomerLoginViewDto 
             {
                 CustomerId = customer.CustomerID,
                 CustomerEmail = customer.CustomerEmail,
+                LastLoginDate = customer.LastLogin,
                 Token = token
             };
         }

@@ -1,20 +1,24 @@
 using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.Entities;
-using AspNetCoreEcommerce.Respositories.Contracts;
+using AspNetCoreEcommerce.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using static AspNetCoreEcommerce.Repositories.Implementations.CustomerRepository;
 
 namespace AspNetCoreEcommerce.Repositories.Implementations
 {
+
     public class VendorRepository(ApplicationDbContext context) : IVendorRepository
     {
         private readonly ApplicationDbContext _context = context;
 
         public async Task<Vendor> CreateVendorAsync(Vendor vendor, HttpRequest request)
         {
-            var vendorExists = await _context.Vendors.AnyAsync(v => v.VendorEmail == vendor.VendorEmail);
+            var vendorExists = await _context.Vendors
+                .AnyAsync(v => v.VendorEmail == vendor.VendorEmail);
+
             if (vendorExists)
                 throw new DuplicateEmailException("Email already exists");
+                
             _context.Vendors.Add(vendor);
             await _context.SaveChangesAsync();
             return vendor;
@@ -34,16 +38,19 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteVendorAsync(Vendor vendor)
-        {
-            vendor.IsDeleted = true;
-            await _context.SaveChangesAsync();
-        }
+        // public async Task DeleteVendorAsync(Vendor vendor)
+        // {
+        //     // vendor.IsDeleted = true;
+        //     await _context.SaveChangesAsync();
+        // }
 
-        public async Task<Vendor?> GetVendorByEmailAsync(string vendorEmail)
+        public async Task<Vendor> GetVendorByEmailAsync(string vendorEmail)
         {
-            var vendor = await _context.Vendors.FirstOrDefaultAsync(v => v.VendorEmail == vendorEmail);
-            return vendor ?? null;
+            var vendor = await _context.Vendors
+                .FirstOrDefaultAsync(v => v.VendorEmail == vendorEmail)
+                ?? throw new KeyNotFoundException("Vendor not found");
+
+            return vendor;
         }
 
     }

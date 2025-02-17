@@ -17,7 +17,7 @@ namespace AspNetCoreEcommerce.Entities
         public string? VendorBanner { get; set; }
         public string? Location { get; set; }
         public string Role {get; set;} = GlobalConstants.vendorRole;
-        public bool IsDeleted = false;
+        // public bool IsDeleted { get; set; } = false;
         [Url]
         public string? GoogleMapUrl { get; set; }
         [Url]
@@ -28,6 +28,7 @@ namespace AspNetCoreEcommerce.Entities
         public string? FacebookUrl { get; set; }
         public DateTimeOffset DateJoined { get; set; }
         public DateTimeOffset DateUpdated { get; private set; }
+        public DateTimeOffset LastLoginDate { get; set; }
         public ICollection<Product> Products { get; set; } = [];
 
         public void UpdateVendor(string? banner, string? vphone, string? location, string? gmap, string? xurl, string? igurl, string? fburl)

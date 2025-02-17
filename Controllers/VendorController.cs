@@ -22,7 +22,7 @@ namespace AspNetCoreEcommerce.Controllers
             return Ok(await _vendorService.CreateVendorAsync(vendorDto, Request));
         }
 
-        [Authorize( Roles = GlobalConstants.vendorRole)]
+        [Authorize(Roles = GlobalConstants.vendorRole)]
         [HttpGet("get")]
         public async Task<IActionResult> GetVendorByIdAsync()
         {
@@ -54,8 +54,19 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(await _vendorService.UpdateVendorByIdAsync(Guid.Parse(vendorId) , updateVendor, Request));
+            return Ok(await _vendorService.UpdateVendorByIdAsync(Guid.Parse(vendorId), updateVendor, Request));
         }
 
+
+        // [Authorize(Roles = GlobalConstants.vendorRole)]
+        // [HttpDelete("delete")]
+        // public async Task<IActionResult> DeleteVendorAsync()
+        // {
+        //     var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //     if (string.IsNullOrWhiteSpace(vendorId))
+        //         return BadRequest("Invalid Authentication");
+        //     await _vendorService.DeleteVendorAsync(Guid.Parse(vendorId));
+        //     return Ok(new { message = "Vendor deleted successfully" });
+        // }
     }
 }

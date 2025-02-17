@@ -1,7 +1,7 @@
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
-using AspNetCoreEcommerce.Respositories.Contracts;
+using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Identity;
 
@@ -74,12 +74,12 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             return MapVendorToDto(existingVendor, request);
         }
-        public async Task DeleteVendorAsync(Guid vendorId)
-        {
-            var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
-                ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
-            await _vendorRepository.DeleteVendorAsync(vendor);
-        }
+        // public async Task DeleteVendorAsync(Guid vendorId)
+        // {
+        //     var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
+        //         ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
+        //     await _vendorRepository.DeleteVendorAsync(vendor);
+        // }
 
         public async Task<VendorLoginViewDto> LoginVendorAsync(LoginDto login)
         {
@@ -96,6 +96,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 throw new ArgumentException("Invalid Password");
 
             var token = _tokenProvider.CreateVendorToken(vendor);
+
+            vendor.LastLoginDate = DateTimeOffset.UtcNow;
+            await _vendorRepository.SaveUpdateVendorAsync();
 
             return new VendorLoginViewDto {
                 VendorId = vendor.VendorId,
@@ -117,6 +120,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 TwitterUrl = vendor.TwitterUrl,
                 FacebookUrl = vendor.FacebookUrl,
                 DateJoined = vendor.DateJoined,
+                LastLoginDate = vendor.LastLoginDate,
                 InstagramUrl = vendor.InstagramUrl,
                 Products = [.. vendor.Products.Select(p => new ProductViewDto {
                     ProductId = p.ProductId,

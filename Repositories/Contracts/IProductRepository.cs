@@ -9,7 +9,7 @@ namespace AspNetCoreEcommerce.Repositories.Contracts
         Task<Product> GetProductByIdAsync(Guid productId);
         Task<Product> CreateProductAsync(Product product, HttpRequest request);
         Task UpdateProductAsync();
-        Task DeleteProductAsync(Guid productId);
+        Task DeleteProductAsync(Guid vendorId, Guid productId);
         Task<Vendor> GetVendorByIdAsync(Guid vendorId);
     }
 }

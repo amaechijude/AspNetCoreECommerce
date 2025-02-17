@@ -12,13 +12,13 @@ namespace AspNetCoreEcommerce.Controllers
     {
         private readonly IProductService _productService = productService;
 
-        [Authorize( Roles = GlobalConstants.vendorRole)]
+        [Authorize(Roles = GlobalConstants.vendorRole)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {
             var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(vendorId))
-               return BadRequest("Invalid Authentication");
+                return BadRequest("Invalid Authentication");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -26,7 +26,7 @@ namespace AspNetCoreEcommerce.Controllers
             return Ok(await _productService.CreateProductAsync(Guid.Parse(vendorId), createProduct, Request));
         }
 
-        [Authorize( Roles = GlobalConstants.vendorRole)]
+        [Authorize(Roles = GlobalConstants.vendorRole)]
         [HttpPatch("update/{productID}")]
         public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productID, [FromForm] UpdateProductDto updateProduct)
         {
@@ -48,6 +48,23 @@ namespace AspNetCoreEcommerce.Controllers
         public async Task<IActionResult> GetProductByIdAsync([FromRoute] Guid productId)
         {
             return Ok(await _productService.GetProductByIdAsync(productId, Request));
+        }
+
+        [Authorize(Roles = GlobalConstants.vendorRole)]
+        [HttpDelete("delete/{productId}")]
+        public async Task<IActionResult> DeleteProductAsync([FromRoute] Guid productId)
+        {
+            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(vendorId))
+                return BadRequest("Invalid Authentication");
+
+            await _productService.DeleteProductAsync(Guid.Parse(vendorId), productId);
+            return Ok(new
+            {
+                Success = true,
+                Message = "Product Deleted Successfully",
+
+            });
         }
     }
 }

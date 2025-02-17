@@ -35,6 +35,10 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
                ?? throw new ArgumentException("Invalid Email");
             return customer;
         }
+        public async Task SaveLastLoginDate()
+        {
+            await _context.SaveChangesAsync();
+        }
 
         public class DuplicateEmailException(string message) : Exception(message);
     }

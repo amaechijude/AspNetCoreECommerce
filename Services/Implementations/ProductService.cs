@@ -54,12 +54,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
         }
 
         public async Task DeleteProductAsync(Guid vendorId, Guid productId)
-        {
-            var product = await _productRepository.GetProductByIdAsync(productId);
-            if (vendorId != product.VendorId)
-                throw new UnauthorizedAccessException("You are not authorized for this action");
-            
-            await _productRepository.DeleteProductAsync(productId);
+        {            
+            await _productRepository.DeleteProductAsync(vendorId, productId);
         }
 
         public async Task<ProductViewDto> UpdateProductAsync(Guid vendorId, Guid productId, UpdateProductDto updateProduct, HttpRequest request)

@@ -23,6 +23,7 @@ namespace AspNetCoreEcommerce.DTOs
         public string? FacebookUrl { get; set; }
         public DateTimeOffset DateJoined { get; set; }
         public DateTimeOffset? DateUpdated { get; set; }
+        public DateTimeOffset LastLoginDate { get; set; }
         public ICollection<ProductViewDto>? Products { get; set; }
 
     }
