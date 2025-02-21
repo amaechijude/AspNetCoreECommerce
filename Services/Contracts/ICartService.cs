@@ -6,5 +6,6 @@ namespace AspNetCoreEcommerce.Services.Contracts
     {
         Task<ReturnCartViewDto> ADddToCartAsync(Guid customerId, CartItemDto cartItemDto);
         Task<ReturnCartViewDto> RemoveFromCartAsync(Guid customerId, Guid productId);
+        Task<CustomerCartViewDto> ViewCartAsync(Guid customerId);
     }
 }

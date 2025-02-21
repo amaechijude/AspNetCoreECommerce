@@ -11,7 +11,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<Vendor> CreateVendorAsync(Vendor vendor, HttpRequest request)
+        public async Task<Vendor> CreateVendorAsync(Vendor vendor)
         {
             var vendorExists = await _context.Vendors
                 .AnyAsync(v => v.VendorEmail == vendor.VendorEmail);
@@ -37,12 +37,6 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
         {
             await _context.SaveChangesAsync();
         }
-
-        // public async Task DeleteVendorAsync(Vendor vendor)
-        // {
-        //     // vendor.IsDeleted = true;
-        //     await _context.SaveChangesAsync();
-        // }
 
         public async Task<Vendor> GetVendorByEmailAsync(string vendorEmail)
         {

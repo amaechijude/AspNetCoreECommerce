@@ -5,6 +5,7 @@ namespace AspNetCoreEcommerce.Entities
 {
     public class Customer
     {
+        [Key]
         public Guid CustomerID { get; set; }
         [EmailAddress]
         [Required]
@@ -16,12 +17,14 @@ namespace AspNetCoreEcommerce.Entities
         public string? CustomerPhone { get; set; }
         public bool IsDeleted { get; set; } = false;
         public string Role {get; set;} = GlobalConstants.customerRole;
+        public bool? IsActive { get; set; } = true;
+        public bool? IsAdmin { get; set; } = false;
         public DateTimeOffset SignupDate {get; set;}
         public DateTimeOffset LastLogin { get; set; }
-        public ICollection<CartItem>? CartItems { get; set; }
         public Cart? Cart { get; set; }
+        public ICollection<Feedback>? Feedbacks {get; set;}
         public ICollection<Order>? Orders { get; set; }
         public ICollection<Payment>? Payments { get; set; }
-        public ICollection<ShippingAddress>? ShippingAddresses { get; set; }
+        public ICollection<ShippingAddress>? Addresses { get; set; }
     }
 }

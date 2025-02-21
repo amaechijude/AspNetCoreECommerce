@@ -12,8 +12,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var cart = await _cartItemRepository.ADddToCartAsync(customerId, cartItemDto);
             return new ReturnCartViewDto
             {
-                CartProductCount = cart.CartCount,
-                CartTotalAmount = cart.CartPrice
+                CartProductCount = cart.CartItemsCount,
+                CartTotalAmount = cart.CartTotalAmount
             };
         }
 
@@ -22,8 +22,26 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var cart = await _cartItemRepository.RemoveFromCartAsync(customerId, productId);
             return new ReturnCartViewDto
             {
-                CartProductCount = cart.CartCount,
-                CartTotalAmount = cart.CartPrice
+                CartProductCount = cart.CartItemsCount,
+                CartTotalAmount = cart.CartTotalAmount
+            };
+        }
+
+        public async Task<CustomerCartViewDto> ViewCartAsync(Guid customerId)
+        {
+            var cart = await _cartItemRepository.GetOrCreateCartAsync(customerId);
+            return new CustomerCartViewDto
+            {
+                CartProductCount = cart.CartItemsCount,
+                CartTotalAmount = cart.CartTotalAmount,
+                CartItems = cart.CartItems.Select(ci => new CsCartItemViewDto
+                {
+                    ProductId = ci.ProductId,
+                    ProductName = ci.Product.ProductName,
+                    Price = ci.Product.Price,
+                    Quantity = ci.Quantity,
+                    SubTotalPrice = ci.Product.Price * ci.Quantity
+                }).ToList()
             };
         }
     }

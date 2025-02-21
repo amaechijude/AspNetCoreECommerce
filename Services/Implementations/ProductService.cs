@@ -40,12 +40,13 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var product = new Product
             {
                 ProductId = Guid.CreateVersion7(),
-                Name = createProductDto.Name,
+                ProductName = createProductDto.Name,
                 Price = createProductDto.Price,
                 Description = createProductDto.Description,
                 VendorId = vendor.VendorId,
                 Vendor = vendor,
-                ImageName = imageUrl
+                ImageUrl = imageUrl,
+                CreatedAt = DateTimeOffset.UtcNow
             };
             // category.Products.Add(product);
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
@@ -85,10 +86,10 @@ namespace AspNetCoreEcommerce.Services.Implementations
             return new ProductViewDto
             {
                 ProductId = product.ProductId,
-                Name = product.Name,
+                Name = product.ProductName,
                 Price = product.Price,
                 Description = product.Description,
-                ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageName),
+                ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageUrl),
                 VendorId = product.VendorId,
                 VendorName = product.Vendor.VendorName
             };

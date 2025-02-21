@@ -43,15 +43,14 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
             newVendor.PasswordHash = _passwordHasher.HashPassword(newVendor, vendorDto1.Password);
 
-            var createVendor = await _vendorRepository.CreateVendorAsync(newVendor, request);
+            var createVendor = await _vendorRepository.CreateVendorAsync(newVendor);
 
             return MapVendorToDto(createVendor, request);
             
         }
         public async Task<VendorViewDto> GetVendorByIdAsync(Guid vendorId, HttpRequest request)
         {
-            var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
-                ?? throw new KeyNotFoundException("Invalid or Non Existing Vendor");
+            var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId);
 
             return MapVendorToDto(vendor, request);
         }
@@ -74,20 +73,13 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             return MapVendorToDto(existingVendor, request);
         }
-        // public async Task DeleteVendorAsync(Guid vendorId)
-        // {
-        //     var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId)
-        //         ?? throw new KeyNotFoundException($"Vendor with the Id {vendorId} was not found");
-        //     await _vendorRepository.DeleteVendorAsync(vendor);
-        // }
 
         public async Task<VendorLoginViewDto> LoginVendorAsync(LoginDto login)
         {
             if (string.IsNullOrEmpty(login.Email))
                 throw new ArgumentException("Email cannot be empty");
-                
-            var vendor = await _vendorRepository.GetVendorByEmailAsync(login.Email)
-                ?? throw new KeyNotFoundException("Invalid vendor email");
+
+            var vendor = await _vendorRepository.GetVendorByEmailAsync(login.Email);
 
 #pragma warning disable CS8604 // Possible null reference argument.
             var verifyLogin = _passwordHasher.VerifyHashedPassword(vendor, vendor.PasswordHash, login.Password);
@@ -124,9 +116,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 InstagramUrl = vendor.InstagramUrl,
                 Products = [.. vendor.Products.Select(p => new ProductViewDto {
                     ProductId = p.ProductId,
-                    Name = p.Name,
+                    Name = p.ProductName,
                     Description = p.Description,
-                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageName),
+                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageUrl),
                     Price = p.Price,
                     VendorId = p.VendorId,
                     VendorName = p.Vendor.VendorName

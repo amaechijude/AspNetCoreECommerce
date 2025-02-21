@@ -5,8 +5,10 @@ namespace AspNetCoreEcommerce.Entities
 {
     public class Vendor
     {
+        [Key]
         public Guid VendorId { get; set; }
-        public string? VendorName { get; set; }
+        [Required]
+        public required string VendorName { get; set; }
         [EmailAddress]
         public required string VendorEmail { get; set; }
         [Required]
@@ -15,9 +17,10 @@ namespace AspNetCoreEcommerce.Entities
         [StringLength(16)]
         public string? VendorPhone {  get; set; }
         public string? VendorBanner { get; set; }
-        public string? Location { get; set; }
+        [Required]
+        public required string Location { get; set; }
         public string Role {get; set;} = GlobalConstants.vendorRole;
-        // public bool IsDeleted { get; set; } = false;
+        public bool? IsAdmin { get; set; } = false;
         [Url]
         public string? GoogleMapUrl { get; set; }
         [Url]

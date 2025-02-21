@@ -12,18 +12,20 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
         public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request)
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             return await _context.Products
                 .Select(p => new ProductViewDto
                 {
                     ProductId = p.ProductId,
-                    Name = p.Name,
+                    Name = p.ProductName,
                     Description = p.Description,
-                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageName),
+                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageUrl),
                     Price = p.Price,
                     VendorId = p.VendorId,
                     VendorName = p.Vendor.VendorName
                 })
                 .ToListAsync();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         public async Task<Product> GetProductByIdAsync(Guid productId)

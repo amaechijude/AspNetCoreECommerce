@@ -37,5 +37,15 @@ namespace AspNetCoreEcommerce.Controllers
 
             return Ok(await _cartService.RemoveFromCartAsync(Guid.Parse(customerId), productId));
         }
+
+        [Authorize(Roles = GlobalConstants.customerRole)]
+        [HttpGet("view")]
+        public async Task<IActionResult> ViewCartAsync()
+        {
+            var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(customerId))
+                return BadRequest("Invalid Authentication");
+            return Ok(await _cartService.ViewCartAsync(Guid.Parse(customerId)));
+        }
     }
 }

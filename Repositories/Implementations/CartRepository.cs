@@ -14,9 +14,39 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
         {
             var userCart = await GetOrCreateCartAsync(customerId);
             var product = await GetProductByIdAsync(cartItemDto.ProductId);
-            var cartItem = await AddToCartItemLogic(userCart, product, cartItemDto.Quantity);
 
-            return cartItem.Cart;
+            var cartItem = await _context.CartItems
+               .Where(ci => ci.CartId == userCart.CartId && ci.ProductId == product.ProductId)
+               .FirstOrDefaultAsync();
+
+            if (cartItem == null)
+            {
+                var newCartItem = new CartItem
+                {
+                    CartItemId = Guid.CreateVersion7(),
+                    CartId = userCart.CartId,
+                    Cart = userCart,
+                    ProductId = product.ProductId,
+                    Product = product,
+                    Quantity = cartItemDto.Quantity
+                };
+                //_context.CartItems.Add(newCartItem);
+                userCart.CartItems.Add(newCartItem);
+                userCart.CartTotalAmount += product.Price * cartItemDto.Quantity;
+                userCart.CartItemsCount += 1;
+                await _context.SaveChangesAsync();
+
+                return userCart;
+
+            }
+            else
+            {
+                cartItem.Quantity += cartItemDto.Quantity;
+                userCart.CartTotalAmount += product.Price * cartItemDto.Quantity;
+                await _context.SaveChangesAsync();
+                return cartItem.Cart;
+            }
+            
         }
         public async Task<Cart> RemoveFromCartAsync(Guid customerID, Guid productId)
         {
@@ -24,13 +54,13 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             var product = await GetProductByIdAsync(productId);
 
             var cartItem = await _context.CartItems
-                .Where(ci => ci.CustomerId == userCart.CustomerId && ci.ProductId == product.ProductId)
+                .Where(ci => ci.CartId == userCart.CartId && ci.ProductId == product.ProductId)
                 .FirstOrDefaultAsync();
 
             if (cartItem != null && userCart.CartItems.Contains(cartItem))
             {
-                userCart.CartPrice -= (cartItem.Product.Price * cartItem.Quantity); 
-                userCart.CartCount -= 1;
+                userCart.CartTotalAmount -= (cartItem.Product.Price * cartItem.Quantity); 
+                userCart.CartItemsCount -= 1;
                 userCart.CartItems.Remove(cartItem);
                 _context.CartItems.Remove(cartItem);
                 await _context.SaveChangesAsync();
@@ -43,7 +73,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             }
         }
 
-        private async Task<Cart> GetOrCreateCartAsync(Guid customerId)
+        public async Task<Cart> GetOrCreateCartAsync(Guid customerId)
         {
             var customer = await _context.Customers.FindAsync(customerId)
                 ?? throw new KeyNotFoundException("Customer is disabled");
@@ -54,18 +84,17 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
             if (cart is null)
             {
-                var userCart = new Cart
+                cart = new Cart
                 {
                     CartId = customer.CustomerID,
                     CustomerId = customer.CustomerID,
-                    Customer = customer,
-                    CartItems = []
+                    Customer = customer
                 };
 
-                _context.Carts.Add(userCart);
+                _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();
 
-                return userCart;
+                return cart;
             }
             return cart;
         }
@@ -77,38 +106,14 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             return product;
         }
 
-        private async Task<CartItem> AddToCartItemLogic(Cart userCart, Product product, int Quantity)
+        public async Task<Cart> GetCustomerCartAsync(Guid customerId)
         {
-            var cartItem = await _context.CartItems
-                .Where(ci => ci.CustomerId == userCart.CustomerId && ci.ProductId == product.ProductId)
-                .FirstOrDefaultAsync();
-
-            if (cartItem == null)
-            {
-                cartItem = new CartItem
-                {
-                    CartItemId = Guid.CreateVersion7(),
-                    CartId = userCart.CartId,
-                    Cart = userCart,
-                    CustomerId = userCart.CustomerId,
-                    Customer = userCart.Customer,
-                    ProductId = product.ProductId,
-                    Product = product,
-                    Quantity = Quantity
-                };
-                _context.CartItems.Add(cartItem);
-                userCart.CartItems.Add(cartItem);
-                userCart.CartPrice += product.Price * Quantity;
-                userCart.CartCount += 1;
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                cartItem.Quantity += Quantity;
-                userCart.CartPrice += product.Price * Quantity;
-                await _context.SaveChangesAsync();
-            }
-            return cartItem;
+            var cart = await _context.Carts
+                .Include(c => c.CartItems)
+                .ThenInclude(ci => ci.Product)
+                .FirstOrDefaultAsync(c => c.CustomerId == customerId)
+                ?? throw new CustomerNotFoundException("Customer does not exist");
+            return cart;
         }
     }
 

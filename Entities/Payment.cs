@@ -6,9 +6,11 @@ namespace AspNetCoreEcommerce.Entities
     {
         [Key]
         public Guid PaymentId { get; set; }
+        public Guid OrderId {get; set;}
         public Order? Order { get; set; }
         public double TotalAmount { get; set; }
         public string? TransactionReference { get; set; }
+        public PaymentStatusEnum PaymentStatus {get; set;}
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset VerificationDate { get; set; }
         public Guid CustormerId { get; set; }

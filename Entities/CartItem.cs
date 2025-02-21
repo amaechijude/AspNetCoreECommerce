@@ -1,17 +1,20 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace AspNetCoreEcommerce.Entities
 {
     public class CartItem
     {
+        [Key]
         public Guid CartItemId { get; set; }
-        public Guid CustomerId { get; set; }
-        public required Customer Customer { get; set; }
-        public Guid ProductId { get; set; }
-        public double ProductPrice { get; set; }
-        public required Product Product { get; set; }
         public Guid CartId {get; set;}
         public required Cart Cart {get; set;}
+        public Guid ProductId { get; set; }
+        public required Product Product { get; set; }
         public int Quantity { get; set; }
-        public double CartItemTotalPrice => ProductPrice * Quantity;
+        public double UnitPrice {get; set; }
+        public double TotalPrice {get; set;}
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace AspNetCoreEcommerce.Entities
         [StringLength(16)]
         public string? Phone { get; set; }
         [Required]
-        public string? Address { get; set; }
+        public string? AddressOne { get; set; }
         public string? SecondAddress { get; set; }
         [Required]
         public string? City { get; set; }
