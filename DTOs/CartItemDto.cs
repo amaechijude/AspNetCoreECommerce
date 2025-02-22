@@ -20,13 +20,13 @@ namespace AspNetCoreEcommerce.DTOs
         public int Quantity { get; set; }
         public double UnitPrice {get; set;}
         public double TotalPrice {get; set;}
-        public ProductViewDto? Product {get; set;}
+        public Guid ProductId {get; set;}
     }
 
     public class AddToCartDto
     {
         [Required(ErrorMessage = "Product id Required")]
-        public Guid ProductId {get; set;}
+        public required string ProductId {get; set;}
         public int Quantity {get; set;} = 1;
     }
 

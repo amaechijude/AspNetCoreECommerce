@@ -21,6 +21,7 @@ namespace AspNetCoreEcommerce.Entities
         public bool? IsAdmin { get; set; } = false;
         public DateTimeOffset SignupDate {get; set;}
         public DateTimeOffset LastLogin { get; set; }
+        public Guid CartId {get; set;}
         public Cart? Cart { get; set; }
         public ICollection<Feedback>? Feedbacks {get; set;}
         public ICollection<Order>? Orders { get; set; }

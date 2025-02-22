@@ -1,11 +1,38 @@
 @AspNetCoreEcommerce_HostAddress = http://localhost:5209
 
-GET {{AspNetCoreEcommerce_HostAddress}}/api/vendor/create
-Accept: application/json
+POST {{AspNetCoreEcommerce_HostAddress}}/api/customer/register
+Content-Type: application/json
+
+{
+    "customerEmail": "userone@email.com",
+    "password": "password",
+    "customerName": "Amaechi",
+    "CustomerPhone": "09122999887709"
+}
+
+###
+POST {{AspNetCoreEcommerce_HostAddress}}/api/customer/login
+Content-Type: application/json
+
+{
+    "Email": "userone@email.com",
+    "password": "password"
+}
 
 ###
 
-POST {{AspNetCoreEcommerce_HostAddress}}/api/product/create
-Accept: application/json
+GET {{AspNetCoreEcommerce_HostAddress}}/api/product/
+
+###
+
+GET {{AspNetCoreEcommerce_HostAddress}}/api/cart/view/
+Content-Type: /application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDAyNTIwODAsInN1YiI6IjAxOTUyZWU0LTQzMDYtNzdkZS04ZTFhLWFlMTQxZThjZjQzOSIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDI0ODQ4MCwibmJmIjoxNzQwMjQ4NDgwfQ.Z7vf4v8tUDDLrvaThMnvC0rXzlllaCh3CLCl1_HiPro
+
+###
+
+DELETE {{AspNetCoreEcommerce_HostAddress}}/api/cart/remove/97951466-ed0b-72ac-b7f1-a562259107c8/
+Content-Type: /application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDAyNTIwODAsInN1YiI6IjAxOTUyZWU0LTQzMDYtNzdkZS04ZTFhLWFlMTQxZThjZjQzOSIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDI0ODQ4MCwibmJmIjoxNzQwMjQ4NDgwfQ.Z7vf4v8tUDDLrvaThMnvC0rXzlllaCh3CLCl1_HiPro
 
 ###

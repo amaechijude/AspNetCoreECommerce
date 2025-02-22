@@ -33,23 +33,14 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CartId = cart.CartId,
                 CartProductCount = cart.CartItemsCount,
                 CartTotalAmount = cart.CartTotalAmount,
-                CartItems = cart.CartItems.Select(ci => new CartItemViewDto
+                CartItems = [.. cart.CartItems.Select(ci => new CartItemViewDto
                     {
                         CartItemId = ci.CartItemId,
                         UnitPrice = ci.UnitPrice,
                         Quantity = ci.Quantity,
                         TotalPrice = ci.UnitPrice * ci.Quantity,
-                        Product = new ProductViewDto
-                            {
-                                ProductId = ci.ProductId,
-                                ProductName = ci.Product.ProductName,
-                                Description = ci.Product.Description,
-                                ImageUrl = ci.Product.ImageUrl,
-                                Price = ci.Product.Price,
-                                VendorId = ci.Product.VendorId,
-                                VendorName = ci.Product.Vendor.VendorName
-                            }
-                    }).ToList()
+                        ProductId = ci.ProductId,
+                    })]
             };
 
             return cartview;

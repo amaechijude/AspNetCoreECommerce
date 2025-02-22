@@ -68,22 +68,22 @@ namespace AspNetCoreEcommerce.Data
                 .HasForeignKey(s => s.CustormerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //Cart items
-            modelBuilder.Entity<CartItem>()
-                .HasKey(c => c.CartItemId);
-
+            // Cart
             modelBuilder.Entity<Cart>()
                 .HasMany(c => c.CartItems)
                 .WithOne(c => c.Cart)
                 .HasForeignKey(c => c.CartItemId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // CartItem -> Product
+             modelBuilder.Entity<CartItem>()
+            .HasOne(ci => ci.Product)
+            .WithMany(p => p.CartItems)
+            .HasForeignKey(ci => ci.ProductId);
+
             modelBuilder.Entity<CartItem>()
-                .HasOne(ci => ci.Product)
-                .WithMany(p => p.CartItems)
-                .HasForeignKey(ci => ci.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(ci => ci.Cart)
+                .WithMany(c => c.CartItems)
+                .HasForeignKey(ci => ci.CartId);
 
             // FeedBack -> Customer
             modelBuilder.Entity<Feedback>()

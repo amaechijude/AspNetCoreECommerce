@@ -13,7 +13,12 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             var customerExists = await _context.Customers.AnyAsync(c => c.CustomerEmail == customer.CustomerEmail);
             if (customerExists)
                 throw new DuplicateEmailException("Email already exists");
+
+            var cart = new Cart {CartId = Guid.CreateVersion7(), CustomerId = customer.CustomerID, Customer = customer, CreatedAt = DateTimeOffset.UtcNow};
+            customer.CartId = cart.CartId;
+            customer.Cart = cart;
             _context.Customers.Add(customer);
+            _context.Carts.Add(cart);
              await _context.SaveChangesAsync();
               return customer;
         }
