@@ -78,6 +78,13 @@ namespace AspNetCoreEcommerce.Data
                 .HasForeignKey(c => c.CartItemId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // CartItem -> Product
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany(p => p.CartItems)
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // FeedBack -> Customer
             modelBuilder.Entity<Feedback>()
                 .HasOne(f => f.Customer)
@@ -91,6 +98,8 @@ namespace AspNetCoreEcommerce.Data
                 .WithMany(p => p.Feedbacks)
                 .HasForeignKey(f => f.ProdcutId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            
 
 
             // Seed Vendor Data

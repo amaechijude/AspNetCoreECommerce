@@ -4,8 +4,8 @@ namespace AspNetCoreEcommerce.Services.Contracts
 {
     public interface ICartService
     {
-        Task<ReturnCartViewDto> ADddToCartAsync(Guid customerId, CartItemDto cartItemDto);
-        Task<ReturnCartViewDto> RemoveFromCartAsync(Guid customerId, Guid productId);
-        Task<CustomerCartViewDto> ViewCartAsync(Guid customerId);
+        Task<CartViewDto> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto);
+        Task<CartViewDto> RemoveFromCartAsync(Guid customerId, Guid productId);
+        Task<CartViewDto> ViewCartAsync(Guid customerId);
     }
 }

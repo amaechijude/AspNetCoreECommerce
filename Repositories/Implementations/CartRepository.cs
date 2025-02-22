@@ -10,7 +10,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<Cart> ADddToCartAsync(Guid customerId, CartItemDto cartItemDto)
+        public async Task<Cart> ADddToCartAsync(Guid customerId, AddToCartDto cartItemDto)
         {
             var userCart = await GetOrCreateCartAsync(customerId);
             var product = await GetProductByIdAsync(cartItemDto.ProductId);
@@ -30,8 +30,9 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
                     Product = product,
                     Quantity = cartItemDto.Quantity
                 };
-                //_context.CartItems.Add(newCartItem);
-                userCart.CartItems.Add(newCartItem);
+
+                _context.CartItems.Add(newCartItem);
+                // userCart.CartItems.Add(newCartItem);
                 userCart.CartTotalAmount += product.Price * cartItemDto.Quantity;
                 userCart.CartItemsCount += 1;
                 await _context.SaveChangesAsync();
@@ -80,7 +81,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerID);
+                .FirstOrDefaultAsync(c => c.CartId ==customer.CustomerID);
 
             if (cart is null)
             {

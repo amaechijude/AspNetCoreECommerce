@@ -116,7 +116,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 InstagramUrl = vendor.InstagramUrl,
                 Products = [.. vendor.Products.Select(p => new ProductViewDto {
                     ProductId = p.ProductId,
-                    Name = p.ProductName,
+                    ProductName = p.ProductName,
                     Description = p.Description,
                     ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageUrl),
                     Price = p.Price,

@@ -86,7 +86,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             return new ProductViewDto
             {
                 ProductId = product.ProductId,
-                Name = product.ProductName,
+                ProductName = product.ProductName,
                 Price = product.Price,
                 Description = product.Description,
                 ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageUrl),

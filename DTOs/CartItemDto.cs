@@ -3,32 +3,31 @@ using AspNetCoreEcommerce.Entities;
 
 namespace AspNetCoreEcommerce.DTOs
 {
-    public class CustomerCartViewDto
+    public class CartViewDto
     {
+        public Guid CartId {get; set;}
         public int CartProductCount { get; set; }
         public double CartTotalAmount{ get; set; }
-        public ICollection<CsCartItemViewDto> CartItems { get; set; } = [];
+        public ICollection<CartItemViewDto> CartItems {get; set;} = [];
+        
     }
 
-    public class CsCartItemViewDto
-    {
-        public Guid ProductId { get; set; }
-        public string? ProductName { get; set; }
-        public double Price { get; set; }
-        public int Quantity { get; set; }
-        public double SubTotalPrice { get; set; }
-    }
-
-    public class CartItemDto
+    
+    public class CartItemViewDto
     {
         [Required]
-        public Guid ProductId { get; set; }
-        public int Quantity { get; set; } = 1;
+        public Guid CartItemId { get; set; }
+        public int Quantity { get; set; }
+        public double UnitPrice {get; set;}
+        public double TotalPrice {get; set;}
+        public ProductViewDto? Product {get; set;}
     }
 
-    public class ReturnCartViewDto
+    public class AddToCartDto
     {
-        public int CartProductCount { get; set; }
-        public double CartTotalAmount { get; set; }
+        [Required(ErrorMessage = "Product id Required")]
+        public Guid ProductId {get; set;}
+        public int Quantity {get; set;} = 1;
     }
+
 }

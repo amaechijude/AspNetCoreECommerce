@@ -23,6 +23,7 @@ namespace AspNetCoreEcommerce.Entities
         [Required]
         public required Guid VendorId { get; set; }
         public Vendor? Vendor { get; set; }
+        public ICollection<CartItem>? CartItems { get; set; }
         public ICollection<OrderItem> OrderItems {get; set;} = [];
         public ICollection<Feedback>? Feedbacks {get; set;}
 

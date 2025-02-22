@@ -14,7 +14,7 @@ namespace AspNetCoreEcommerce.Controllers
         private readonly ICartService _cartService = cartService;
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddToCartAsync([FromBody] CartItemDto cartItem)
+        public async Task<IActionResult> AddToCartAsync([FromBody] AddToCartDto addToCartDto)
         {
             var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -24,7 +24,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(await _cartService.ADddToCartAsync(Guid.Parse(customerId), cartItem));
+            return Ok(await _cartService.ADddToCartAsync(Guid.Parse(customerId), addToCartDto));
         }
 
         [HttpPost("remove/{productId}")]

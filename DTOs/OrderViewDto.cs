@@ -6,6 +6,6 @@
         public Guid CustomerId { get; set; }
         public string? CustomerName { get; set; }
         public double TotalAmount { get; set; }
-        public CartItemDto? CartDo { get; set; }
+        public CartItemViewDto? CartItemViewDtos { get; set; }
     }
 }
