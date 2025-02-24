@@ -60,7 +60,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             }
             
         }
-        public async Task<Cart> RemoveFromCartAsync(Guid customerID, Guid productId)
+        public async Task<CartItem?> RemoveFromCartAsync(Guid customerID, Guid productId)
         {
             var userCart = await GetOrCreateCartAsync(customerID);
             var product = await GetProductByIdAsync(productId);
@@ -71,17 +71,17 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
             if (cartItem != null && userCart.CartItems.Contains(cartItem))
             {
-                userCart.CartTotalAmount -= (cartItem.Product.Price * cartItem.Quantity); 
+                userCart.CartTotalAmount -= cartItem.Product.Price * cartItem.Quantity; 
                 userCart.CartItemsCount -= 1;
                 userCart.CartItems.Remove(cartItem);
                 _context.CartItems.Remove(cartItem);
                 await _context.SaveChangesAsync();
 
-                return userCart;
+                return cartItem;
             }
             else
             {
-                return userCart;
+                return null;
             }
         }
 

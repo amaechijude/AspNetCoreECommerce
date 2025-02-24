@@ -28,6 +28,12 @@ namespace AspNetCoreEcommerce.DTOs
         public string VendorName {get; set;} = string.Empty;
     }
 
+    public class RemoveFromCartViewDto
+    {
+        public bool Success {get; set;}
+        public required string Message {get; set;}
+    }
+
     public class AddToCartDto
     {
         [Required(ErrorMessage = "Product id Required")]

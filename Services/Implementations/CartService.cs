@@ -14,10 +14,11 @@ namespace AspNetCoreEcommerce.Services.Implementations
             return MapCartToDto(cart);
         }
 
-        public async Task<CartViewDto> RemoveFromCartAsync(Guid customerId, Guid productId)
+        public async Task<RemoveFromCartViewDto> RemoveFromCartAsync(Guid customerId, Guid productId)
         {
-            var cart = await _cartItemRepository.RemoveFromCartAsync(customerId, productId);
-            return MapCartToDto(cart);
+            var cartItem = await _cartItemRepository.RemoveFromCartAsync(customerId, productId);
+            
+            return MapRemoveDto(cartItem);
         }
 
         public async Task<CartViewDto> ViewCartAsync(Guid customerId)
@@ -49,6 +50,26 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
 
             return cartview;
+        }
+
+        private static RemoveFromCartViewDto MapRemoveDto(CartItem? cartItem)
+        {
+            if (cartItem is null)
+            {
+                return new RemoveFromCartViewDto
+                {
+                    Success = false,
+                    Message = "Product does not exist in your Cart",
+                };
+            }
+            else
+            {
+                return new RemoveFromCartViewDto
+                {
+                    Success = true,
+                    Message = "Product removed from your Cart",
+                };
+            }
         }
     }
 }
