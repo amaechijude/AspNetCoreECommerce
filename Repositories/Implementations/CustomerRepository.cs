@@ -2,6 +2,7 @@
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+using static AspNetCoreEcommerce.Repositories.Implementations.VendorRepository;
 
 namespace AspNetCoreEcommerce.Repositories.Implementations
 {
@@ -12,7 +13,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
         {
             var customerExists = await _context.Customers.AnyAsync(c => c.CustomerEmail == customer.CustomerEmail);
             if (customerExists)
-                throw new DuplicateEmailException("Email already exists");
+                throw new DuplicateException("Email already exists");
 
             var cart = new Cart {CartId = Guid.CreateVersion7(), CustomerId = customer.CustomerID, Customer = customer, CreatedAt = DateTimeOffset.UtcNow};
             customer.CartId = cart.CartId;
@@ -45,6 +46,5 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public class DuplicateEmailException(string message) : Exception(message);
     }
 }

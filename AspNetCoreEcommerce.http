@@ -21,6 +21,16 @@ Content-Type: application/json
 
 ###
 
+POST {{AspNetCoreEcommerce_HostAddress}}/api/vendor/login
+Content-Type: application/json
+
+{
+  "email": "scalar@email.com",
+  "password": "password"
+}
+
+###
+
 GET {{AspNetCoreEcommerce_HostAddress}}/api/product/
 
 ###

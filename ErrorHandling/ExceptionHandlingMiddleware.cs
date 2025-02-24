@@ -2,7 +2,7 @@ using System.Net;
 using System.Security.Authentication;
 using System.Text.Json;
 using AspNetCoreEcommerce.Repositories.Implementations;
-using static AspNetCoreEcommerce.Repositories.Implementations.CustomerRepository;
+using static AspNetCoreEcommerce.Repositories.Implementations.VendorRepository;
 
 namespace AspNetCoreEcommerce.ErrorHandling
 {
@@ -103,7 +103,7 @@ namespace AspNetCoreEcommerce.ErrorHandling
                 
                 return;
             }
-            catch(DuplicateEmailException ex)
+            catch(DuplicateException ex)
             {
                 context.Response.ContentType = httpContentType;
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -120,74 +120,6 @@ namespace AspNetCoreEcommerce.ErrorHandling
                 
                 return;
             }
-            // catch(InvalidCredentialException ex)
-            // {
-            //     context.Response.ContentType = httpContentType;
-            //     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-
-            //     var errorResponse = new 
-            //     {
-            //         code = (int)HttpStatusCode.Unauthorized,
-            //         status = "failed",
-            //         message = $"{ex.Message}"
-            //     };
-
-            //     var jsonRespose = JsonSerializer.Serialize(errorResponse);
-            //     await context.Response.WriteAsync(jsonRespose);
-                
-            //     return;
-            // }
-            // catch(ProductNotFoundException ex)
-            // {
-            //     context.Response.ContentType = httpContentType;
-            //     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-
-            //     var errorResponse = new
-            //     {
-            //         code = (int)HttpStatusCode.NotFound,
-            //         status = "failed",
-            //         message = $"{ex.Message}"
-            //     };
-
-            //     var jsonResponseose = JsonSerializer.Serialize(errorResponse);
-            //     await context.Response.WriteAsync(jsonResponseose);
-            //     return;
-            // }
-            // catch(NullReferenceException ex)
-            // {
-            //     context.Response.ContentType = httpContentType;
-            //     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-            //     var errorResponse = new 
-            //     {
-            //         code = (int)HttpStatusCode.BadRequest,
-            //         status = "failed",
-            //         message = $"{ex.Message}"
-            //     };
-
-            //     var jsonRespose = JsonSerializer.Serialize(errorResponse);
-            //     await context.Response.WriteAsync(jsonRespose);
-                
-            //     return;
-            // }
-            // catch(InvalidCastException ex)
-            // {
-            //     context.Response.ContentType = httpContentType;
-            //     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-            //     var errorResponse = new 
-            //     {
-            //         code = (int)HttpStatusCode.BadRequest,
-            //         status = "failed",
-            //         message = $"{ex.Message}"
-            //     };
-
-            //     var jsonRespose = JsonSerializer.Serialize(errorResponse);
-            //     await context.Response.WriteAsync(jsonRespose);
-                
-            //     return;
-            // }
-
         }
 
         
