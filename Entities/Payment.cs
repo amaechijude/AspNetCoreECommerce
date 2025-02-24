@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspNetCoreEcommerce.Entities
 {
@@ -8,7 +9,8 @@ namespace AspNetCoreEcommerce.Entities
         public Guid PaymentId { get; set; }
         public Guid OrderId {get; set;}
         public Order? Order { get; set; }
-        public double TotalAmount { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalAmount { get; set; }
         public string? TransactionReference { get; set; }
         public PaymentStatusEnum PaymentStatus {get; set;}
         public DateTimeOffset CreatedDate { get; set; }

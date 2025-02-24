@@ -6,8 +6,11 @@ namespace AspNetCoreEcommerce.DTOs
     public class CartViewDto
     {
         public Guid CartId {get; set;}
+        public Guid CustomerId {get; set;}
+        public string CustomerEmail {get; set;} = string.Empty;
+        public string CustomerName {get; set;} = string.Empty;
         public int CartProductCount { get; set; }
-        public double CartTotalAmount{ get; set; }
+        public decimal CartTotalAmount{ get; set; }
         public ICollection<CartItemViewDto> CartItems {get; set;} = [];
         
     }
@@ -18,9 +21,11 @@ namespace AspNetCoreEcommerce.DTOs
         [Required]
         public Guid CartItemId { get; set; }
         public int Quantity { get; set; }
-        public double UnitPrice {get; set;}
-        public double TotalPrice {get; set;}
+        public decimal UnitPrice {get; set;}
+        public decimal TotalPrice {get; set;}
         public Guid ProductId {get; set;}
+        public string ProductName {get; set;} = string.Empty;
+        public string VendorName {get; set;} = string.Empty;
     }
 
     public class AddToCartDto

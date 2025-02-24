@@ -19,7 +19,7 @@ namespace AspNetCoreEcommerce.Data
                 .HasIndex(p => p.ProductId)
                 .IsUnique();
 
-             // Vendor Product relationships
+            // Vendor Product relationships
             modelBuilder.Entity<Vendor>()
                 .HasMany(v => v.Products)
                 .WithOne(p => p.Vendor)
@@ -30,7 +30,7 @@ namespace AspNetCoreEcommerce.Data
             modelBuilder.Entity<Customer>()
                 .HasIndex(c => c.CustomerEmail)
                 .IsUnique();
-            
+
             // Customer Primary Key
             modelBuilder.Entity<Customer>()
                 .HasKey(c => c.CustomerID);
@@ -75,10 +75,10 @@ namespace AspNetCoreEcommerce.Data
                 .HasForeignKey(c => c.CartItemId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-             modelBuilder.Entity<CartItem>()
-            .HasOne(ci => ci.Product)
-            .WithMany(p => p.CartItems)
-            .HasForeignKey(ci => ci.ProductId);
+            modelBuilder.Entity<CartItem>()
+           .HasOne(ci => ci.Product)
+           .WithMany(p => p.CartItems)
+           .HasForeignKey(ci => ci.ProductId);
 
             modelBuilder.Entity<CartItem>()
                 .HasOne(ci => ci.Cart)
@@ -99,33 +99,38 @@ namespace AspNetCoreEcommerce.Data
                 .HasForeignKey(f => f.ProdcutId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            
 
+            string vendorOneName = "Vendo One";
+            Guid vendoroneId = Guid.Parse("64f3720e-f189-411e-aa8d-209ece4bd40f");
 
+            string vendorTwoName = "Vendor Two";
+            Guid VendorTwoId = Guid.Parse("0195193a-3ef6-743e-9d22-333bbae0764b");
             // Seed Vendor Data
             modelBuilder.Entity<Vendor>().HasData(
                 new Vendor
                 {
-                    VendorId = Guid.Parse("0195193a-3ef6-743e-9d22-333bbae0764b"),
-                    VendorName = "Vendor One",
+                    VendorId = vendoroneId,
+                    VendorName = vendorOneName,
                     VendorEmail = "vendorone@gmail.com",
-                    PasswordHash = "password",
-                    VendorBanner = Path.Combine("Upload", "Vendor", "5fd9e872-0aac-445d-bd1c-d9a9dbced9e6_.jpg"),
-                    VendorPhone = "098765432109",
-                    Location = "Abuja",
-                    DateJoined = DateTimeOffset.Parse("21-Feb-25 7:35:19 PM +00:00")
-                },
-                new Vendor
-                {
-                    VendorId = Guid.Parse("64f3720e-f189-411e-aa8d-209ece4bd40f"),
-                    VendorName = "Vendor Two",
-                    VendorEmail = "vendortwo@gmail.com",
                     PasswordHash = "password",
                     VendorBanner = Path.Combine("Upload", "Vendor", "2976ce82-545e-46f1-a035-507a008cc5ed_.jpg"),
                     VendorPhone = "098765432109",
                     Location = "Abuja",
                     DateJoined = DateTimeOffset.Parse("21-Feb-25 7:35:19 PM +00:00")
+                },
+
+                new Vendor
+                {
+                    VendorId = VendorTwoId,
+                    VendorName = vendorTwoName,
+                    VendorEmail = "vendortwo@gmail.com",
+                    PasswordHash = "password",
+                    VendorBanner = Path.Combine("Upload", "Vendor", "5fd9e872-0aac-445d-bd1c-d9a9dbced9e6_.jpg"),
+                    VendorPhone = "098765432109",
+                    Location = "Abuja",
+                    DateJoined = DateTimeOffset.Parse("21-Feb-25 7:35:19 PM +00:00")
                 }
+
             );
 
             // Seed Product data
@@ -136,11 +141,12 @@ namespace AspNetCoreEcommerce.Data
                     ProductName = "Product one",
                     Description = "Product One description",
                     ImageUrl = Path.Combine(),
-                    Price = 1099.99,
+                    Price = 1099.99m,
                     StockQuantity = 7896,
                     IsAvailable = true,
                     DiscountPercentage = 0,
-                    VendorId = Guid.Parse("0195193a-3ef6-743e-9d22-333bbae0764b"),
+                    VendorId = vendoroneId,
+                    VendorName = vendorOneName,
                     CreatedAt = DateTimeOffset.Parse("21-Feb-25 7:35:19 PM +00:00")
                 },
                 new Product
@@ -149,11 +155,12 @@ namespace AspNetCoreEcommerce.Data
                     ProductName = "Product two",
                     Description = "Product Two description",
                     ImageUrl = Path.Combine(),
-                    Price = 2099.99,
+                    Price = 2099.99m,
                     StockQuantity = 921,
                     IsAvailable = true,
                     DiscountPercentage = 0,
-                    VendorId =  Guid.Parse("0195193a-3ef6-743e-9d22-333bbae0764b"),
+                    VendorId = vendoroneId,
+                    VendorName = vendorOneName,
                     CreatedAt = DateTimeOffset.Parse("21-Feb-25 7:35:19 PM +00:00")
                 },
                 new Product
@@ -162,11 +169,12 @@ namespace AspNetCoreEcommerce.Data
                     ProductName = "Product Three",
                     Description = "Product three description",
                     ImageUrl = Path.Combine(),
-                    Price = 3099.99,
+                    Price = 3099.99m,
                     StockQuantity = 325,
                     IsAvailable = true,
                     DiscountPercentage = 10,
-                    VendorId = Guid.Parse("64f3720e-f189-411e-aa8d-209ece4bd40f"),
+                    VendorId = VendorTwoId,
+                    VendorName = vendorTwoName,
                     CreatedAt = DateTimeOffset.Parse("21-Feb-25 7:35:19 PM +00:00")
                 },
                 new Product
@@ -175,11 +183,12 @@ namespace AspNetCoreEcommerce.Data
                     ProductName = "Product four",
                     Description = "Product Four description",
                     ImageUrl = Path.Combine(),
-                    Price = 4099.99,
+                    Price = 4099.99m,
                     StockQuantity = 475,
                     IsAvailable = true,
                     DiscountPercentage = 20,
-                    VendorId = Guid.Parse("64f3720e-f189-411e-aa8d-209ece4bd40f"),
+                    VendorId = VendorTwoId,
+                    VendorName = vendorTwoName,
                     CreatedAt = DateTimeOffset.Parse("21-Feb-25 7:35:19 PM +00:00")
                 }
             );

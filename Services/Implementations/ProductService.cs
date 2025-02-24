@@ -44,11 +44,12 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Price = createProductDto.Price,
                 Description = createProductDto.Description,
                 VendorId = vendor.VendorId,
+                VendorName = vendor.VendorName,
                 Vendor = vendor,
                 ImageUrl = imageUrl,
                 CreatedAt = DateTimeOffset.UtcNow
             };
-            // category.Products.Add(product);
+            
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
 
             return MapProductToDto(createdProduct, request);
@@ -91,7 +92,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Description = product.Description,
                 ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageUrl),
                 VendorId = product.VendorId,
-                VendorName = product.Vendor.VendorName
+                VendorName = product.VendorName
             };
         }
 

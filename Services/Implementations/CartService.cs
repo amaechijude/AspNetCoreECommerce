@@ -31,6 +31,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var cartview = new CartViewDto
             {
                 CartId = cart.CartId,
+                CustomerId = cart.CustomerId,
+                CustomerEmail = cart.Customer.CustomerEmail ?? string.Empty,
+                CustomerName = cart.Customer.CustomerName ?? string.Empty,
                 CartProductCount = cart.CartItemsCount,
                 CartTotalAmount = cart.CartTotalAmount,
                 CartItems = [.. cart.CartItems.Select(ci => new CartItemViewDto
@@ -40,6 +43,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
                         Quantity = ci.Quantity,
                         TotalPrice = ci.UnitPrice * ci.Quantity,
                         ProductId = ci.ProductId,
+                        ProductName = ci.ProductName ?? string.Empty,
+                        VendorName = ci.VendorName ?? string.Empty
                     })]
             };
 

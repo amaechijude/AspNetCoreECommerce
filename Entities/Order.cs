@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspNetCoreEcommerce.Entities
 {
@@ -12,10 +13,14 @@ namespace AspNetCoreEcommerce.Entities
         public required ShippingAddress ShippingAddress {get; set;}
         public required string OrderRefrence {get; set;}
         public required Cart Cart {get; set;}
-        public double TotalBaseAmount { get; set; }
-        public double TotalDiscountAmount {get; set;}
-        public double ShippingCost {get; set;}
-        public double TotalOrderAmount {get; set;}
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalBaseAmount { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalDiscountAmount {get; set;}
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ShippingCost {get; set;}
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalOrderAmount {get; set;}
 
         [EnumDataType(typeof(OrderStatusEnum), ErrorMessage = "Invalid Order Status")]
         public OrderStatusEnum OrderStatus { get; set; }

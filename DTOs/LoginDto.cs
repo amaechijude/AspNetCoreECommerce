@@ -23,7 +23,7 @@ namespace AspNetCoreEcommerce.DTOs
     {
         public Guid CustomerId {get; set;}
         public required string CustomerEmail {get; set;}
-        public required string Token {get; set;}
         public DateTimeOffset LastLoginDate {get; set;}
+        public required string Token {get; set;}
     }
 }

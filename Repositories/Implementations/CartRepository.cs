@@ -31,12 +31,15 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
                     TotalPrice = product.Price * cartItemDto.Quantity,
                     ProductId = product.ProductId,
                     Product = product,
+                    ProductName = product.ProductName,
+                    VendorId = product.VendorId,
+                    VendorName = product.VendorName,
                     Quantity = cartItemDto.Quantity,
                     CreatedAt = DateTimeOffset.UtcNow,
                 };
 
                 _context.CartItems.Add(newCartItem);
-                userCart.CartItems.Add(newCartItem);
+                // userCart.CartItems.Add(newCartItem);
                 userCart.CartTotalAmount += product.Price * cartItemDto.Quantity;
                 userCart.CartItemsCount += 1;
                 await _context.SaveChangesAsync();

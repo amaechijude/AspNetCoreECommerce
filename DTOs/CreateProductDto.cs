@@ -10,6 +10,6 @@ namespace AspNetCoreEcommerce.DTOs
         public string? Description { get; set; }
         public IFormFile? Image { get; set; }
         [Required]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

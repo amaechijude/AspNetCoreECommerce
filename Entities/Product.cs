@@ -12,22 +12,24 @@ namespace AspNetCoreEcommerce.Entities
         public string? ImageUrl { get; set; }
         [Range(0.01, 10_000_000, ErrorMessage = "Price must be between 0.01 and 10,000,000")]
         [Column(TypeName = "decimal(18,2)")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public int StockQuantity {get; set;}
         public bool IsAvailable {get; set;}
         [Range(0, 100, ErrorMessage = "Discount percentage must by between 0 and 100")]
+        [Column(TypeName = "decimal(4,2)")]
         public decimal DiscountPercentage {get; set;}
         [Required]
         public required DateTimeOffset CreatedAt {get; set;}
         public DateTimeOffset UpdateddAt {get; set;}
         [Required]
         public required Guid VendorId { get; set; }
+        public string? VendorName {get; set;}
         public Vendor? Vendor { get; set; }
         public ICollection<CartItem>? CartItems { get; set; }
         public ICollection<OrderItem> OrderItems {get; set;} = [];
         public ICollection<Feedback>? Feedbacks {get; set;}
 
-        public void UpdateProduct(Vendor vendor, Guid vendorId, string? name, string? description, string? imageName, double? price)
+        public void UpdateProduct(Vendor vendor, Guid vendorId, string? name, string? description, string? imageName, decimal? price)
         {
             if (!string.IsNullOrWhiteSpace(name))
                 ProductName = name;
@@ -39,7 +41,7 @@ namespace AspNetCoreEcommerce.Entities
                 ImageUrl = imageName;
 
             if (price != null)
-                Price = (double)price;
+                Price = (decimal)price;
 
             Vendor = vendor;
             VendorId = vendorId;

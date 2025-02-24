@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspNetCoreEcommerce.Entities
 {
@@ -13,6 +14,7 @@ namespace AspNetCoreEcommerce.Entities
         public DateTimeOffset UpdatedAt {get; set;}
         public ICollection<CartItem> CartItems {get; set;} = [];
         public int CartItemsCount {get; set;}
-        public double CartTotalAmount {get; set;}
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal CartTotalAmount {get; set;}
     }
 }
