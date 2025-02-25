@@ -6,22 +6,28 @@ namespace AspNetCoreEcommerce.Entities
     {
         [Key]
         public Guid Id { get; set; }
-        [Required]
-        public string? FullName { get; set; }
+        [Required(ErrorMessage = "Email is required")]
         [EmailAddress]
         public string? Email { get; set; }
-        [Required]
+        [Required(ErrorMessage = "First name is required")]
+        public string? FirstName { get; set; }
+        [Required(ErrorMessage = "Last name is required")]
+        public string? LastName { get; set; }
+        [Required(ErrorMessage = "Phone number is required")]
         [StringLength(16)]
         public string? Phone { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Address is required")]
         public string? AddressOne { get; set; }
         public string? SecondAddress { get; set; }
-        [Required]
+        [Required(ErrorMessage = "City is required")]
         public string? City { get; set; }
-        [Required]
+        [Required(ErrorMessage = "State is required")]
         public string? State { get; set; }
-        public string? PostalCode { get; set; }
+        [Required(ErrorMessage = "Country is required")]
         public string? Country { get; set; }
+        [Required(ErrorMessage = "Poastal code is required")]
+        public string? PostalCode { get; set; }
+        [Required(ErrorMessage = "Customerid is required")]
         public Guid CustormerId { get; set; }
         public Customer? Customer { get; set; }
 

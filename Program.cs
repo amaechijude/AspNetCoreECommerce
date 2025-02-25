@@ -60,12 +60,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 // builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-// builder.Services.AddScoped<>();
+ builder.Services.AddScoped<IShippingAddressRespository, ShippingAddressRespository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 
 // Register Services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IShippingAddressService, ShippingAddressService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();

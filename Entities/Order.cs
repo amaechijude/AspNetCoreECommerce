@@ -9,7 +9,7 @@ namespace AspNetCoreEcommerce.Entities
         public Guid OrderId { get; set; }
         public Guid CustomerId {get; set;}
         public required Customer Customer {get; set;}
-        public Guid AddressId {get; set;}
+        public Guid ShippingAddressAddressId {get; set;}
         public required ShippingAddress ShippingAddress {get; set;}
         public required string OrderRefrence {get; set;}
         public required Cart Cart {get; set;}

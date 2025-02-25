@@ -4,7 +4,8 @@ namespace AspNetCoreEcommerce.Services.Contracts
 {
     public interface IShippingAddressService
     {
-        Task AddShippingAddressAsync(ShippingAddressDto shippingAddress);
-        Task RemoveShippingAddressAsync(int shippingAddressId);
+        Task<ShippingAddressDto> AddShippingAddressAsync(Guid customerId, ShippingAddressDto shippingAddress);
+        Task DeleteShippingAddressAsync(Guid customerid, Guid shippingId);
+        Task<IEnumerable<ShippingAddressDto>> GetShippingAddressByCustomerIdAsync(Guid customerId);
     }
 }
