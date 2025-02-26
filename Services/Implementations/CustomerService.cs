@@ -22,32 +22,21 @@ namespace AspNetCoreEcommerce.Services.Implementations
             {
                 CustomerID = Guid.CreateVersion7(),
                 CustomerEmail = customerDto.CustomerEmail,
-                CustomerName = customerDto.CustomerName,
+                FirstName = customerDto.FirstName,
+                LastName = customerDto.LastName,
                 CustomerPhone = customerDto.CustomerPhone,
                 SignupDate = DateTimeOffset.UtcNow
             };
             newCustomer.PasswordHash = _passwordhasher.HashPassword(newCustomer, customerDto.Password);
             var customer = await _customerRepository.CreateCustomerAsync(newCustomer);
 
-            return new CustomerDTO
-            {
-                CustomerId = customer.CustomerID,
-                CustomerEmail = customer.CustomerEmail,
-                CustomerName = customer.CustomerName,
-                CustomerPhone = customer.CustomerPhone,
-            };
+            return MapCustomerDto(customer);
         }
 
         public async Task<CustomerDTO> GetCustomerByIdAsync(int id)
         {
             var customer = await _customerRepository.GetCustomerByIdAsync(id);
-            return new CustomerDTO
-            {
-                CustomerId = customer.CustomerID,
-                CustomerEmail = customer.CustomerEmail,
-                CustomerName = customer.CustomerName,
-                CustomerPhone = customer.CustomerPhone,
-            };
+            return MapCustomerDto(customer);
         }
         public async Task DeleteCustomerAsync(int customerId)
         {
@@ -79,6 +68,17 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CustomerEmail = customer.CustomerEmail,
                 LastLoginDate = customer.LastLogin,
                 Token = token
+            };
+        }
+
+        private static CustomerDTO MapCustomerDto(Customer customer)
+        {
+            return new CustomerDTO
+            {
+                CustomerId = customer.CustomerID,
+                CustomerEmail = customer.CustomerEmail,
+                CustomerName = $"{customer.FirstName} {customer.LastName}",
+                CustomerPhone = customer.CustomerPhone,
             };
         }
     }

@@ -19,7 +19,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
         public async Task DeleteShippingAddress(Guid customerId, Guid shippingid)
         {
             var shippingAddress = await _context.ShippingAddresses
-                .Where(sh => sh.Id == shippingid && sh.CustormerId == customerId)
+                .Where(sh => sh.ShippingAddressId == shippingid && sh.CustomerId == customerId)
                 .FirstOrDefaultAsync()
                 ?? throw new KeyNotFoundException("Shipping address deleted or does not exist");
 
@@ -31,7 +31,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
         {
             var customer = await GetCustomerByIdAsync(customerId);
             return await _context.ShippingAddresses
-                .Where(sh => sh.CustormerId == customer.CustomerID)
+                .Where(sh => sh.CustomerId == customer.CustomerID)
                 .ToListAsync();
         }
 

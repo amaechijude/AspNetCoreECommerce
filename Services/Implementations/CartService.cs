@@ -34,7 +34,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CartId = cart.CartId,
                 CustomerId = cart.CustomerId,
                 CustomerEmail = cart.Customer.CustomerEmail ?? string.Empty,
-                CustomerName = cart.Customer.CustomerName ?? string.Empty,
+                CustomerName = $"{cart.Customer.FirstName} {cart.Customer.LastName}" ?? string.Empty,
                 CartProductCount = cart.CartItemsCount,
                 CartTotalAmount = cart.CartTotalAmount,
                 CartItems = [.. cart.CartItems.Select(ci => new CartItemViewDto

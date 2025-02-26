@@ -7,7 +7,7 @@ namespace AspNetCoreEcommerce.Repositories.Contracts
     {
         Task<Cart> GetCustomerCartAsync(Guid customerId);
         Task<Cart> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto);
-        Task<CartItem> RemoveFromCartAsync(Guid customerID, Guid productId);
+        Task<CartItem?> RemoveFromCartAsync(Guid customerID, Guid productId);
         Task<Cart> GetOrCreateCartAsync(Guid customerId);
     }
 }

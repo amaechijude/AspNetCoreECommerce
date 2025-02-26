@@ -12,7 +12,9 @@ namespace AspNetCoreEcommerce.DTOs
         [PasswordPropertyText]
         public string? Password { get; set; }
         [Required]
-        public string? CustomerName { get; set; }
+        public string? FirstName { get; set; }
+        [Required]
+        public string? LastName { get; set; }
         [Required]
         public string? CustomerPhone { get; set; }
     }

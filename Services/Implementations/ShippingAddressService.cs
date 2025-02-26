@@ -14,7 +14,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             var customer = await _shippingAddressRespository.GetCustomerByIdAsync(customerId);
             var shippingAddressEntity = new ShippingAddress
             {
-                Id = Guid.CreateVersion7(),
+                ShippingAddressId = Guid.CreateVersion7(),
                 Email = customer.CustomerEmail,
                 FirstName= shippingAddress.FirstName,
                 LastName = shippingAddress.LastName,
@@ -25,7 +25,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 State = shippingAddress.State,
                 Country = shippingAddress.Country,
                 PostalCode = shippingAddress.PostalCode,
-                CustormerId = customer.CustomerID,
+                CustomerId = customer.CustomerID,
                 Customer = customer
             };
             var result = await _shippingAddressRespository.AddShippingAddress(shippingAddressEntity);

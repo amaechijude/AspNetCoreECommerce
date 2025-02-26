@@ -65,7 +65,7 @@ namespace AspNetCoreEcommerce.Data
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.Addresses)
                 .WithOne(s => s.Customer)
-                .HasForeignKey(s => s.CustormerId)
+                .HasForeignKey(s => s.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Cart

@@ -5,7 +5,7 @@ namespace AspNetCoreEcommerce.Entities
     public class ShippingAddress
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid ShippingAddressId { get; set; }
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress]
         public string? Email { get; set; }
@@ -28,8 +28,8 @@ namespace AspNetCoreEcommerce.Entities
         [Required(ErrorMessage = "Poastal code is required")]
         public string? PostalCode { get; set; }
         [Required(ErrorMessage = "Customerid is required")]
-        public Guid CustormerId { get; set; }
-        public Customer? Customer { get; set; }
+        public Guid CustomerId { get; set; }
+        public required Customer Customer { get; set; }
 
     }
 }

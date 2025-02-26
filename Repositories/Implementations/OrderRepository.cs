@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.Entities;
-using AspNetCoreEcommerce.Respositories.Contracts;
+using AspNetCoreEcommerce.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreEcommerce.Repositories.Implementations
@@ -25,7 +25,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
                 .Where(o => o.CustomerId == customerId)
                 .ToListAsync();
 
-            return (order.Count() == 0) ? [] : order;
+            return order.Count > 0 ? order : [];
         }
         public async Task<Order> GetOrderByOrderIdAsync(Guid orderId, Guid customerId)
         {
@@ -38,17 +38,33 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             return order;
         }
 
-        public async Task<CartItem> GetCartItem(Guid customerId)
-        {
-            var cart = await _context.CartItems.FindAsync(customerId)
-                ?? throw new KeyNotFoundException("Unauthorized access");
 
-            return cart;
-        }
-
-        public async Task SaveUpdateOrderStatusAsync()
+        public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Cart> GetCartByIdAsync(Guid customerId, Guid cartId)
+        {
+            var cart = await _context.Carts
+                .Where(c => c.CustomerId == customerId && c.CartId == cartId)
+                .FirstOrDefaultAsync();
+            return cart ?? throw new KeyNotFoundException("Cart does not exist");
+        }
+
+        public async Task<ShippingAddress> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddressId)
+        {
+            var shippingAddress = await _context.ShippingAddresses
+                .Where(s => s.CustomerId == customerId && s.ShippingAddressId == shippingAddressId)
+                .FirstOrDefaultAsync();
+            return shippingAddress 
+                ?? throw new KeyNotFoundException("Shipping address does not exist");
+        }
+
+        public async Task<ICollection<OrderItem>> CreateOrderItemsAsync(ICollection<OrderItem> orderItems)
+        {
+            await _context.OrderItems.AddRangeAsync(orderItems);
+            return orderItems;
         }
     }
 }
