@@ -9,7 +9,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
     {
         private readonly IShippingAddressRespository _shippingAddressRespository = shippingAddressRespository;
 
-        public async Task<ShippingAddressDto> AddShippingAddressAsync(Guid customerId, ShippingAddressDto shippingAddress)
+        public async Task<ShippingAddressViewDto> AddShippingAddressAsync(Guid customerId, ShippingAddressDto shippingAddress)
         {
             var customer = await _shippingAddressRespository.GetCustomerByIdAsync(customerId);
             var shippingAddressEntity = new ShippingAddress
@@ -29,15 +29,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Customer = customer
             };
             var result = await _shippingAddressRespository.AddShippingAddress(shippingAddressEntity);
-            return new ShippingAddressDto
-            {
-                AddressOne = result.AddressOne,
-                City = result.City,
-                Country = result.Country,
-                PostalCode = result.PostalCode,
-                State = result.State,
-                //CustomerId = result.CustormerId
-            };
+            return MapShippingAddress(result);
         }
 
         public async Task DeleteShippingAddressAsync(Guid customerId, Guid shippingId)
@@ -46,19 +38,29 @@ namespace AspNetCoreEcommerce.Services.Implementations
             await _shippingAddressRespository.DeleteShippingAddress(customer.CustomerID, shippingId);
         }
 
-        public async Task<IEnumerable<ShippingAddressDto>> GetShippingAddressByCustomerIdAsync(Guid customerId)
+        public async Task<IEnumerable<ShippingAddressViewDto>> GetShippingAddressByCustomerIdAsync(Guid customerId)
         {
             var customer = await _shippingAddressRespository.GetCustomerByIdAsync(customerId);
             var shippingAddresses = await _shippingAddressRespository.GetShippingAddressByCustomerId(customer.CustomerID);
-            return shippingAddresses.Select(sh => new ShippingAddressDto
-            {
-                AddressOne = sh.AddressOne,
-                City = sh.City,
-                Country = sh.Country,
-                PostalCode = sh.PostalCode,
-                State = sh.State,
-                //CustomerId = sh.CustormerId
-            });
+            return shippingAddresses.Select(sh => MapShippingAddress(sh));
+        }
+
+        private static ShippingAddressViewDto MapShippingAddress(ShippingAddress shippingAddress)
+        {
+            return new ShippingAddressViewDto
+            { 
+                ShippingAddressId = shippingAddress.ShippingAddressId,
+                CustomerId = shippingAddress.CustomerId,
+                CustomerName = $"{shippingAddress.Customer.FirstName} {shippingAddress.Customer.LastName}",
+                ShippingAddressName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
+                ShippingAddressPhone = shippingAddress.Phone,
+                AddressOne = shippingAddress.AddressOne,
+                SecondAddress = shippingAddress.SecondAddress,
+                City = shippingAddress.City,
+                State = shippingAddress.State,
+                Country = shippingAddress.Country,
+                PostalCode = shippingAddress.PostalCode,
+            };
         }
     }
 }

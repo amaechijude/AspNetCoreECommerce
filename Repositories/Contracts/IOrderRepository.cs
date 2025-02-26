@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using AspNetCoreEcommerce.Entities;
 
 namespace AspNetCoreEcommerce.Repositories.Contracts

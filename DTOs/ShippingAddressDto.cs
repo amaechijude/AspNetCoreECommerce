@@ -23,4 +23,19 @@ namespace AspNetCoreEcommerce.DTOs
         [Required(ErrorMessage = "Poastal code is required")]
         public string? PostalCode { get; set; }
     }
+
+    public class ShippingAddressViewDto
+    {
+        public Guid ShippingAddressId { get; set; }
+        public Guid CustomerId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? ShippingAddressName { get; set; }
+        public string? ShippingAddressPhone { get; set; }
+        public string? AddressOne { get; set; }
+        public string? SecondAddress { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Country { get; set; }
+        public string? PostalCode { get; set; }
+    }
 }

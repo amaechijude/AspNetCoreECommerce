@@ -2,7 +2,6 @@
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCoreEcommerce.Controllers

@@ -70,7 +70,7 @@ builder.Services.AddScoped<IShippingAddressService, ShippingAddressService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<IOrderSevice, IOrderSevice>();
+builder.Services.AddScoped<IOrderSevice, OrderSevice>();
 
 
 builder.Services.AddControllers();

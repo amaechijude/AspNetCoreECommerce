@@ -8,7 +8,7 @@ namespace AspNetCoreEcommerce.DTOs
     {
         public Guid OrderId { get; set; }
         public Guid CustomerId { get; set; }
-        public required string CustomerName { get; set; }
+        public string? CustomerName { get; set; }
         public Guid ShippingAddressAddressId { get; set; }
         public required string ReceiverName { get; set; }
         public required string OrderRefrence { get; set; }

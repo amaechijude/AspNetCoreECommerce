@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
@@ -17,24 +13,6 @@ namespace AspNetCoreEcommerce.Services.Implementations
         {
             var orders = await _orderRepository.GetCustomerOrdersAsync(customerId);
             return orders.Select(o => MapOrderViewDto(o));
-                
-            //    (o => new OrderViewDto
-            //{
-            //    OrderId = o.OrderId,
-            //    CustomerId = o.CustomerId,
-            //    CustomerName = $"{o.Customer.FirstName} {o.Customer.LastName}",
-            //    ShippingAddressAddressId = o.ShippingAddressAddressId,
-            //    ReceiverName = $"{o.ShippingAddress.FirstName} {o.ShippingAddress.LastName}",
-            //    OrderRefrence = o.OrderRefrence,
-            //    TotalOrderAmount = o.TotalOrderAmount,
-            //    ShippingCost = o.ShippingCost,
-            //    TotalDiscountAmount = o.TotalDiscountAmount,
-            //    TotalAmountToBePaid = o.TotalAmountToBePaid,
-            //    OrderStatus = o.OrderStatus,
-            //    DateCreated = o.DateCreated,
-            //    DateUpdated = o.DateUpdated,
-
-            //});
         }
 
         public async Task<OrderViewDto> GetOrderByOrderIdAsync(Guid orderId, Guid customerId)
@@ -47,9 +25,12 @@ namespace AspNetCoreEcommerce.Services.Implementations
         public async Task<OrderViewDto> CreateOrderAsync(Guid customerId, Guid cartId, Guid ShippingAddressId)
         {
             var cart = await _orderRepository.GetCartByIdAsync(customerId, cartId);
+            if (cart.CartTotalAmount <= 1)
+                throw new EmptyCartException("Cannot create order with empty cart");
+
             var shippingAddress = await _orderRepository.GetShippingAddressByIdAsync(customerId, ShippingAddressId);
-            var cartItems = cart.CartItems;
-            var createOrderItems = cartItems.Select(ci => new OrderItem
+            
+            var createOrderItems = cart.CartItems.Select(ci => new OrderItem
             {
                 OrderItemId = Guid.CreateVersion7(),
                 ProductId = ci.ProductId,
@@ -68,18 +49,19 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Customer = cart.Customer,
                 ShippingAddressAddressId = shippingAddress.ShippingAddressId,
                 ShippingAddress = shippingAddress,
+                ReceiverName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
                 OrderRefrence = Guid.NewGuid().ToString(),
                 TotalOrderAmount = cart.CartTotalAmount,
                 ShippingCost = 0,
                 TotalDiscountAmount = 0,
+                TotalAmountToBePaid = cart.CartTotalAmount + 0 - 0, // + shipAddressv- discount
                 OrderStatus = OrderStatusEnum.Pending,
                 OrderItems = newOrderItems,
-                DateCreated = DateTime.Now,
-                DateUpdated = DateTime.Now,
+                DateCreated = DateTimeOffset.UtcNow,
+                DateUpdated = DateTimeOffset.UtcNow,
             };
 
             var newOrder = await _orderRepository.CreateOrderAsync(order);
-            cart.CartItems = [];
             await _orderRepository.SaveChangesAsync();
             
             return MapOrderViewDto(order);
@@ -91,8 +73,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
         {
             return new OrderViewDto
             {
-                CustomerName = $"{newOrder.Customer.FirstName} {newOrder.Customer.LastName}",
-                ReceiverName = $"{newOrder.ShippingAddress.FirstName} {newOrder.ShippingAddress.LastName}",
+                ReceiverName = newOrder.ReceiverName,
                 OrderId = newOrder.OrderId,
                 CustomerId = newOrder.CustomerId,
                 ShippingAddressAddressId = newOrder.ShippingAddressAddressId,
@@ -106,5 +87,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 DateUpdated = newOrder.DateUpdated,
             };
         }
+
+        public class EmptyCartException(string Message) : Exception(Message);
     }
 }

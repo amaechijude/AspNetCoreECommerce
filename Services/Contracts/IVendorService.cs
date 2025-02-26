@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AspNetCoreEcommerce.DTOs;
-using AspNetCoreEcommerce.Entities;
 
 namespace AspNetCoreEcommerce.Services.Contracts
 {

@@ -6,7 +6,8 @@ Content-Type: application/json
 {
     "customerEmail": "userone@email.com",
     "password": "password",
-    "customerName": "Amaechi",
+    "firstName": "Amaechi",
+    "lastName": "Jude",
     "CustomerPhone": "09122999887709"
 }
 
@@ -34,15 +35,58 @@ Content-Type: application/json
 GET {{AspNetCoreEcommerce_HostAddress}}/api/product/
 
 ###
+POST {{AspNetCoreEcommerce_HostAddress}}/api/cart/add/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA2MDg5NTgsInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDYwNTM1OCwibmJmIjoxNzQwNjA1MzU4fQ.tJ_BS7b-HZNXUtqO1DxcIpCydzcPOImqh6OCbk8jjAU
 
+{
+  "productId": "01951487-ed0b-72ac-b7f1-a562259107c8",
+  "quantity": 3
+}
+
+
+###
 GET {{AspNetCoreEcommerce_HostAddress}}/api/cart/view/
-Content-Type: /application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA0MDcwNTEsInN1YiI6IjAxOTUzODFmLWI4MmMtN2Q1Yy1hNjZkLWI4MDM1M2EyMmE0ZCIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDQwMzQ1MSwibmJmIjoxNzQwNDAzNDUxfQ.653Tfhtiu4R2cjtu4NZd0jmB4GBMP4OZN2tdPqKEKlc
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA2MDg5NTgsInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDYwNTM1OCwibmJmIjoxNzQwNjA1MzU4fQ.tJ_BS7b-HZNXUtqO1DxcIpCydzcPOImqh6OCbk8jjAU
 
 ###
 
 DELETE {{AspNetCoreEcommerce_HostAddress}}/api/cart/remove/97951466-ed0b-72ac-b7f1-a562259107c8/
 Content-Type: /application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA0MDcwNTEsInN1YiI6IjAxOTUzODFmLWI4MmMtN2Q1Yy1hNjZkLWI4MDM1M2EyMmE0ZCIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDQwMzQ1MSwibmJmIjoxNzQwNDAzNDUxfQ.653Tfhtiu4R2cjtu4NZd0jmB4GBMP4OZN2tdPqKEKlc
+
+###
+POST {{AspNetCoreEcommerce_HostAddress}}/api/shippingaddress/add/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA2MDEzOTIsInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDU5Nzc5MiwibmJmIjoxNzQwNTk3NzkyfQ.ReUyIGAkZREDx6CZTID_z-VxbMxu4QvouOFx-NJTib8
+
+{
+  "firstName": "Amaechi",
+  "lastName": "Jude",
+  "phone": "0987654321",
+  "addressOne": "Ajah",
+  "secondAddress": "Lagos",
+  "city": "Lagos",
+  "state": "Lagos",
+  "country": "Nigeria",
+  "postalCode": "243891"
+}
+###
+
+POST {{AspNetCoreEcommerce_HostAddress}}/api/order/create/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA2MDg5NTgsInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDYwNTM1OCwibmJmIjoxNzQwNjA1MzU4fQ.tJ_BS7b-HZNXUtqO1DxcIpCydzcPOImqh6OCbk8jjAU
+
+{
+  "cartId": "019543b6-62c2-756f-9ef0-8c5a19f935c3",
+  "shippingAddressId": "019543ba-c63c-7f15-8e2c-cb3839e060e6"
+}
+
+###
+
+GET  {{AspNetCoreEcommerce_HostAddress}}/api/order/all/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA2MDg5NTgsInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDYwNTM1OCwibmJmIjoxNzQwNjA1MzU4fQ.tJ_BS7b-HZNXUtqO1DxcIpCydzcPOImqh6OCbk8jjAU
 
 ###

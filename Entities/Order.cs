@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using DotNetEnv;
 
 namespace AspNetCoreEcommerce.Entities
 {
@@ -12,6 +11,7 @@ namespace AspNetCoreEcommerce.Entities
         public required Customer Customer { get; set; }
         public Guid ShippingAddressAddressId { get; set; }
         public required ShippingAddress ShippingAddress { get; set; }
+        public required string ReceiverName { get; set; }
         public required string OrderRefrence { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalOrderAmount { get; set; }
@@ -20,28 +20,20 @@ namespace AspNetCoreEcommerce.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalDiscountAmount { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalAmountToBePaid { get; private set; }
+        public required decimal TotalAmountToBePaid { get; set; }
 
         [EnumDataType(typeof(OrderStatusEnum), ErrorMessage = "Invalid Order Status")]
         public OrderStatusEnum OrderStatus { get; set; }
         public required ICollection<OrderItem> OrderItems { get; set; } = [];
         public DateTimeOffset DateCreated { get; set; }
-        public DateTimeOffset? DateUpdated { get; set; }
+        public DateTimeOffset DateUpdated { get; set; }
         public Payment? Payment { get; set; }
 
         public void UpdateOrderStatus(OrderStatusEnum statusEnum)
         {
             OrderStatus = statusEnum;
-            DateUpdated = DateTimeOffset.UtcNow;
-        }
-        private void CalculateTotalAmountToBePaid()
-        {
-            TotalAmountToBePaid = TotalOrderAmount + ShippingCost - TotalDiscountAmount;
+            DateUpdated = DateTime.UtcNow;
         }
 
-        public Order()
-        {
-            CalculateTotalAmountToBePaid();
-        }
     }
 }

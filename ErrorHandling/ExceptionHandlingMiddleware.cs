@@ -1,9 +1,8 @@
 using System.Net;
-using System.Security.Authentication;
 using System.Text.Json;
 using AspNetCoreEcommerce.Repositories.Implementations;
 using static AspNetCoreEcommerce.Repositories.Implementations.VendorRepository;
-
+using static AspNetCoreEcommerce.Services.Implementations.OrderSevice;
 namespace AspNetCoreEcommerce.ErrorHandling
 {
     public class ExceptionHandlingMiddleware(RequestDelegate next)
@@ -75,6 +74,23 @@ namespace AspNetCoreEcommerce.ErrorHandling
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
                 var errorResponse = new 
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    status = "failed",
+                    message = $"{ex.Message}"
+                };
+
+                var jsonRespose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonRespose);
+
+                return;
+            }
+            catch (EmptyCartException ex)
+            {
+                context.Response.ContentType = httpContentType;
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                var errorResponse = new
                 {
                     code = (int)HttpStatusCode.BadRequest,
                     status = "failed",

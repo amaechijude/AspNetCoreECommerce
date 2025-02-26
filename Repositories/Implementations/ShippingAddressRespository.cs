@@ -30,9 +30,11 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
         public async Task<IEnumerable<ShippingAddress>> GetShippingAddressByCustomerId(Guid customerId)
         {
             var customer = await GetCustomerByIdAsync(customerId);
-            return await _context.ShippingAddresses
+            var sh = await _context.ShippingAddresses
                 .Where(sh => sh.CustomerId == customer.CustomerID)
                 .ToListAsync();
+
+            return sh.Count > 0 ? sh : [];
         }
 
         public async Task<Customer> GetCustomerByIdAsync(Guid customerId)

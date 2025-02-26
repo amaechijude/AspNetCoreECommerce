@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
@@ -15,6 +11,9 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
         public async Task<Order> CreateOrderAsync(Order order)
         {
+            var cart = await _context.Carts.FirstOrDefaultAsync(c => c.CustomerId == order.CustomerId);
+            if (cart is not null)
+                _context.Carts.Remove(cart);
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
             return order;
@@ -63,7 +62,8 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
         public async Task<ICollection<OrderItem>> CreateOrderItemsAsync(ICollection<OrderItem> orderItems)
         {
-            await _context.OrderItems.AddRangeAsync(orderItems);
+            _context.OrderItems.AddRange(orderItems);
+            await _context.SaveChangesAsync();
             return orderItems;
         }
     }
