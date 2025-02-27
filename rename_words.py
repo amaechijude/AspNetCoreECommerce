@@ -1,31 +1,33 @@
 from pathlib import Path
-
-def rename_text(file_name, s_word, new_word):
-    try:
-        #file name
-        file = Path(file_name)
-        #Convert both the old and new words into lists
-        word_list = s_word.split(",")
-        new_word_list = new_word.split(",")
-        #Loop through the list and replace them
-        for i in range(len(word_list)):
-            data = file.read_text()
-            data = data.replace(word_list[i], new_word_list[i])
-            #Save the new text
-            file.write_text(data)
-        # return f"{s_word} is succesfully renamed to {new_word}"
-    except FileNotFoundError:
-        return "file name error"
-
-
-# x = input("Enter file name: ")
-
-# output = rename_text(x,y,z)
-# print(output)
-
 import os
 
-def traverse_directory(root_dir, skip_folder: list[str], old_word, new_word):
+def rename_text(file_name: str, s_word: str, new_word: str) -> None:
+    """
+    Replaces a word in a text file with a new word.
+
+    Args:
+        file_name (str): The name of the file to rename.
+        s_word (str): The word to replace.
+        new_word (str): The new word to replace with.
+    """
+    
+    file = Path(file_name) #file name
+
+    #Convert both the old and new words into lists
+    word_list = s_word.split(",")
+    new_word_list = new_word.split(",")
+
+    #Loop through the list and replace them
+    for i in range(len(word_list)):
+        data = file.read_text()
+        data = data.replace(word_list[i], new_word_list[i])
+        #Save the new text
+        file.write_text(data)
+
+    return None
+
+
+def traverse_directory(root_dir, skip_folder: list[str], current_word, new_word):
     """
     Traverses a directory and its subdirectories, printing all files,
     skipping a specified folder.
@@ -43,8 +45,8 @@ def traverse_directory(root_dir, skip_folder: list[str], old_word, new_word):
 
             for file in files:
                 file_path = os.path.join(root, file)
-                print(f"Renaming {old_word} to {new_word} in {file_path}")
-                rename_text(file_path, old_word, new_word)
+                print(f"Renaming {current_word} to {new_word} in {file_path}")
+                rename_text(file_path, current_word, new_word)
 
     except FileNotFoundError:
         print(f"Error: Directory '{root_dir}' not found.")
@@ -52,10 +54,13 @@ def traverse_directory(root_dir, skip_folder: list[str], old_word, new_word):
         print(f"An error occurred: {e}")
 
 
-skip_folder = ["obj", "bin", "Upload", ".git", ".github", ".vs", "Migrations"]
-# Example usage:
+# Usage:
 if __name__ == "__main__":
-    y = input("Enter words to be renamed seperated by ',': ")
-    z = input("Enter new words for the above accordignly: ")
+    skip_folder = ["obj", "bin", "Upload", ".git", ".github", ".vs", "Migrations"]
+
+    current_word = input("Enter words to be renamed seperated by ',': ")
+    new_word = input("Enter new words for the above accordignly: ")
+
     root_directory = "."  # Current directory, change as needed.
-    traverse_directory(root_directory, skip_folder, y, z)
+    traverse_directory(root_directory, skip_folder, current_word, new_word)
+    print("Done renaming files.")

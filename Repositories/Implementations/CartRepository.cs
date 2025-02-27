@@ -88,11 +88,12 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
         public async Task<Cart> GetOrCreateCartAsync(Guid customerId)
         {
             var customer = await _context.Customers.FindAsync(customerId)
-                ?? throw new KeyNotFoundException("Customer is disabled");
+                ?? throw new KeyNotFoundException("Customer not found");
 
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.CartId == customer.CartId);
+                // .ThenInclude(ci => ci.Product)
+                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
 
             if (cart != null)
                 return cart;
@@ -117,15 +118,15 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             return product;
         }
 
-        public async Task<Cart> GetCustomerCartAsync(Guid customerId)
-        {
-            var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.Product)
-                .FirstOrDefaultAsync(c => c.CustomerId == customerId)
-                ?? throw new CustomerNotFoundException("Customer does not exist");
-            return cart;
-        }
+        // public async Task<Cart> GetCustomerCartAsync(Guid customerId)
+        // {
+        //     var cart = await _context.Carts
+        //         .Include(c => c.CartItems)
+        //         .ThenInclude(ci => ci.Product)
+        //         .FirstOrDefaultAsync(c => c.CustomerId == customerId)
+        //         ?? throw new CustomerNotFoundException("Customer does not exist");
+        //     return cart;
+        // }
     }
 
 

@@ -43,12 +43,16 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Cart> GetCartByIdAsync(Guid customerId, Guid cartId)
+        public async Task<(Customer, Cart)> GetCartByIdAsync(Guid customerId)
         {
+            var customer = await _context.Customers.FindAsync(customerId)
+                ?? throw new KeyNotFoundException("Customer does not exist");
+
             var cart = await _context.Carts
-                .Where(c => c.CustomerId == customerId && c.CartId == cartId)
-                .FirstOrDefaultAsync();
-            return cart ?? throw new KeyNotFoundException("Cart does not exist");
+                .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerID)
+                ?? throw new KeyNotFoundException("Cart is Empty");
+
+            return (customer, cart);
         }
 
         public async Task<ShippingAddress> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddressId)

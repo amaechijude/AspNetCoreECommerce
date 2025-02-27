@@ -11,6 +11,8 @@
 *.sln.docstates
 Upload/*
 Migrations/*
+.env
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

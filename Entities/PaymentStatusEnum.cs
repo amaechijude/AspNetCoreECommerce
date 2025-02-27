@@ -1,10 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace AspNetCoreEcommerce.Entities
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PaymentStatusEnum
     {
         Pending = 1,
-        Completed = 2,
-        Failed = 7,
-        Refunded = 10
+        verified = 2,
+        Refunded = 4
     }
 }

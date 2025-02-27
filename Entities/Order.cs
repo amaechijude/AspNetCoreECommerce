@@ -9,6 +9,7 @@ namespace AspNetCoreEcommerce.Entities
         public Guid OrderId { get; set; }
         public Guid CustomerId { get; set; }
         public required Customer Customer { get; set; }
+        public required string CustomerName { get; set; }
         public Guid ShippingAddressAddressId { get; set; }
         public required ShippingAddress ShippingAddress { get; set; }
         public required string ReceiverName { get; set; }
@@ -24,6 +25,7 @@ namespace AspNetCoreEcommerce.Entities
 
         [EnumDataType(typeof(OrderStatusEnum), ErrorMessage = "Invalid Order Status")]
         public OrderStatusEnum OrderStatus { get; set; }
+        public PaymentStatusEnum PaymentStatus {get; set;}
         public required ICollection<OrderItem> OrderItems { get; set; } = [];
         public DateTimeOffset DateCreated { get; set; }
         public DateTimeOffset DateUpdated { get; set; }

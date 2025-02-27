@@ -22,9 +22,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
         }
 
 
-        public async Task<OrderViewDto> CreateOrderAsync(Guid customerId, Guid cartId, Guid ShippingAddressId)
+        public async Task<OrderViewDto> CreateOrderAsync(Guid customerId, Guid ShippingAddressId)
         {
-            var cart = await _orderRepository.GetCartByIdAsync(customerId, cartId);
+            var (customer, cart) = await _orderRepository.GetCartByIdAsync(customerId);
             if (cart.CartTotalAmount <= 1)
                 throw new EmptyCartException("Cannot create order with empty cart");
 
@@ -46,7 +46,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
             {
                 OrderId = Guid.CreateVersion7(),
                 CustomerId = customerId,
-                Customer = cart.Customer,
+                Customer = customer,
+                CustomerName = $"{customer.FirstName} {customer.LastName}",
                 ShippingAddressAddressId = shippingAddress.ShippingAddressId,
                 ShippingAddress = shippingAddress,
                 ReceiverName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
@@ -76,6 +77,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 ReceiverName = newOrder.ReceiverName,
                 OrderId = newOrder.OrderId,
                 CustomerId = newOrder.CustomerId,
+                CustomerName = newOrder.CustomerName,
                 ShippingAddressAddressId = newOrder.ShippingAddressAddressId,
                 OrderRefrence = newOrder.OrderRefrence,
                 TotalOrderAmount = newOrder.TotalOrderAmount,

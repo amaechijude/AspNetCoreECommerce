@@ -43,8 +43,8 @@ namespace AspNetCoreEcommerce.Controllers
         }
 
         [Authorize(Roles = GlobalConstants.customerRole)]
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateOrderAsync([FromBody] CreateOrderDto orderDto)
+        [HttpPost("create/{shippingaddressId}")]
+        public async Task<IActionResult> CreateOrderAsync([FromRoute] Guid shippingaddressId)
         {
             var customerIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(customerIdString))
@@ -54,10 +54,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!isValid)
                 return Unauthorized("Invalid Authentication");
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(await _orderSevice.CreateOrderAsync(customerId, orderDto.CartId, orderDto.ShippingAddressId ));
+            return Ok(await _orderSevice.CreateOrderAsync(customerId, shippingaddressId));
         }
     }
 }
