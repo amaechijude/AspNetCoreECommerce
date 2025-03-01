@@ -13,25 +13,37 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     public class PaymentRepository(ApplicationDbContext context) : IPaymentRepository
     {
         private readonly ApplicationDbContext _context = context;
-        // private readonly IHttpClientFactory _httpClientFactory = new();
 
-        public async Task<(string, string)> CheckoutAsync(Guid customerid, Guid orderId)
+        public async Task<(Customer, Order)> GetCustomerAndIdAsync(Guid CustomerId, Guid OrderId)
         {
-            var customer = await _context.Customers.FindAsync(customerid)
+            var customer = await _context.Customers.FindAsync(CustomerId)
                 ?? throw new KeyNotFoundException("Customer not found");
 
             var order = await _context.Orders
-                .Where(o => o.OrderId == orderId && o.Customer == customer)
+                .Where(o => o.OrderId == OrderId && o.CustomerId == CustomerId)
                 .FirstOrDefaultAsync()
                 ?? throw new KeyNotFoundException("Order not found");
 
-            if (order.PaymentStatus != PaymentStatusEnum.Pending)
-                throw new PaymentStatusException("Duplicate Payment");
-
-            return("success", "failure");
+            return (customer, order);
         }
 
+        public async Task AddPaymentAsync(Payment payment)
+        {
+            var existingPayment = await _context.Payments
+                .FirstOrDefaultAsync(p => p.OrderId == payment.OrderId);
 
-        public class PaymentStatusException(string Message) : Exception(Message);
+            if (existingPayment != null)
+                return; // Avoid duplicate insertion
+
+            try
+            {
+                _context.Payments.Add(payment);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return; // Log the exception
+            }
+        }
     }
 }

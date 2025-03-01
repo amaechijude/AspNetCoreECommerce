@@ -3,6 +3,7 @@ using AspNetCoreEcommerce;
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.ErrorHandling;
+using AspNetCoreEcommerce.PaymentChannel;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Repositories.Implementations;
 using AspNetCoreEcommerce.Respositories.Contracts;
@@ -59,9 +60,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Register Repositories
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
- builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IShippingAddressRespository, ShippingAddressRespository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 
 // Register Services
@@ -69,8 +71,10 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IShippingAddressService, ShippingAddressService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderSevice, OrderSevice>();
+builder.Services.AddScoped<ErcasPay>();
 
 
 builder.Services.AddControllers();

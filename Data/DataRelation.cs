@@ -99,6 +99,18 @@ namespace AspNetCoreEcommerce.Data
                 .HasForeignKey(f => f.ProdcutId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Order -> Payment
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Payment)
+                .WithOne(p => p.Order)
+                .HasForeignKey<Payment>(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Payment>()
+                .HasIndex(p => p.OrderId)
+                .IsUnique();
+
+
 
             string vendorOneName = "Vendo One";
             Guid vendoroneId = Guid.Parse("64f3720e-f189-411e-aa8d-209ece4bd40f");
