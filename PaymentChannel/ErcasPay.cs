@@ -16,37 +16,25 @@ namespace AspNetCoreEcommerce.PaymentChannel
         private readonly string _baseURL = "https://api.ercaspay.com/api/v1";
         private readonly HttpClient _httpClient = new();
 
-        public async Task<PaymentResponseDto?> InitiateTransaction(PaymentRequestDto paymentRequest)
+        public async Task<object?> InitiateTransaction(InitiateTransactionDto initiateTransaction)
         {
             var url = $"{_baseURL}/payment/initiate";
-            string jsonBody = JsonSerializer.Serialize(paymentRequest);
+            string jsonBody = JsonSerializer.Serialize(initiateTransaction);
+
             // Create request content
             StringContent content = new(jsonBody, Encoding.UTF8, "application/json");
-            HttpRequestMessage request = new(HttpMethod.Post, url);
 
-            request.Headers.Add("Authorization", $"Bearer {_ercasPayApiKey}");
-            request.Content = content;
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _ercasPayApiKey);
 
-            //send post request
-            HttpResponseMessage response = await _httpClient.SendAsync(request);
+            HttpResponseMessage response = await client.PostAsync(url, content);
 
             string responseBody = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+                return JsonSerializer.Deserialize<InitiateTransactionSuccessResponse>(responseBody);
 
-                // Deserialise 
-            var result = JsonSerializer.Deserialize<PaymentResponseDto>(responseBody);
-            return result;
-
+            return JsonSerializer.Deserialize<InitiateTransactionErrorResponse>(responseBody);
         }
 
-        public async Task<PaymentVerificationResponse?> VerifyTransaction(string paymentReference)
-        {
-            var url = $"{_baseURL}/payment/verify/{paymentReference}";
-            HttpRequestMessage request = new(HttpMethod.Get, url);
-            request.Headers.Add("Authorization", $"Bearer {_ercasPayApiKey}");
-            HttpResponseMessage response = await _httpClient.SendAsync(request);
-            string responseBody = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<PaymentVerificationResponse>(responseBody);
-            return result;
-        }
     }
 }

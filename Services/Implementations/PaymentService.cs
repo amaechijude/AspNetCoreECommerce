@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.PaymentChannel;
 using AspNetCoreEcommerce.Repositories.Contracts;
@@ -14,21 +10,20 @@ namespace AspNetCoreEcommerce.Services.Implementations
         private readonly IPaymentRepository _paymentRepository = paymentRepository; 
         private readonly ErcasPay _ercasPay = ercasPay;
 
-        public async Task<PaymentResponseDto?> InitiateTransaction(Guid CustomerId, Guid OrderId)
+        public async Task<object?> InitiateTransaction(Guid CustomerId, Guid OrderId)
         {
             var (customer, order) = await _paymentRepository.GetCustomerAndIdAsync(CustomerId, OrderId);
-            var paymentRequest = new PaymentRequestDto
+            var initiateTransaction = new InitiateTransactionDto
             {
-                Amount = order.TotalAmountToBePaid,
-                PaymentReference = order.OrderRefrence,
-                CustomerEmail = customer.CustomerEmail,
-                CustomerName = $"{customer.FirstName} {customer.LastName}",
-                CustomerPhoneNumber = customer.CustomerPhone ?? "+234000000000",
-                Metadata = new Metadata
+                amount = order.TotalAmountToBePaid,
+                paymentReference = order.OrderRefrence,
+                customerEmail = customer.CustomerEmail,
+                customerName = $"{customer.FirstName} {customer.LastName}",
+                metadata = new Metadata
                 {
-                    Firstname = customer.FirstName,
-                    Lastname = customer.LastName,
-                    Email = customer.CustomerEmail
+                    firstname = customer.FirstName,
+                    lastname = customer.LastName,
+                    email = customer.CustomerEmail
                 }
                 
             };
@@ -46,12 +41,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             };
             await _paymentRepository.AddPaymentAsync(payment);
-            return await _ercasPay.InitiateTransaction(paymentRequest);
+            return await _ercasPay.InitiateTransaction(initiateTransaction);
         }
 
-        public async Task<PaymentVerificationResponse?> VerifyTransaction(string paymentReference)
-        {
-            return await _ercasPay.VerifyTransaction(paymentReference);
-        }
     }
 }
