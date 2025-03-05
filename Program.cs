@@ -1,7 +1,9 @@
 using System.Text;
+using System.Threading.Channels;
 using AspNetCoreEcommerce;
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.Data;
+using AspNetCoreEcommerce.EmailService;
 using AspNetCoreEcommerce.ErrorHandling;
 using AspNetCoreEcommerce.PaymentChannel;
 using AspNetCoreEcommerce.Repositories.Contracts;
@@ -74,7 +76,11 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderSevice, OrderSevice>();
+
 builder.Services.AddScoped<ErcasPay>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddSingleton(Channel.CreateUnbounded<EmailDto>());
+builder.Services.AddHostedService<EmailService.EmailBackgroundService>();
 
 
 builder.Services.AddControllers();

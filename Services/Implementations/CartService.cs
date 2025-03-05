@@ -2,12 +2,20 @@ using AspNetCoreEcommerce.Services.Contracts;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Entities;
+using System.Threading.Channels;
+using AspNetCoreEcommerce.EmailService;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
-    public class CartService(ICartRepository cartItemRepository) : ICartService
+    public class CartService : ICartService
     {
-        private readonly ICartRepository _cartItemRepository = cartItemRepository;
+        private readonly ICartRepository _cartItemRepository;
+        
+        public CartService(ICartRepository cartItemRepository)
+        {
+            _cartItemRepository = cartItemRepository;
+        }
+
         public async Task<CartViewDto> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto)
         {
             var cart = await _cartItemRepository.ADddToCartAsync(customerId, addToCartDto);

@@ -1,5 +1,7 @@
+using System.Threading.Channels;
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.EmailService;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Respositories.Contracts;
 using AspNetCoreEcommerce.Services.Contracts;
@@ -7,11 +9,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
-    public class CustomerService(ICustomerRepository customerRepository, TokenProvider tokenProvider) : ICustomerService
+    public class CustomerService : ICustomerService
     {
-        private readonly ICustomerRepository _customerRepository = customerRepository;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly TokenProvider _tokenProvider;
+        private readonly Channel<EmailDto> _emailChannel;
+
+        public CustomerService(ICustomerRepository customerRepository, TokenProvider tokenProvider, Channel<EmailDto> emailChannel)
+        {
+            _customerRepository = customerRepository;
+            _tokenProvider = tokenProvider;
+            _emailChannel = emailChannel;
+        }
+        
         private readonly PasswordHasher<Customer> _passwordhasher = new();
-        private readonly TokenProvider _tokenProvider = tokenProvider;
 
         public async Task<CustomerDTO> CreateCustomerAsync(CustomerRegistrationDTO customerDto)
         {
