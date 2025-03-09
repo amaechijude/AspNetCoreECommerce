@@ -1,6 +1,7 @@
 ﻿using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
+using AspNetCoreEcommerce.Result;
 using AspNetCoreEcommerce.Services.Contracts;
 
 namespace AspNetCoreEcommerce.Services.Implementations
@@ -10,32 +11,36 @@ namespace AspNetCoreEcommerce.Services.Implementations
     {
         private readonly IProductRepository _productRepository = productRepository;
 
-        public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request)
+        public async Task<ResultPattern> GetAllProductsAsync(HttpRequest request)
         {
-            return await _productRepository.GetAllProductsAsync(request);
+            var data = await _productRepository.GetAllProductsAsync(request);
+            return ResultPattern.SuccessResult(data, "Products fetched successfully");
         }
 
-        public async Task<ProductViewDto> GetProductByIdAsync(Guid productId, HttpRequest request)
+        public async Task<ResultPattern> GetProductByIdAsync(Guid productId, HttpRequest request)
         {
-            var product = await _productRepository.GetProductByIdAsync(productId)
-                ?? throw new KeyNotFoundException("Product not found or is deleted");
-
-            return MapProductToDto(product, request);
+            var product = await _productRepository.GetProductByIdAsync(productId);
+            if (product is null)
+                return ResultPattern.FailResult("Product not found", 404);
+            var data = MapProductToDto(product, request);
+            return ResultPattern.SuccessResult(data, "Product found");
         }
 
-        public async Task<ProductViewDto> CreateProductAsync(Guid vendorId, CreateProductDto createProductDto, HttpRequest request)
+        public async Task<ResultPattern> CreateProductAsync(Guid vendorId, CreateProductDto createProductDto, HttpRequest request)
         {
             if (string.IsNullOrWhiteSpace(createProductDto.Name))
-                throw new ArgumentException("Product name cannot be empty.");
+                return ResultPattern.FailResult("Product name cannot be empty");
 
             if (createProductDto.Price <= 0)
-                throw new ArgumentException("Product price must be greater than zero.");
+                return ResultPattern.FailResult("Product price cannot be less than or equal to zero");
 
             if (createProductDto.Image is null)
-                throw new ArgumentException("Product Image is missing");
+                return ResultPattern.FailResult("Product image is required");
 
             var imageUrl = await GlobalConstants.SaveImageAsync(createProductDto.Image, GlobalConstants.productSubPath);
             var vendor = await _productRepository.GetVendorByIdAsync(vendorId);
+            if (vendor is null)
+                return ResultPattern.FailResult("Vendor not found", 404);
 
             var product = new Product
             {
@@ -52,7 +57,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
             
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
 
-            return MapProductToDto(createdProduct, request);
+            var data = MapProductToDto(createdProduct, request);
+            return ResultPattern.SuccessResult(data, "Product created successfully");
         }
 
         public async Task DeleteProductAsync(Guid vendorId, Guid productId)
@@ -60,16 +66,18 @@ namespace AspNetCoreEcommerce.Services.Implementations
             await _productRepository.DeleteProductAsync(vendorId, productId);
         }
 
-        public async Task<ProductViewDto> UpdateProductAsync(Guid vendorId, Guid productId, UpdateProductDto updateProduct, HttpRequest request)
+        public async Task<ResultPattern> UpdateProductAsync(Guid vendorId, Guid productId, UpdateProductDto updateProduct, HttpRequest request)
         {
-            var product = await _productRepository.GetProductByIdAsync(productId)
-                ?? throw new ArgumentException("Product not found");
+            var product = await _productRepository.GetProductByIdAsync(productId);
+            if (product is null)
+                return ResultPattern.FailResult("Product not found", 404);
 
-            var vendor = await _productRepository.GetVendorByIdAsync(vendorId)
-                ?? throw new KeyNotFoundException("Action Restricted. Contact admin");
+            var vendor = await _productRepository.GetVendorByIdAsync(vendorId);
+            if (vendor is null)
+                return ResultPattern.FailResult("Vendor not found", 404);
 
             if (vendor.VendorId != product.VendorId)
-                throw new UnauthorizedAccessException("You are not authorized for this action");
+                return ResultPattern.FailResult("Vendor does not own this product", 403);
 
             var imageUrl = updateProduct.Image == null
                 ? null
@@ -78,7 +86,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
             product.UpdateProduct(vendor, vendorId, updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
             await _productRepository.UpdateProductAsync();
 
-            return MapProductToDto(product, request);
+            var data = MapProductToDto(product, request);
+            return ResultPattern.SuccessResult(data, "Product updated successfully");
         }
 
 

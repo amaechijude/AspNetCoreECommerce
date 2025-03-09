@@ -1,12 +1,13 @@
 ﻿using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.Result;
 
 namespace AspNetCoreEcommerce.Services.Contracts
 {
     public interface ICustomerService
     {
-        Task<CustomerDTO> CreateCustomerAsync(CustomerRegistrationDTO customer);
-        Task<CustomerDTO> GetCustomerByIdAsync(int id);
+        Task<ResultPattern> CreateCustomerAsync(CustomerRegistrationDTO customer);
+        Task<ResultPattern> GetCustomerByIdAsync(int id);
         Task DeleteCustomerAsync(int customerId);
-        Task<CustomerLoginViewDto> LoginCustomerAsync(LoginDto login);
+        Task<ResultPattern> LoginCustomerAsync(LoginDto login);
     }
 }

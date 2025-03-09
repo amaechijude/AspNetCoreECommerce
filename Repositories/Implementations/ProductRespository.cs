@@ -28,18 +28,24 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        public async Task<Product> GetProductByIdAsync(Guid productId)
+        public async Task<Product?> GetProductByIdAsync(Guid productId)
         {
-            var product = await _context.Products.FindAsync(productId)
-                ?? throw new KeyNotFoundException($"Product with ID {productId} not found.");
-            return product;
+            var product = await _context.Products.FindAsync(productId);
+            return product is null ? null : product;
         }
 
         public async Task<Product> CreateProductAsync(Product product, HttpRequest request)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-            return product;
+            try
+            {
+                await _context.Products.AddAsync(product);
+                await _context.SaveChangesAsync();
+                return product;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
         public async Task UpdateProductAsync()
         {
@@ -48,7 +54,8 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
         public async Task DeleteProductAsync(Guid vendorId, Guid productId)
         {
-            var vendor = await GetVendorByIdAsync(vendorId);
+            var vendor = await GetVendorByIdAsync(vendorId)
+                ?? throw new KeyNotFoundException($"Vendor with ID {vendorId} not found or deleted.");
             var product = await _context.Products.FindAsync(productId)
                 ?? throw new KeyNotFoundException($"Product with ID {productId} not found or deleted.");
 
@@ -59,11 +66,10 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
+        public async Task<Vendor?> GetVendorByIdAsync(Guid vendorId)
         {
-            var vendor = await _context.Vendors.FindAsync(vendorId)
-                ?? throw new KeyNotFoundException("Vendor does not exist");
-            return vendor;
+            var vendor = await _context.Vendors.FindAsync(vendorId);
+            return vendor is null ? null : vendor;
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.Result;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,26 +17,40 @@ namespace AspNetCoreEcommerce.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {
-            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(vendorId))
-                return BadRequest("Invalid Authentication");
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(await _productService.CreateProductAsync(Guid.Parse(vendorId), createProduct, Request));
+            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(vendorId))
+                return BadRequest(ResultPattern.FailResult("Invalid Authentication", 400));
+
+            var isValidGuid = Guid.TryParse(vendorId, out Guid vid);
+            if (!isValidGuid)
+                return BadRequest(ResultPattern.FailResult("Invalid Vendor Id", 400));
+            var res = await _productService.CreateProductAsync(vid, createProduct, Request);
+            return res.Success
+                ? Ok(res)
+                : BadRequest(res);
         }
 
         [Authorize(Roles = GlobalConstants.vendorRole)]
         [HttpPatch("update/{productID}")]
         public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productID, [FromForm] UpdateProductDto updateProduct)
         {
-            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(vendorId))
-                return BadRequest("Invalid Authentication");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            return Ok(await _productService.UpdateProductAsync(Guid.Parse(vendorId), productID, updateProduct, Request));
+            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(vendorId))
+                return BadRequest(ResultPattern.FailResult("Invalid Authentication", 400));
+
+            var isValidGuid = Guid.TryParse(vendorId, out Guid vid);
+            if (!isValidGuid)
+                return BadRequest(ResultPattern.FailResult("Invalid Vendor Id", 400));
+            
+            var res = await _productService.UpdateProductAsync(Guid.Parse(vendorId), productID, updateProduct, Request);
+            return res.Success
+                ? Ok(res)
+                : BadRequest(res);
         }
 
         [HttpGet]
@@ -45,26 +60,31 @@ namespace AspNetCoreEcommerce.Controllers
         }
 
         [HttpGet("{productId}")]
-        public async Task<IActionResult> GetProductByIdAsync([FromRoute] Guid productId)
+        public async Task<IActionResult> GetProductByIdAsync([FromRoute] string productId)
         {
-            return Ok(await _productService.GetProductByIdAsync(productId, Request));
+            var isValidGuid = Guid.TryParse(productId, out Guid pid);
+            if (!isValidGuid)
+                return BadRequest(ResultPattern.FailResult("Invalid Product Id", 400));
+            var res = await _productService.GetProductByIdAsync(pid, Request);
+            return res.Success 
+                ? Ok(res) 
+                : NotFound(res);
         }
 
         [Authorize(Roles = GlobalConstants.vendorRole)]
         [HttpDelete("delete/{productId}")]
-        public async Task<IActionResult> DeleteProductAsync([FromRoute] Guid productId)
+        public async Task<IActionResult> DeleteProductAsync([FromRoute] string productId)
         {
             var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(vendorId))
-                return BadRequest("Invalid Authentication");
+                return BadRequest(ResultPattern.FailResult("Invalid Authentication", 400));
 
-            await _productService.DeleteProductAsync(Guid.Parse(vendorId), productId);
-            return Ok(new
-            {
-                Success = true,
-                Message = "Product Deleted Successfully",
+            var isValidGuid = Guid.TryParse(productId, out Guid pid);
+            if (!isValidGuid)
+                return BadRequest(ResultPattern.FailResult("Invalid Product Id", 400));
 
-            });
+            await _productService.DeleteProductAsync(Guid.Parse(vendorId), pid);
+            return Ok(ResultPattern.SuccessResult("", "Product deleted successfully"));
         }
     }
 }

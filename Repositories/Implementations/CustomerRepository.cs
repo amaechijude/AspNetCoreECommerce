@@ -15,31 +15,32 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             if (customerExists)
                 throw new DuplicateException("Email already exists");
 
-            var cart = new Cart {CartId = Guid.CreateVersion7(), CustomerId = customer.CustomerID, Customer = customer, CreatedAt = DateTimeOffset.UtcNow};
+            var cart = new Cart { CartId = Guid.CreateVersion7(), CustomerId = customer.CustomerID, Customer = customer, CreatedAt = DateTimeOffset.UtcNow };
             customer.CartId = cart.CartId;
             customer.Cart = cart;
             _context.Customers.Add(customer);
             _context.Carts.Add(cart);
-             await _context.SaveChangesAsync();
-              return customer;
+            await _context.SaveChangesAsync();
+            return customer;
         }
-        public async Task<Customer> GetCustomerByIdAsync(int id)
+        public async Task<Customer?> GetCustomerByIdAsync(int id)
         {
-            var cs = await _context.Customers.FindAsync(id) ?? throw new KeyNotFoundException("Customer is does not exist or is deleted");
-            return cs;
+            var cs = await _context.Customers.FindAsync(id);
+            return cs is null ? null : cs;
         }
         public async Task DeleteCustomerAsync(int id)
         {
-            var cs = await _context.Customers.FindAsync(id) ?? throw new KeyNotFoundException("Customer is does not exist or is deleted");
+            var cs = await _context.Customers.FindAsync(id)
+                ?? throw new KeyNotFoundException("Customer is does not exist or is deleted");
             cs.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Customer> GetCustomerByEmailAsync(string email)
+        public async Task<Customer?> GetCustomerByEmailAsync(string email)
         {
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerEmail == email)
-               ?? throw new ArgumentException("Invalid Email");
-            return customer;
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.CustomerEmail == email);
+            return customer is null ? null : customer;
         }
         public async Task SaveLastLoginDate()
         {

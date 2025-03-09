@@ -118,15 +118,6 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             return product;
         }
 
-        // public async Task<Cart> GetCustomerCartAsync(Guid customerId)
-        // {
-        //     var cart = await _context.Carts
-        //         .Include(c => c.CartItems)
-        //         .ThenInclude(ci => ci.Product)
-        //         .FirstOrDefaultAsync(c => c.CustomerId == customerId)
-        //         ?? throw new CustomerNotFoundException("Customer does not exist");
-        //     return cart;
-        // }
     }
 
 

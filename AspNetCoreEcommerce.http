@@ -4,7 +4,7 @@ POST {{AspNetCoreEcommerce_HostAddress}}/api/customer/register
 Content-Type: application/json
 
 {
-    "customerEmail": "userone@email.com",
+    "customerEmail": "user2one@email.com",
     "password": "password",
     "firstName": "Amaechi",
     "lastName": "Jude",
@@ -31,10 +31,12 @@ Content-Type: application/json
 }
 
 ###
-
 GET {{AspNetCoreEcommerce_HostAddress}}/api/product/
-
 ###
+
+GET {{AspNetCoreEcommerce_HostAddress}}/api/product/01951487-ed0b-72ac-b7f1-a562259107c8/
+###
+
 POST {{AspNetCoreEcommerce_HostAddress}}/api/cart/add/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA2NjA5NTksInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDY1NzM1OSwibmJmIjoxNzQwNjU3MzU5fQ.LevlNs4sieRc6cl455DiuA0AyOH7wxidpnCYjrz-0V0

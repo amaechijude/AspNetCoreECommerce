@@ -78,7 +78,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderSevice, OrderSevice>();
 
 builder.Services.AddScoped<ErcasPay>();
-builder.Services.AddScoped<EmailService>();
+builder.Services.AddSingleton<EmailService>();
 builder.Services.AddSingleton(Channel.CreateUnbounded<EmailDto>());
 builder.Services.AddHostedService<EmailService.EmailBackgroundService>();
 

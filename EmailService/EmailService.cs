@@ -17,7 +17,7 @@ namespace AspNetCoreEcommerce.EmailService
             _emaiAddress = $"{Environment.GetEnvironmentVariable("EMAIL_ADDRESS")}";
             _emailPassword = $"{Environment.GetEnvironmentVariable("EMAIL_PASSWORD")}";
             _smtpServer = $"{Environment.GetEnvironmentVariable("SMTP_SERVER")}";
-            _port = Convert.ToInt32($"{Environment.GetEnvironmentVariable("EMAIL_PORT")}");
+            _port = 587;//Convert.ToInt32($"{Environment.GetEnvironmentVariable("EMAIL_PORT")}");
         }
 
         public async Task SendMail(EmailDto emailDto)
