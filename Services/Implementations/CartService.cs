@@ -22,6 +22,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
         public async Task<ResultPattern> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto)
         {
             var cart = await _cartItemRepository.ADddToCartAsync(customerId, addToCartDto);
+            if (cart is null)
+                return ResultPattern.FailResult("Product does not exist");
+
             var data = MapCartToDto(cart);
             return ResultPattern.SuccessResult(data, "Product added to cart successfully");
         }
@@ -30,17 +33,15 @@ namespace AspNetCoreEcommerce.Services.Implementations
         {
             var cartItem = await _cartItemRepository.RemoveFromCartAsync(customerId, productId);
             if (cartItem is null)
-            {
                 return ResultPattern.FailResult("Product does not exist in your Cart");
-            }
+            
             return ResultPattern.SuccessResult(cartItem, "Product removed from cart successfully");
         }
 
         public async Task<ResultPattern> ViewCartAsync(Guid customerId)
         {
             var cart = await _cartItemRepository.GetOrCreateCartAsync(customerId);
-            var data = MapCartToDto(cart);
-            return ResultPattern.SuccessResult(data, "Cart retrieved successfully");
+            return ResultPattern.SuccessResult(MapCartToDto(cart), "Cart retrieved successfully");
         }
 
         private static CartViewDto MapCartToDto(Cart cart)

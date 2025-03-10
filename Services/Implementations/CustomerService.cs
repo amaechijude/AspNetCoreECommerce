@@ -35,6 +35,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
             if (string.IsNullOrWhiteSpace(customerDto.CustomerEmail) || string.IsNullOrWhiteSpace(customerDto.Password))
                 return ResultPattern.FailResult("Email and password cannot be empty");
 
+            var customerExists = await _customerRepository.GetCustomerByEmailAsync(customerDto.CustomerEmail);
+            if (customerExists is not null)
+                return ResultPattern.FailResult("Email already exists");
             var newCustomer = new Customer
             {
                 CustomerID = Guid.CreateVersion7(),
@@ -45,24 +48,54 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 SignupDate = DateTimeOffset.UtcNow
             };
             newCustomer.PasswordHash = _passwordhasher.HashPassword(newCustomer, customerDto.Password);
-            var customer = await _customerRepository.CreateCustomerAsync(newCustomer);
+            var verificationCode = new Random().Next(1000, 10000).ToString();
 
-            var data =  MapCustomerDto(customer);
-            return ResultPattern.SuccessResult(data, "Customer created successfully");
+            var customer = await _customerRepository.CreateCustomerAsync(newCustomer, verificationCode);
+            var EmailData = new EmailDto
+            {
+                EmailTo = newCustomer.CustomerEmail,
+                Name = $"{newCustomer.FirstName} {newCustomer.LastName}",
+                Subject = "Welcome to our store",
+                Body = "Welcome to our store, we are glad to have you as a customer \n" +
+                    "Your verification code is: \n" +
+                    $"{verificationCode}"
+            };
+            await _emailChannel.Writer.WriteAsync(EmailData);
+            return ResultPattern.SuccessResult(MapCustomerDto(customer), "Customer created successfully");
         }
 
-        public async Task<ResultPattern> GetCustomerByIdAsync(int id)
+        public async Task<ResultPattern> UpdateCustomerAsync(Guid customerId, UpdateCustomerDto customerDto)
+        {
+            var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+            if (customer is null)
+                return ResultPattern.FailResult("Customer not found", 404);
+            customer.UpdateCustomer(customerDto);
+            await _customerRepository.SaveChangesAsync();
+            return ResultPattern.SuccessResult(MapCustomerDto(customer), "Customer updated successfully");
+        }
+
+        public async Task<ResultPattern> GetCustomerByIdAsync(Guid id)
         {
             var customer = await _customerRepository.GetCustomerByIdAsync(id);
             if (customer is null)
                 return ResultPattern.FailResult("Customer not found", 404);
-            var data = MapCustomerDto(customer);
 
-            return ResultPattern.SuccessResult(data, "Customer found");
+            return ResultPattern.SuccessResult(MapCustomerDto(customer), "Customer found");
         }
-        public async Task DeleteCustomerAsync(int customerId)
+
+        public async Task<ResultPattern> GetCustomerByEmailAsync(string email)
         {
-            await _customerRepository.DeleteCustomerAsync(customerId);
+            var customer = await _customerRepository.GetCustomerByEmailAsync(email);
+            if (customer is null)
+                return ResultPattern.FailResult("Customer not found", 404);
+            return ResultPattern.SuccessResult(MapCustomerDto(customer), "Customer found");
+        }
+        public async Task<ResultPattern> DeleteCustomerAsync(Guid customerId)
+        {
+            var data = await _customerRepository.DeleteCustomerAsync(customerId);
+            if (data is null)
+                return ResultPattern.FailResult("Customer not found", 404);
+            return ResultPattern.SuccessResult(data, "Customer deleted successfully");
         }
 
         public async Task<ResultPattern> LoginCustomerAsync(LoginDto login)
@@ -71,20 +104,17 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 return ResultPattern.FailResult("Email cannot be empty");
 
             var customer = await _customerRepository.GetCustomerByEmailAsync(login.Email);
-            if (customer is null)
+            if (customer is null || string.IsNullOrEmpty(customer.PasswordHash))
                 return ResultPattern.FailResult("Customer not found", 404);
 
-#pragma warning disable CS8604 // Possible null reference argument.
             var verifyLogin = _passwordhasher.VerifyHashedPassword(customer, customer.PasswordHash, login.Password);
-#pragma warning restore CS8604 // Possible null reference argument.
-
             if (verifyLogin == PasswordVerificationResult.Failed)
                 return ResultPattern.FailResult("Invalid password");
 
             var token = _tokenProvider.Create(customer);
 
             customer.LastLogin = DateTimeOffset.UtcNow;
-            await _customerRepository.SaveLastLoginDate();
+            await _customerRepository.SaveChangesAsync();
 
             var data = new CustomerLoginViewDto
             {
@@ -105,6 +135,12 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CustomerName = $"{customer.FirstName} {customer.LastName}",
                 CustomerPhone = customer.CustomerPhone,
             };
+        }
+        private static string GenerateVerificationCode()
+        {
+            var random = new Random();
+            int code = random.Next(1000, 10000); // Generates a random number between 1000 and 9999
+            return code.ToString();
         }
     }
 }

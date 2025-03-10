@@ -14,5 +14,7 @@ namespace AspNetCoreEcommerce.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ShippingAddress> ShippingAddresses { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<VerificationCode> VerificationCodes { get; set; }
     }
 }

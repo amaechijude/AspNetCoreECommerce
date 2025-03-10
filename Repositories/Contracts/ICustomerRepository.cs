@@ -4,10 +4,10 @@ namespace AspNetCoreEcommerce.Repositories.Contracts
 {
     public interface ICustomerRepository
     {
-        Task<Customer> CreateCustomerAsync(Customer customer);
-        Task<Customer?> GetCustomerByIdAsync(int id);
-        Task DeleteCustomerAsync(int customerId);
+        Task<Customer> CreateCustomerAsync(Customer customer, string verificationCode);
+        Task<Customer?> GetCustomerByIdAsync(Guid id);
+        Task<string?> DeleteCustomerAsync(Guid customerId);
         Task<Customer?> GetCustomerByEmailAsync(string email);
-        Task SaveLastLoginDate();
+        Task SaveChangesAsync();
     }
 }

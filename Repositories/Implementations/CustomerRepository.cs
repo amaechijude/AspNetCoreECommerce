@@ -9,13 +9,16 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     public class CustomerRepository(ApplicationDbContext context) : ICustomerRepository
     {
         private readonly ApplicationDbContext _context = context;
-        public async Task<Customer> CreateCustomerAsync(Customer customer)
+        public async Task<Customer> CreateCustomerAsync(Customer customer, string verificationCode)
         {
-            var customerExists = await _context.Customers.AnyAsync(c => c.CustomerEmail == customer.CustomerEmail);
-            if (customerExists)
-                throw new DuplicateException("Email already exists");
-
-            var cart = new Cart { CartId = Guid.CreateVersion7(), CustomerId = customer.CustomerID, Customer = customer, CreatedAt = DateTimeOffset.UtcNow };
+            await CreateVerificationCodeAsync(customer.CustomerEmail, verificationCode);
+            var cart = new Cart
+            {
+                CartId = Guid.CreateVersion7(),
+                CustomerId = customer.CustomerID,
+                Customer = customer,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
             customer.CartId = cart.CartId;
             customer.Cart = cart;
             _context.Customers.Add(customer);
@@ -23,17 +26,19 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             await _context.SaveChangesAsync();
             return customer;
         }
-        public async Task<Customer?> GetCustomerByIdAsync(int id)
+        public async Task<Customer?> GetCustomerByIdAsync(Guid id)
         {
             var cs = await _context.Customers.FindAsync(id);
             return cs is null ? null : cs;
         }
-        public async Task DeleteCustomerAsync(int id)
+        public async Task<string?> DeleteCustomerAsync(Guid id)
         {
-            var cs = await _context.Customers.FindAsync(id)
-                ?? throw new KeyNotFoundException("Customer is does not exist or is deleted");
+            var cs = await _context.Customers.FindAsync(id);
+            if (cs is null)
+                return null;
             cs.IsDeleted = true;
             await _context.SaveChangesAsync();
+            return "Customer deleted successfully";
         }
 
         public async Task<Customer?> GetCustomerByEmailAsync(string email)
@@ -42,9 +47,17 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
                 .FirstOrDefaultAsync(c => c.CustomerEmail == email);
             return customer is null ? null : customer;
         }
-        public async Task SaveLastLoginDate()
+        public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        private async Task CreateVerificationCodeAsync(string email, string code)
+        {
+            var verification = await _context.VerificationCodes.FindAsync(email);
+            if (verification is not null)
+                return;
+            _ = new VerificationCode { Email = email, Code = code };
         }
 
     }
