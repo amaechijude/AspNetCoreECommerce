@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AspNetCoreEcommerce.PaymentChannel;
+using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ namespace AspNetCoreEcommerce.Controllers
 
             return response switch
             {
+                ResultPattern => BadRequest(response),
                 InitiateTransactionErrorResponse => BadRequest(response),
                 InitiateTransactionSuccessResponse => Ok(response),
                 _ => BadRequest("An error occurred while initiating payment")

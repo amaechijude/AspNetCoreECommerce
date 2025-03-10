@@ -9,17 +9,22 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<(Customer, Order)> GetCustomerAndIdAsync(Guid CustomerId, Guid OrderId)
+        public async Task<Customer?> GetCustomerByIdAsync(Guid CustomerId)
         {
-            var customer = await _context.Customers.FindAsync(CustomerId)
-                ?? throw new KeyNotFoundException("Customer not found");
+            var customer = await _context.Customers.FindAsync(CustomerId);
+                return customer is null
+                ? null
+                : customer;
+        }
 
+        public async Task<Order?> GetCustomerOrderById(Guid CustomerId, Guid OrderId)
+        {
             var order = await _context.Orders
                 .Where(o => o.OrderId == OrderId && o.CustomerId == CustomerId)
-                .FirstOrDefaultAsync()
-                ?? throw new KeyNotFoundException("Order not found");
-
-            return (customer, order);
+                .FirstOrDefaultAsync();
+            return order is null
+                ? null
+                : order;
         }
 
         public async Task AddPaymentAsync(Payment payment)

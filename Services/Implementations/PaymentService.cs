@@ -1,6 +1,7 @@
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.PaymentChannel;
 using AspNetCoreEcommerce.Repositories.Contracts;
+using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 
 namespace AspNetCoreEcommerce.Services.Implementations
@@ -12,8 +13,25 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
         public async Task<object?> InitiateTransaction(Guid CustomerId, Guid OrderId)
         {
-            var (customer, order) = await _paymentRepository.GetCustomerAndIdAsync(CustomerId, OrderId);
-            var initiateTransaction = new InitiateTransactionDto
+            var customer = await _paymentRepository.GetCustomerByIdAsync(CustomerId);
+            if (customer is null)
+                return ResultPattern.FailResult("Invalid Customer");
+            var order = await _paymentRepository.GetCustomerOrderById(CustomerId, OrderId);
+            if (order is null)
+                return ResultPattern.FailResult("Invalid Order");
+
+            var initiateTransaction = PrepareInitiateTransactionDto(customer, order);
+
+            var payment = PreparePayment(customer, order);
+            await _paymentRepository.AddPaymentAsync(payment);
+            return await _ercasPay.InitiateTransaction(initiateTransaction);
+        }
+
+
+
+        private static InitiateTransactionDto PrepareInitiateTransactionDto(Customer customer, Order order)
+        {
+            return new InitiateTransactionDto
             {
                 amount = order.TotalAmountToBePaid,
                 paymentReference = order.OrderRefrence,
@@ -25,9 +43,13 @@ namespace AspNetCoreEcommerce.Services.Implementations
                     lastname = customer.LastName,
                     email = customer.CustomerEmail
                 }
-                
+
             };
-            var payment = new Payment
+        }
+
+        private static Payment PreparePayment(Customer customer, Order order)
+        {
+            return new Payment
             {
                 PaymentId = Guid.CreateVersion7(),
                 OrderId = order.OrderId,
@@ -40,8 +62,6 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CreatedDate = DateTimeOffset.UtcNow
 
             };
-            await _paymentRepository.AddPaymentAsync(payment);
-            return await _ercasPay.InitiateTransaction(initiateTransaction);
         }
 
     }
