@@ -44,7 +44,7 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
                 .Where(sh => sh.CustomerId == customerId)
                 .ToListAsync();
 
-            return sh;
+            return sh.Count == 0 ? [] : sh;
         }
 
         public async Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId)

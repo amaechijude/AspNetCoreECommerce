@@ -7,7 +7,6 @@ namespace AspNetCoreEcommerce.DTOs
         public string? CustomerEmail { get; set; }
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
-        public string? VerificationCode { get; set; }
         public ICollection<CartItem>? CarItems { get; set; }
         public ICollection<Order>? Orders { get; set; }
         public ICollection<Payment>? Payments { get; set; }

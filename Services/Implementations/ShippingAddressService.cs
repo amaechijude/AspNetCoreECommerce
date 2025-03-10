@@ -21,7 +21,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             if (result is null)
                 return ResultPattern.FailResult("Error adding shipping address");
 
-            return ResultPattern.SuccessResult(result, "Shipping address added successfully");
+            return ResultPattern.SuccessResult(MapShippingAddress(result), "Shipping address added successfully");
         }
 
         public async Task<ResultPattern> DeleteShippingAddressAsync(Guid customerId, Guid shippingId)
@@ -69,7 +69,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             { 
                 ShippingAddressId = shippingAddress.ShippingAddressId,
                 CustomerId = shippingAddress.CustomerId,
-                CustomerName = $"{shippingAddress.Customer.FirstName} {shippingAddress.Customer.LastName}",
+                CustomerName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
                 ShippingAddressName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
                 ShippingAddressPhone = shippingAddress.Phone,
                 AddressOne = shippingAddress.AddressOne,

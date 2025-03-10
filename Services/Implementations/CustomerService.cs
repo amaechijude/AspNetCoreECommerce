@@ -153,8 +153,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CustomerId = customer.CustomerID,
                 CustomerEmail = customer.CustomerEmail,
                 CustomerName = $"{customer.FirstName} {customer.LastName}",
-                CustomerPhone = customer.CustomerPhone,
-                VerificationCode = customer.VerificationCode,
+                CustomerPhone = customer.CustomerPhone
             };
         }
         

@@ -35,7 +35,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
             if (cartItem is null)
                 return ResultPattern.FailResult("Product does not exist in your Cart");
             
-            return ResultPattern.SuccessResult(cartItem, "Product removed from cart successfully");
+            return ResultPattern.SuccessResult("CaartItem Removed", "Product removed from cart successfully");
         }
 
         public async Task<ResultPattern> ViewCartAsync(Guid customerId)
