@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AspNetCoreEcommerce.Result
+namespace AspNetCoreEcommerce.ResultResponse
 {
     public class ResultPattern
     {
-        private int StatusCode { get; set; }
+        public int StatusCode { get; set; }
         public bool Success { get; set; }
-        private string? Message { get; set; }
-        private object? Data { get; set; }
+        public string? Message { get; set; }
+        public object? Data { get; set; }
 
         public static ResultPattern SuccessResult(object data, string message)
         {

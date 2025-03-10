@@ -4,7 +4,7 @@ POST {{AspNetCoreEcommerce_HostAddress}}/api/customer/register
 Content-Type: application/json
 
 {
-    "customerEmail": "user2one@email.com",
+    "customerEmail": "user2o9ne@email.com",
     "password": "password",
     "firstName": "Amaechi",
     "lastName": "Jude",
@@ -50,10 +50,19 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lc
 ###
 GET {{AspNetCoreEcommerce_HostAddress}}/api/cart/view/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA2NjA5NTksInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDY1NzM1OSwibmJmIjoxNzQwNjU3MzU5fQ.LevlNs4sieRc6cl455DiuA0AyOH7wxidpnCYjrz-0V0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDE1NjgwMTIsInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MTU2NDQxMiwibmJmIjoxNzQxNTY0NDEyfQ.8UPldfUafU7nzCrrtHChyssYUVVwVuKqjUUqHvgnRQk
 
 ###
 
+POST {{AspNetCoreEcommerce_HostAddress}}/api/cart/add/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDE1NjgwMTIsInN1YiI6IjAxOTU0M2I2LTYxNGUtN2Y4My04ZWM5LTc5Mzg4N2UyMzM2MiIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MTU2NDQxMiwibmJmIjoxNzQxNTY0NDEyfQ.8UPldfUafU7nzCrrtHChyssYUVVwVuKqjUUqHvgnRQk
+
+{
+  "productId": "97951466-ed0b-72ac-b7f1-a562259107c8",
+  "quantity": 7
+}
+###
 DELETE {{AspNetCoreEcommerce_HostAddress}}/api/cart/remove/97951466-ed0b-72ac-b7f1-a562259107c8/
 Content-Type: /application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDA0MDcwNTEsInN1YiI6IjAxOTUzODFmLWI4MmMtN2Q1Yy1hNjZkLWI4MDM1M2EyMmE0ZCIsImVtYWlsIjoidXNlcm9uZUBlbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJDdXN0b21lciIsImlhdCI6MTc0MDQwMzQ1MSwibmJmIjoxNzQwNDAzNDUxfQ.653Tfhtiu4R2cjtu4NZd0jmB4GBMP4OZN2tdPqKEKlc

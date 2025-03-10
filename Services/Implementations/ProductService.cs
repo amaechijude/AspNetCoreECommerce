@@ -1,7 +1,7 @@
 ﻿using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
-using AspNetCoreEcommerce.Result;
+using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 
 namespace AspNetCoreEcommerce.Services.Implementations

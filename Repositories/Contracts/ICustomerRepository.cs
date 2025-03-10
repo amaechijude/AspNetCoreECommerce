@@ -1,6 +1,6 @@
 using AspNetCoreEcommerce.Entities;
 
-namespace AspNetCoreEcommerce.Respositories.Contracts
+namespace AspNetCoreEcommerce.Repositories.Contracts
 {
     public interface ICustomerRepository
     {

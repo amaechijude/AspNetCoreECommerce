@@ -8,7 +8,6 @@ using AspNetCoreEcommerce.ErrorHandling;
 using AspNetCoreEcommerce.PaymentChannel;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Repositories.Implementations;
-using AspNetCoreEcommerce.Respositories.Contracts;
 using AspNetCoreEcommerce.Services.Contracts;
 using AspNetCoreEcommerce.Services.Implementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

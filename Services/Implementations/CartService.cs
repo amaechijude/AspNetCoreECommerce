@@ -4,6 +4,9 @@ using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Entities;
 using System.Threading.Channels;
 using AspNetCoreEcommerce.EmailService;
+// using AspNetCoreEcommerce
+
+using AspNetCoreEcommerce.ResultResponse;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
@@ -16,23 +19,28 @@ namespace AspNetCoreEcommerce.Services.Implementations
             _cartItemRepository = cartItemRepository;
         }
 
-        public async Task<CartViewDto> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto)
+        public async Task<ResultPattern> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto)
         {
             var cart = await _cartItemRepository.ADddToCartAsync(customerId, addToCartDto);
-            return MapCartToDto(cart);
+            var data = MapCartToDto(cart);
+            return ResultPattern.SuccessResult(data, "Product added to cart successfully");
         }
 
-        public async Task<RemoveFromCartViewDto> RemoveFromCartAsync(Guid customerId, Guid productId)
+        public async Task<ResultPattern> RemoveFromCartAsync(Guid customerId, Guid productId)
         {
             var cartItem = await _cartItemRepository.RemoveFromCartAsync(customerId, productId);
-            
-            return MapRemoveDto(cartItem);
+            if (cartItem is null)
+            {
+                return ResultPattern.FailResult("Product does not exist in your Cart");
+            }
+            return ResultPattern.SuccessResult(cartItem, "Product removed from cart successfully");
         }
 
-        public async Task<CartViewDto> ViewCartAsync(Guid customerId)
+        public async Task<ResultPattern> ViewCartAsync(Guid customerId)
         {
             var cart = await _cartItemRepository.GetOrCreateCartAsync(customerId);
-            return MapCartToDto(cart);
+            var data = MapCartToDto(cart);
+            return ResultPattern.SuccessResult(data, "Cart retrieved successfully");
         }
 
         private static CartViewDto MapCartToDto(Cart cart)
@@ -60,24 +68,5 @@ namespace AspNetCoreEcommerce.Services.Implementations
             return cartview;
         }
 
-        private static RemoveFromCartViewDto MapRemoveDto(CartItem? cartItem)
-        {
-            if (cartItem is null)
-            {
-                return new RemoveFromCartViewDto
-                {
-                    Success = false,
-                    Message = "Product does not exist in your Cart",
-                };
-            }
-            else
-            {
-                return new RemoveFromCartViewDto
-                {
-                    Success = true,
-                    Message = "Product removed from your Cart",
-                };
-            }
-        }
     }
 }

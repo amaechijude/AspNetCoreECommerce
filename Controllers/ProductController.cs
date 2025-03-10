@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using AspNetCoreEcommerce.DTOs;
-using AspNetCoreEcommerce.Result;
+using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,7 +47,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!isValidGuid)
                 return BadRequest(ResultPattern.FailResult("Invalid Vendor Id", 400));
             
-            var res = await _productService.UpdateProductAsync(Guid.Parse(vendorId), productID, updateProduct, Request);
+            var res = await _productService.UpdateProductAsync(vid, productID, updateProduct, Request);
             return res.Success
                 ? Ok(res)
                 : BadRequest(res);

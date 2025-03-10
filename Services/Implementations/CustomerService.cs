@@ -3,8 +3,8 @@ using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.EmailService;
 using AspNetCoreEcommerce.Entities;
-using AspNetCoreEcommerce.Respositories.Contracts;
-using AspNetCoreEcommerce.Result;
+using AspNetCoreEcommerce.Repositories.Contracts;
+using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Identity;
 
@@ -79,7 +79,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
 #pragma warning restore CS8604 // Possible null reference argument.
 
             if (verifyLogin == PasswordVerificationResult.Failed)
-                return ResultPattern.FailResult("Invalid email or password");
+                return ResultPattern.FailResult("Invalid password");
 
             var token = _tokenProvider.Create(customer);
 

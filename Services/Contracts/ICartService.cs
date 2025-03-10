@@ -1,11 +1,12 @@
 ﻿using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.ResultResponse;
 
 namespace AspNetCoreEcommerce.Services.Contracts
 {
     public interface ICartService
     {
-        Task<CartViewDto> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto);
-        Task<RemoveFromCartViewDto> RemoveFromCartAsync(Guid customerId, Guid productId);
-        Task<CartViewDto> ViewCartAsync(Guid customerId);
+        Task<ResultPattern> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto);
+        Task<ResultPattern> RemoveFromCartAsync(Guid customerId, Guid productId);
+        Task<ResultPattern> ViewCartAsync(Guid customerId);
     }
 }

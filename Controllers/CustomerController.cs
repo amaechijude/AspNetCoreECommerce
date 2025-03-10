@@ -24,7 +24,10 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(await _customerService.LoginCustomerAsync(login));
+            var res = await _customerService.LoginCustomerAsync(login);
+            return res.Success
+                ? Ok(res)
+                : BadRequest(res);
         }
     }
 }
