@@ -9,5 +9,6 @@ namespace AspNetCoreEcommerce.Services.Contracts
         Task<ResultPattern> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor, HttpRequest request);
         Task<ResultPattern> GetVendorByIdAsync(Guid vendorId, HttpRequest request);
         Task<ResultPattern> LoginVendorAsync(LoginDto loginDto);
+        Task<ResultPattern> ActivateVendorAsync(string email, string code, HttpRequest request);
     }
 }

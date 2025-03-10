@@ -7,6 +7,7 @@ using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Identity;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
@@ -67,6 +68,18 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
             await _emailChannel.Writer.WriteAsync(Emaildata);
             return ResultPattern.SuccessResult(MapToVendorViewDto(nVendor, request), "Vendor Created Successfully");
+        }
+
+        public async Task<ResultPattern> ActivateVendorAsync(string email, string code, HttpRequest request)
+        {
+            var vendor = await _vendorRepository.GetVendorByEmailAsync(email);
+            if (vendor is null)
+                return ResultPattern.FailResult("Vendor not found");
+            if (vendor.VerificationCode != code)
+                return ResultPattern.FailResult("Invalid Verification Code");
+            vendor.IsActive = true;
+            await _vendorRepository.SaveChangesAsync();
+            return ResultPattern.SuccessResult(MapToVendorViewDto(vendor, request), "Vendor Activated Successfully");
         }
 
         public async Task<ResultPattern> GetVendorByIdAsync(Guid vendorId, HttpRequest request)

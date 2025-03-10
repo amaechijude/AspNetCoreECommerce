@@ -76,5 +76,18 @@ namespace AspNetCoreEcommerce.Controllers
                 ? Ok(res)
                 : BadRequest(res);
         }
+
+        [HttpPost("activate")]
+        public async Task<IActionResult> ActivateVendorAsync([FromBody] VerificationRequest activateVendor)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ResultPattern.BadModelState(ModelState));
+
+            var res = await _vendorService
+                .ActivateVendorAsync(activateVendor.Email, activateVendor.Code, Request);
+            return res.Success
+                ? Ok(res)
+                : BadRequest(res);
+        }
     }
 }
