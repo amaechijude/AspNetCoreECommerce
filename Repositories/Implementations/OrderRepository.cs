@@ -26,15 +26,16 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
 
             return order.Count > 0 ? order : [];
         }
-        public async Task<Order> GetOrderByOrderIdAsync(Guid orderId, Guid customerId)
+        public async Task<Order?> GetOrderByOrderIdAsync(Guid orderId, Guid customerId)
         {
-            var order = await _context.Orders.FindAsync(orderId)
-                ?? throw new KeyNotFoundException("Order does not exist");
+            var order = await _context.Orders
+                .Where(o => o.OrderId == orderId && o.CustomerId == customerId)
+                .FirstOrDefaultAsync();
 
-            if (order.CustomerId != customerId)
-                throw new KeyNotFoundException("Unauthorized access");
-
-            return order;
+            return order is null
+                ? null
+                : order;
+                ;
         }
 
 
@@ -55,13 +56,14 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             return (customer, cart);
         }
 
-        public async Task<ShippingAddress> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddressId)
+        public async Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddressId)
         {
             var shippingAddress = await _context.ShippingAddresses
                 .Where(s => s.CustomerId == customerId && s.ShippingAddressId == shippingAddressId)
                 .FirstOrDefaultAsync();
-            return shippingAddress 
-                ?? throw new KeyNotFoundException("Shipping address does not exist");
+            return shippingAddress is null
+                ? null
+                : shippingAddress;
         }
 
         public async Task<ICollection<OrderItem>> CreateOrderItemsAsync(ICollection<OrderItem> orderItems)

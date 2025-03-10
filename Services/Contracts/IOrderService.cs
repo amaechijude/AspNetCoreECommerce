@@ -1,11 +1,12 @@
 ﻿using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.ResultResponse;
 
 namespace AspNetCoreEcommerce.Services.Contracts
 {
     public interface IOrderSevice
     {
-        Task<OrderViewDto> CreateOrderAsync(Guid customerId, Guid ShippingAddress);
-        Task<IEnumerable<OrderViewDto>> GetOrdersByCustomerIdAsync(Guid customerId);
-        Task<OrderViewDto> GetOrderByOrderIdAsync(Guid orderId, Guid customerId);
+        Task<ResultPattern> CreateOrderAsync(Guid customerId, Guid ShippingAddress);
+        Task<ResultPattern> GetOrdersByCustomerIdAsync(Guid customerId);
+        Task<ResultPattern> GetOrderByOrderIdAsync(Guid orderId, Guid customerId);
     }
 }

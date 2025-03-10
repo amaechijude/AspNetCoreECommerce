@@ -1,35 +1,49 @@
+using System.Threading.Channels;
 using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.EmailService;
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
+using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {
-    public class OrderSevice(IOrderRepository orderRepository) : IOrderSevice
+    public class OrderSevice : IOrderSevice
     {
-        private readonly IOrderRepository _orderRepository = orderRepository;
-        
-        public async Task<IEnumerable<OrderViewDto>> GetOrdersByCustomerIdAsync(Guid customerId)
+        private readonly IOrderRepository _orderRepository;
+        private readonly Channel<EmailDto> _emailChannel;
+        public OrderSevice(IOrderRepository orderRepository, Channel<EmailDto> emailChannel)
+        {
+            _orderRepository = orderRepository;
+            _emailChannel = emailChannel;
+        }
+
+        public async Task<ResultPattern> GetOrdersByCustomerIdAsync(Guid customerId)
         {
             var orders = await _orderRepository.GetCustomerOrdersAsync(customerId);
-            return orders.Select(o => MapOrderViewDto(o));
+            return ResultPattern.SuccessResult(orders.Select(o => MapOrderViewDto(o)), "");
         }
 
-        public async Task<OrderViewDto> GetOrderByOrderIdAsync(Guid orderId, Guid customerId)
+        public async Task<ResultPattern> GetOrderByOrderIdAsync(Guid orderId, Guid customerId)
         {
             var order = await _orderRepository.GetOrderByOrderIdAsync(orderId, customerId);
-            return MapOrderViewDto(order);
+            if (order is null)
+                return ResultPattern.FailResult("Order not found");
+            return ResultPattern.SuccessResult(MapOrderViewDto(order), "Order Found");
         }
 
 
-        public async Task<OrderViewDto> CreateOrderAsync(Guid customerId, Guid ShippingAddressId)
+        public async Task<ResultPattern> CreateOrderAsync(Guid customerId, Guid ShippingAddressId)
         {
             var (customer, cart) = await _orderRepository.GetCartByIdAsync(customerId);
             if (cart.CartTotalAmount <= 1)
-                throw new EmptyCartException("Cannot create order with empty cart");
+                return ResultPattern.FailResult("Cannot create order with empty cart");
 
-            var shippingAddress = await _orderRepository.GetShippingAddressByIdAsync(customerId, ShippingAddressId);
-            
+            var shippingAddress = await _orderRepository
+                .GetShippingAddressByIdAsync(customerId, ShippingAddressId);
+            if (shippingAddress is null)
+                return ResultPattern.FailResult("Shipping Address not found");
+
             var createOrderItems = cart.CartItems.Select(ci => new OrderItem
             {
                 OrderItemId = Guid.CreateVersion7(),
@@ -64,8 +78,14 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             var newOrder = await _orderRepository.CreateOrderAsync(order);
             await _orderRepository.SaveChangesAsync();
-            
-            return MapOrderViewDto(order);
+            var EmailDto = new EmailDto
+            {
+                EmailTo = customer.CustomerEmail,
+                Name = $"{customer.FirstName} {customer.LastName}",
+                Subject = "Order Confirmation",
+                Body = $"Your order with reference {newOrder.OrderRefrence} has been created successfully"
+            };
+            return ResultPattern.SuccessResult(MapOrderViewDto(order), "Order created");
 
         }
 
@@ -90,6 +110,5 @@ namespace AspNetCoreEcommerce.Services.Implementations
             };
         }
 
-        public class EmptyCartException(string Message) : Exception(Message);
     }
 }
