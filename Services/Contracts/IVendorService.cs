@@ -1,12 +1,13 @@
 using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.ResultResponse;
 
 namespace AspNetCoreEcommerce.Services.Contracts
 {
     public interface IVendorService
     {
-        Task<VendorViewDto> SignupVendorAsync(VendorDto vendorDto, HttpRequest request);
-        Task<VendorViewDto> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor, HttpRequest request);
-        Task<VendorViewDto> GetVendorByIdAsync(Guid vendorId, HttpRequest request);
-        Task<VendorLoginViewDto> LoginVendorAsync(LoginDto loginDto);
+        Task<ResultPattern> SignupVendorAsync(VendorDto vendorDto, HttpRequest request);
+        Task<ResultPattern> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor, HttpRequest request);
+        Task<ResultPattern> GetVendorByIdAsync(Guid vendorId, HttpRequest request);
+        Task<ResultPattern> LoginVendorAsync(LoginDto loginDto);
     }
 }

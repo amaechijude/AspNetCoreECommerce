@@ -20,7 +20,10 @@ namespace AspNetCoreEcommerce.Entities
         [Required]
         public required string Location { get; set; }
         public string Role {get; set;} = GlobalConstants.vendorRole;
-        public bool? IsAdmin { get; set; } = false;
+        public bool IsAdmin { get; set; } = false;
+        public string? VerificationCode { get; set; }
+        public bool IsVerified { get; set; } = false;
+        public bool IsActive { get; set; } = true;
         [Url]
         public string? GoogleMapUrl { get; set; }
         [Url]

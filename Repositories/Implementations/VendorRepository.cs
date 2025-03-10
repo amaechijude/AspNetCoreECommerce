@@ -9,21 +9,21 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     {
         private readonly ApplicationDbContext _context = context;
 
+        public async Task<bool> CheckExistingVendorEmailAsync(string email)
+        {
+            return await _context.Vendors
+                .AnyAsync(v => v.VendorEmail == email);
+        }
+
+        public async Task<bool> CheckExistingVendorNameAsync(string name)
+        {
+            return await _context.Vendors
+                .AnyAsync(v => v.VendorName == name);
+        }
         public async Task<Vendor> SignupVendorAsync(Vendor vendor)
         {
-            var existingVendorEmail = await _context.Vendors
-                .AnyAsync(v => v.VendorEmail == vendor.VendorEmail);
-            if (existingVendorEmail)
-                throw new DuplicateException("Email is already taken");
-
-            var existingVendorName = await _context.Vendors
-                .AnyAsync(v => v.VendorName == vendor.VendorName);
-            if (existingVendorName)
-                throw new DuplicateException("Vendor Name is already taken");
-
             _context.Vendors.Add(vendor);
             await _context.SaveChangesAsync();
-
             return vendor;
 
         }

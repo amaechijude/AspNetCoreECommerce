@@ -8,5 +8,7 @@ namespace AspNetCoreEcommerce.Repositories.Contracts
         Task<Vendor> GetVendorByIdAsync(Guid veondorId);
         Task<Vendor> GetVendorByEmailAsync(string email);
         Task SaveChangesAsync();
+        Task<bool> CheckExistingVendorEmailAsync(string email);
+        Task<bool> CheckExistingVendorNameAsync(string name);
     }
 }

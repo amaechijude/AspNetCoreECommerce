@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +9,13 @@ namespace AspNetCoreEcommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class VendorController(IVendorService vendorService) : ControllerBase
+    public class VendorController : ControllerBase
     {
-        private readonly IVendorService _vendorService = vendorService;
+        private readonly IVendorService _vendorService;
+        public VendorController(IVendorService vendorService)
+        {
+            _vendorService = vendorService;
+        }
 
 
         [HttpPost("register")]
@@ -19,7 +24,10 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(await _vendorService.SignupVendorAsync(vendorDto, Request));
+            var res = await _vendorService.SignupVendorAsync(vendorDto, Request);
+            return res.Success
+                ? Ok(res)
+                : BadRequest(res);
         }
 
         [Authorize(Roles = GlobalConstants.vendorRole)]
@@ -30,13 +38,15 @@ namespace AspNetCoreEcommerce.Controllers
                 return BadRequest(ModelState);
 
             var vendorClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrWhiteSpace(vendorClaim))
-                return BadRequest("Invalid Authentiation");
 
             var vid = Guid.TryParse(vendorClaim, out Guid VendorId);
             if (!vid)
-                return BadRequest("Invalid VendorId");
-            return Ok(await _vendorService.UpdateVendorAsync(VendorId, updateVendor, Request));
+                return BadRequest(ResultPattern.FailResult("Invalid VendorId"));
+
+            var re = await _vendorService.UpdateVendorAsync(VendorId, updateVendor, Request);
+            return re.Success
+                ? Ok(re)
+                : BadRequest(re);
         }
 
         [Authorize(Roles = GlobalConstants.vendorRole)]
@@ -44,23 +54,27 @@ namespace AspNetCoreEcommerce.Controllers
         public async Task<IActionResult> GetVendorByIdAsync()
         {
             var vendorClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrWhiteSpace(vendorClaim))
-                return BadRequest("Invalid Authentiation");
 
             var vid = Guid.TryParse(vendorClaim, out Guid VendorId);
             if (!vid)
-                return BadRequest("Invalid VendorId");
+                return BadRequest(ResultPattern.FailResult("Invalid VendorId"));
 
-            return Ok(await _vendorService.GetVendorByIdAsync(VendorId, Request));
+            var res = await _vendorService.GetVendorByIdAsync(VendorId, Request);
+            return res.Success
+                ? Ok(res)
+                : BadRequest(res);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginVendorAsync([FromBody] LoginDto loginDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(ResultPattern.BadModelState(ModelState));
 
-            return Ok(await _vendorService.LoginVendorAsync(loginDto));
+            var res = await _vendorService.LoginVendorAsync(loginDto);
+            return res.Success
+                ? Ok(res)
+                : BadRequest(res);
         }
     }
 }
