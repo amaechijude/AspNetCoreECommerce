@@ -14,10 +14,10 @@ namespace AspNetCoreEcommerce.EmailService
         public EmailService()
         {
             DotNetEnv.Env.TraversePath().Load();
-            _emaiAddress = $"{Environment.GetEnvironmentVariable("EMAIL_ADDRESS")}";
-            _emailPassword = $"{Environment.GetEnvironmentVariable("EMAIL_PASSWORD")}";
-            _smtpServer = $"{Environment.GetEnvironmentVariable("SMTP_SERVER")}";
-            _port = 587;//Convert.ToInt32($"{Environment.GetEnvironmentVariable("EMAIL_PORT")}");
+            _emaiAddress = $"{Environment.GetEnvironmentVariable("EMAIL_HOST_ADDRESS")}";
+            _emailPassword = $"{Environment.GetEnvironmentVariable("EMAIL_HOST_PASSWORD")}";
+            _smtpServer = $"{Environment.GetEnvironmentVariable("EMAIL_SMTP_SERVER")}";
+            _port = int.Parse($"{Environment.GetEnvironmentVariable("EMAIL_PORT")}");
         }
 
         public async Task SendMail(EmailDto emailDto)

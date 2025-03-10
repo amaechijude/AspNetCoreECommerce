@@ -22,6 +22,7 @@ namespace AspNetCoreEcommerce.Entities
         public bool IsActive { get; set; } = true;
         public bool IsAdmin { get; set; } = false;
         public bool IsVerified { get; set; } = false;
+        public string? VerificationCode { get; set; }
         public DateTimeOffset SignupDate {get; set;}
         public DateTimeOffset LastLogin { get; set; }
         public Guid CartId {get; set;}

@@ -68,23 +68,7 @@ namespace AspNetCoreEcommerce.ErrorHandling
 
                 return;
             }
-            catch (ProductNotFoundException ex)
-            {
-                context.Response.ContentType = httpContentType;
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-                var errorResponse = new 
-                {
-                    code = (int)HttpStatusCode.BadRequest,
-                    status = "failed",
-                    message = $"{ex.Message}"
-                };
-
-                var jsonRespose = JsonSerializer.Serialize(errorResponse);
-                await context.Response.WriteAsync(jsonRespose);
-
-                return;
-            }
+            
             catch (EmptyCartException ex)
             {
                 context.Response.ContentType = httpContentType;

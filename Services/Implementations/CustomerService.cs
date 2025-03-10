@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Threading.Channels;
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.DTOs;
@@ -48,9 +49,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 SignupDate = DateTimeOffset.UtcNow
             };
             newCustomer.PasswordHash = _passwordhasher.HashPassword(newCustomer, customerDto.Password);
-            var verificationCode = new Random().Next(1000, 10000).ToString();
-
-            var customer = await _customerRepository.CreateCustomerAsync(newCustomer, verificationCode);
+            var verificationCode = GlobalConstants.GenerateVerificationCode();
+            newCustomer.VerificationCode = verificationCode;
+            var customer = await _customerRepository.CreateCustomerAsync(newCustomer);
             var EmailData = new EmailDto
             {
                 EmailTo = newCustomer.CustomerEmail,
@@ -64,6 +65,25 @@ namespace AspNetCoreEcommerce.Services.Implementations
             return ResultPattern.SuccessResult(MapCustomerDto(customer), "Customer created successfully");
         }
 
+        public async Task<ResultPattern> VerifyCodeAsync(VerificationRequest verification)
+        {
+            if (string.IsNullOrEmpty(verification.Email))
+                return ResultPattern.FailResult($"");
+            if (string.IsNullOrWhiteSpace(verification.Code))
+                return ResultPattern.FailResult("Invalid Code");
+            var customer = await _customerRepository.GetCustomerByEmailAsync(verification.Email);
+            if (customer is null)
+                return ResultPattern.FailResult("Customer details not found");
+
+            if (verification.Code != customer.VerificationCode)
+                return ResultPattern.FailResult("Verification Failed. Try again later");
+
+            customer.IsVerified = true;
+            await _customerRepository.SaveChangesAsync();
+            return ResultPattern.SuccessResult("Verified", "Customer is Verified");
+
+
+        }
         public async Task<ResultPattern> UpdateCustomerAsync(Guid customerId, UpdateCustomerDto customerDto)
         {
             var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
@@ -134,13 +154,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 CustomerEmail = customer.CustomerEmail,
                 CustomerName = $"{customer.FirstName} {customer.LastName}",
                 CustomerPhone = customer.CustomerPhone,
+                VerificationCode = customer.VerificationCode,
             };
         }
-        private static string GenerateVerificationCode()
-        {
-            var random = new Random();
-            int code = random.Next(1000, 10000); // Generates a random number between 1000 and 9999
-            return code.ToString();
-        }
+        
     }
 }

@@ -84,5 +84,16 @@ namespace AspNetCoreEcommerce.Controllers
                 ? Ok(res)
                 : BadRequest(res);
         }
+        [HttpPost("verify")]
+        public async Task<IActionResult> VerifyCodeAsync(VerificationRequest verification)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ResultPattern.BadModelState(ModelState));
+
+            var res = await _customerService.VerifyCodeAsync(verification);
+            return res.Success
+                ? Ok(res)
+                : BadRequest(res);
+        }
     }
 }

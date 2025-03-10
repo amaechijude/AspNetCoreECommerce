@@ -11,5 +11,6 @@ namespace AspNetCoreEcommerce.Services.Contracts
         Task<ResultPattern> LoginCustomerAsync(LoginDto login);
         Task<ResultPattern> GetCustomerByEmailAsync(string email);
         Task<ResultPattern> UpdateCustomerAsync(Guid customerId, UpdateCustomerDto customer);
+        Task<ResultPattern> VerifyCodeAsync(VerificationRequest verificationRequest);
     }
 }

@@ -111,7 +111,6 @@ namespace AspNetCoreEcommerce.Data
                 .IsUnique();
 
 
-
             string vendorOneName = "Vendo One";
             Guid vendoroneId = Guid.Parse("64f3720e-f189-411e-aa8d-209ece4bd40f");
 

@@ -20,10 +20,11 @@ namespace AspNetCoreEcommerce.Services.Implementations
         public async Task<ResultPattern> GetProductByIdAsync(Guid productId, HttpRequest request)
         {
             var product = await _productRepository.GetProductByIdAsync(productId);
+
             if (product is null)
                 return ResultPattern.FailResult("Product not found", 404);
-            var data = MapProductToDto(product, request);
-            return ResultPattern.SuccessResult(data, "Product found");
+            
+            return ResultPattern.SuccessResult(MapProductToDto(product, request), "Product found");
         }
 
         public async Task<ResultPattern> CreateProductAsync(Guid vendorId, CreateProductDto createProductDto, HttpRequest request)

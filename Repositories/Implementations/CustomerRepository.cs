@@ -9,16 +9,9 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     public class CustomerRepository(ApplicationDbContext context) : ICustomerRepository
     {
         private readonly ApplicationDbContext _context = context;
-        public async Task<Customer> CreateCustomerAsync(Customer customer, string verificationCode)
+        public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
-            await CreateVerificationCodeAsync(customer.CustomerEmail, verificationCode);
-            var cart = new Cart
-            {
-                CartId = Guid.CreateVersion7(),
-                CustomerId = customer.CustomerID,
-                Customer = customer,
-                CreatedAt = DateTimeOffset.UtcNow
-            };
+            var cart = await UserCart(customer);
             customer.CartId = cart.CartId;
             customer.Cart = cart;
             _context.Customers.Add(customer);
@@ -52,12 +45,21 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        private async Task CreateVerificationCodeAsync(string email, string code)
+        private async Task<Cart> UserCart(Customer customer)
         {
-            var verification = await _context.VerificationCodes.FindAsync(email);
-            if (verification is not null)
-                return;
-            _ = new VerificationCode { Email = email, Code = code };
+            var cart = await _context.Carts
+                .FirstOrDefaultAsync (c => c.CustomerId == customer.CustomerID);
+            if (cart is null)
+            {
+                return new Cart
+                {
+                    CartId = Guid.CreateVersion7(),
+                    CustomerId = customer.CustomerID,
+                    Customer = customer,
+                    CreatedAt = DateTimeOffset.UtcNow
+                };
+            }
+            return cart;
         }
 
     }

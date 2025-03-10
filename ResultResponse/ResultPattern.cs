@@ -32,5 +32,16 @@ namespace AspNetCoreEcommerce.ResultResponse
                 Message = message
             };
         }
+
+        public static ResultPattern BadModelState(object? data)
+        {
+            return new ResultPattern
+            {
+                StatusCode = 400,
+                Success = false,
+                Message = "Invalid model state",
+                Data = data
+            };
+        }
     }
 }

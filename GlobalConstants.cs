@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace AspNetCoreEcommerce
 {
     public static class GlobalConstants
@@ -58,6 +60,13 @@ namespace AspNetCoreEcommerce
             {
                 throw new IOException("File in use");
             }
+        }
+        public static string GenerateVerificationCode()
+        {
+            byte[] randomByte = new byte[4];
+            RandomNumberGenerator.Fill(randomByte);
+            int code = BitConverter.ToInt32(randomByte, 0) % 1000000;
+            return Math.Abs(code).ToString("D6");
         }
 
     }
