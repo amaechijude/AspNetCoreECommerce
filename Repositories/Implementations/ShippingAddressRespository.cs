@@ -9,38 +9,56 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<ShippingAddress> AddShippingAddress(ShippingAddress shippingAddress)
+        public async Task<ShippingAddress?> AddShippingAddress(ShippingAddress shippingAddress)
         {
-            await _context.ShippingAddresses.AddAsync(shippingAddress);
-            await _context.SaveChangesAsync();
-            return shippingAddress;
+            try
+            {
+                await _context.ShippingAddresses.AddAsync(shippingAddress);
+                await _context.SaveChangesAsync();
+                return shippingAddress;
+            }
+            catch(Exception)
+            {
+                //throw new DbUpdateException("Error adding shipping address", ex)
+                // log exception
+                return null;
+            }
         }
 
-        public async Task DeleteShippingAddress(Guid customerId, Guid shippingid)
+        public async Task<string?> DeleteShippingAddress(Guid customerId, Guid shippingid)
         {
             var shippingAddress = await _context.ShippingAddresses
                 .Where(sh => sh.ShippingAddressId == shippingid && sh.CustomerId == customerId)
-                .FirstOrDefaultAsync()
-                ?? throw new KeyNotFoundException("Shipping address deleted or does not exist");
+                .FirstOrDefaultAsync();
+            if (shippingAddress == null)
+                return null;
 
             _context.ShippingAddresses.Remove(shippingAddress);
             await _context.SaveChangesAsync();
+            return "Shipping address removed";
         }
 
         public async Task<IEnumerable<ShippingAddress>> GetShippingAddressByCustomerId(Guid customerId)
         {
-            var customer = await GetCustomerByIdAsync(customerId);
             var sh = await _context.ShippingAddresses
-                .Where(sh => sh.CustomerId == customer.CustomerID)
+                .Where(sh => sh.CustomerId == customerId)
                 .ToListAsync();
 
-            return sh.Count > 0 ? sh : [];
+            return sh;
         }
 
-        public async Task<Customer> GetCustomerByIdAsync(Guid customerId)
+        public async Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId)
         {
-            return await _context.Customers.FindAsync(customerId)
-                ?? throw new KeyNotFoundException("Invalid Customer");
+            var sh = await _context.ShippingAddresses
+                .Where(sh => sh.CustomerId == customerId && sh.ShippingAddressId == shippingAddId)
+                .FirstOrDefaultAsync();
+            return sh is null ? null: sh;
+        }
+
+        public async Task<Customer?> GetCustomerByIdAsync(Guid customerId)
+        {
+            var cs = await _context.Customers.FindAsync(customerId);
+            return cs is null ? null : cs;
         }
     }
 }
