@@ -41,12 +41,17 @@ var dbPassword = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
 var dbPort = Environment.GetEnvironmentVariable("DATABASE_PORT");
 
 // Construct connection string
+var environment = builder.Environment;
 var dbConnectionString = $"Host={dbHost};Username={dbUser};Database={dbName};Password={dbPassword};Port={dbPort}";
 
 //Register Application context with postgresql connection
-builder.Services.AddDbContext<ApplicationDbContext>(services =>
-    services.UseNpgsql(dbConnectionString)
-    );
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    if (environment.IsEnvironment("Testing"))
+        options.UseSqlite("DataSource=test.db");
+    else
+        options.UseNpgsql(dbConnectionString);
+});
 
 
 // Register JWT

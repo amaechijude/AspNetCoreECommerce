@@ -2,7 +2,6 @@
 using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
-using static AspNetCoreEcommerce.Repositories.Implementations.VendorRepository;
 
 namespace AspNetCoreEcommerce.Repositories.Implementations
 {
