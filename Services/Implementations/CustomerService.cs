@@ -81,9 +81,8 @@ namespace AspNetCoreEcommerce.Services.Implementations
             customer.IsVerified = true;
             await _customerRepository.SaveChangesAsync();
             return ResultPattern.SuccessResult("Verified", "Customer is Verified");
-
-
         }
+        
         public async Task<ResultPattern> UpdateCustomerAsync(Guid customerId, UpdateCustomerDto customerDto)
         {
             var customer = await _customerRepository.GetCustomerByIdAsync(customerId);

@@ -36,7 +36,7 @@ namespace AspNetCoreEcommerce.Services.Implementations
         public async Task<ResultPattern> CreateOrderAsync(Guid customerId, Guid ShippingAddressId)
         {
             var (customer, cart) = await _orderRepository.GetCartByIdAsync(customerId);
-            if (cart.CartTotalAmount <= 1)
+            if (cart.CartTotalAmount < 1)
                 return ResultPattern.FailResult("Cannot create order with empty cart");
 
             var shippingAddress = await _orderRepository
@@ -85,8 +85,9 @@ namespace AspNetCoreEcommerce.Services.Implementations
                 Subject = "Order Confirmation",
                 Body = $"Your order with reference {newOrder.OrderRefrence} has been created successfully"
             };
+            await _emailChannel.Writer.WriteAsync(EmailDto);
+            
             return ResultPattern.SuccessResult(MapOrderViewDto(order), "Order created");
-
         }
 
 
