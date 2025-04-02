@@ -41,17 +41,15 @@ var dbPassword = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
 var dbPort = Environment.GetEnvironmentVariable("DATABASE_PORT");
 
 // Construct connection string
-var environment = builder.Environment;
+// var environment = builder.Environment;
 var dbConnectionString = $"Host={dbHost};Username={dbUser};Database={dbName};Password={dbPassword};Port={dbPort}";
 
 //Register Application context with postgresql connection
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    if (environment.IsEnvironment("Testing"))
-        options.UseSqlite("DataSource=test.db");
-    else
-        options.UseNpgsql(dbConnectionString);
-});
+builder.Services
+    .AddDbContext<ApplicationDbContext>(
+        options =>
+            options.UseNpgsql(dbConnectionString)
+);
 
 
 // Register JWT
@@ -130,3 +128,10 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllers();
 
 app.Run();
+
+
+    // <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    // <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    // <PackageReference Include="Moq" Version="4.20.72" />
+    // <PackageReference Include="xunit" Version="2.9.2" />
+    // <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
