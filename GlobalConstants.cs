@@ -10,6 +10,7 @@ namespace AspNetCoreEcommerce
         public const string uploadPath = "Upload";
         public const string vendorSubPath = "Vendor";
         public const string productSubPath = "Products";
+        public const string _dbPath = "test.sqlite3";
 
         public static async Task<string> SaveImageAsync(IFormFile imageFile, string subPath)
         {
@@ -69,5 +70,16 @@ namespace AspNetCoreEcommerce
             return Math.Abs(code).ToString("D6");
         }
 
+        public static void TestDbCheck()
+        {
+            if (File.Exists(_dbPath))
+            {
+                File.Delete(_dbPath);
+            }
+            else
+            {
+                File.Create(_dbPath);
+            }
+        }
     }
 }

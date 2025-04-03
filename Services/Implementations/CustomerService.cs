@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.Threading.Channels;
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.DTOs;

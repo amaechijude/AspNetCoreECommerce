@@ -1,5 +1,4 @@
-﻿using AspNetCoreEcommerce.DTOs;
-using AspNetCoreEcommerce.ResultResponse;
+﻿using AspNetCoreEcommerce.ResultResponse;
 
 namespace AspNetCoreEcommerce.Services.Contracts
 {

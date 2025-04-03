@@ -1,8 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using AspNetCoreEcommerce.Repositories.Implementations;
 using static AspNetCoreEcommerce.Repositories.Implementations.VendorRepository;
-using static AspNetCoreEcommerce.Services.Implementations.OrderSevice;
 namespace AspNetCoreEcommerce.ErrorHandling
 {
     public class ExceptionHandlingMiddleware(RequestDelegate next)

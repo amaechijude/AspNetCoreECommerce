@@ -7,7 +7,6 @@ using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.ResultResponse;
 using AspNetCoreEcommerce.Services.Contracts;
 using Microsoft.AspNetCore.Identity;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace AspNetCoreEcommerce.Services.Implementations
 {

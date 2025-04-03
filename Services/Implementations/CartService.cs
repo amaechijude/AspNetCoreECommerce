@@ -2,8 +2,6 @@ using AspNetCoreEcommerce.Services.Contracts;
 using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Repositories.Contracts;
 using AspNetCoreEcommerce.Entities;
-using System.Threading.Channels;
-using AspNetCoreEcommerce.EmailService;
 // using AspNetCoreEcommerce
 
 using AspNetCoreEcommerce.ResultResponse;
