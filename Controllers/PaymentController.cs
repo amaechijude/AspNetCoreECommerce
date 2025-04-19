@@ -27,7 +27,6 @@ namespace AspNetCoreEcommerce.Controllers
 
             return response switch
             {
-                ResultPattern => BadRequest(response),
                 InitiateTransactionErrorResponse => BadRequest(response),
                 InitiateTransactionSuccessResponse => Ok(response),
                 _ => BadRequest("An error occurred while initiating payment")
