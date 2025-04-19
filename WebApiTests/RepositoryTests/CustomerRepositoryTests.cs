@@ -25,7 +25,7 @@ namespace AspNetCoreEcommerce.WebApiTests.RepositoryTests
                 .Options;
 
             _context = new ApplicationDbContext(options);
-            _context.Database.EnsureCreated();
+            // _context.Database.EnsureCreated();
             _customerRepository = new CustomerRepository(_context);
         }
         [Fact]

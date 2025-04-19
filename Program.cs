@@ -59,7 +59,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => 
     {
         var secretKey = $"{Environment.GetEnvironmentVariable("JWT_SECRET_KEY")}";
-        options.RequireHttpsMetadata = false;
+        options.RequireHttpsMetadata = false; // Set to true in production
+        options.SaveToken = true; // Save the token in the authentication properties
         options.TokenValidationParameters = new TokenValidationParameters
         {
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),

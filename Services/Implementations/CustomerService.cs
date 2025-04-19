@@ -123,11 +123,11 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
             var customer = await _customerRepository.GetCustomerByEmailAsync(login.Email);
             if (customer is null || string.IsNullOrEmpty(customer.PasswordHash))
-                return ResultPattern.FailResult("Customer not found", 404);
+                return ResultPattern.FailResult("Invalid Credentials", 401);
 
             var verifyLogin = _passwordhasher.VerifyHashedPassword(customer, customer.PasswordHash, login.Password);
             if (verifyLogin == PasswordVerificationResult.Failed)
-                return ResultPattern.FailResult("Invalid password");
+                return ResultPattern.FailResult("Invalid Credentials", 401);
 
             var token = _tokenProvider.Create(customer);
 

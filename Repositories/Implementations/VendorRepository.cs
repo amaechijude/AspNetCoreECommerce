@@ -22,9 +22,16 @@ namespace AspNetCoreEcommerce.Repositories.Implementations
         }
         public async Task<Vendor> SignupVendorAsync(Vendor vendor)
         {
-            _context.Vendors.Add(vendor);
-            await _context.SaveChangesAsync();
-            return vendor;
+            try
+            {
+                _context.Vendors.Add(vendor);
+                await _context.SaveChangesAsync();
+                return vendor;
+            }
+            catch (Exception)
+            {
+                throw new DuplicateException("Vendor already exists");
+            }
 
         }
         public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
