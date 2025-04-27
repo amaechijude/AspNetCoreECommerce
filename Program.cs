@@ -4,6 +4,7 @@ using AspNetCoreEcommerce;
 using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.Data;
 using AspNetCoreEcommerce.EmailService;
+using AspNetCoreEcommerce.Entities;
 using AspNetCoreEcommerce.ErrorHandling;
 using AspNetCoreEcommerce.PaymentChannel;
 using AspNetCoreEcommerce.Repositories.Contracts;
@@ -11,6 +12,7 @@ using AspNetCoreEcommerce.Repositories.Implementations;
 using AspNetCoreEcommerce.Services.Contracts;
 using AspNetCoreEcommerce.Services.Implementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
@@ -24,7 +26,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
+            policy.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         });
@@ -45,16 +47,26 @@ var dbPort = Environment.GetEnvironmentVariable("DATABASE_PORT");
 var dbConnectionString = $"Host={dbHost};Username={dbUser};Database={dbName};Password={dbPassword};Port={dbPort}";
 
 //Register Application context with postgresql connection
-builder.Services
-    .AddDbContext<ApplicationDbContext>(
-        options =>
-            options.UseNpgsql(dbConnectionString)
-);
+builder.Services.AddDbContext<ApplicationDbContext>(options => 
+    options.UseNpgsql(dbConnectionString));
 
+//Authentication and Identity
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentity<AppUser, IdentityRole>(options => {
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+})
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 // Register JWT
 builder.Services.AddSingleton<TokenProvider>();
-builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => 
     {
@@ -69,7 +81,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero,
         };
     });
-
 
 
 // Register Repositories
@@ -121,18 +132,10 @@ app.UseStaticFiles(new StaticFileOptions{
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-
+app.UseCors("AllowFrontend");
 // add middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
 app.Run();
-
-
-    // <PackageReference Include="coverlet.collector" Version="6.0.2" />
-    // <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    // <PackageReference Include="Moq" Version="4.20.72" />
-    // <PackageReference Include="xunit" Version="2.9.2" />
-    // <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />

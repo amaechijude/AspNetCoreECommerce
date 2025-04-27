@@ -1,10 +1,11 @@
 ﻿using System.Threading.Channels;
 using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using MimeKit;
 
 namespace AspNetCoreEcommerce.EmailService
 {
-    public class EmailService
+    public class EmailService : IEmailSender
     {
         private readonly string _emaiAddress;
         private readonly string _emailPassword;
@@ -20,6 +21,19 @@ namespace AspNetCoreEcommerce.EmailService
             _port = int.Parse($"{Environment.GetEnvironmentVariable("EMAIL_PORT")}");
         }
 
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            var emailDto = new EmailDto
+            {
+                EmailTo = email,
+                Subject = subject,
+                Body = htmlMessage,
+                Name = "AspNetCoreEcommerce"
+            };
+            await SendMail(emailDto);
+            //
+        }
+
         public async Task SendMail(EmailDto emailDto)
         {
             var email = new MimeMessage();
@@ -33,8 +47,6 @@ namespace AspNetCoreEcommerce.EmailService
             await smtp.AuthenticateAsync(_emaiAddress, _emailPassword);
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
-
-            return;
         }
 
         public class EmailBackgroundService : BackgroundService

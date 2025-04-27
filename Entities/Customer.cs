@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using AspNetCoreEcommerce.DTOs;
+using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreEcommerce.Entities
 {
@@ -8,11 +9,9 @@ namespace AspNetCoreEcommerce.Entities
     {
         [Key]
         public Guid CustomerID { get; set; }
-        [EmailAddress]
-        [Required]
+        [EmailAddress, Required]
         public required string CustomerEmail { get; set; }
-        [Required]
-        [PasswordPropertyText]
+        [Required, PasswordPropertyText]
         public string? PasswordHash { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

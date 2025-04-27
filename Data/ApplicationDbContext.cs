@@ -1,9 +1,14 @@
 ﻿using AspNetCoreEcommerce.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreEcommerce.Data
 {
-    public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+    public partial class ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext>
+        options
+        ) : IdentityDbContext<AppUser, IdentityRole, string>(options)
     {
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
