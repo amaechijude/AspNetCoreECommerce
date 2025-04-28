@@ -36,7 +36,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         public async Task<Customer?> GetCustomerByEmailAsync(string email)
         {
             var customer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.CustomerEmail == email);
+                .FirstOrDefaultAsync(c => c.User.Email == email);
             return customer is null ? null : customer;
         }
         public async Task SaveChangesAsync()

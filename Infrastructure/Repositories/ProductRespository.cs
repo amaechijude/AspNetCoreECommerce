@@ -18,7 +18,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
                 .Select(p => new ProductViewDto
                 {
                     ProductId = p.ProductId,
-                    ProductName = p.ProductName,
+                    ProductName = p.Name,
                     Description = p.Description,
                     ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageUrl),
                     Price = p.Price,
@@ -73,5 +73,9 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             return vendor is null ? null : vendor;
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

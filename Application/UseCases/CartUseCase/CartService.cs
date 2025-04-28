@@ -7,14 +7,9 @@ using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
 {
-    public class CartService : ICartService
+    public class CartService(ICartRepository cartItemRepository) : ICartService
     {
-        private readonly ICartRepository _cartItemRepository;
-        
-        public CartService(ICartRepository cartItemRepository)
-        {
-            _cartItemRepository = cartItemRepository;
-        }
+        private readonly ICartRepository _cartItemRepository = cartItemRepository;
 
         public async Task<ResultPattern> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto)
         {
@@ -23,7 +18,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
                 return ResultPattern.FailResult("Product does not exist");
 
             var data = MapCartToDto(cart);
-            return ResultPattern.SuccessResult(data, "Product added to cart successfully");
+            return ResultPattern.SuccessResult(data);
         }
 
         public async Task<ResultPattern> RemoveFromCartAsync(Guid customerId, Guid productId)
@@ -32,13 +27,15 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
             if (cartItem is null)
                 return ResultPattern.FailResult("Product does not exist in your Cart");
             
-            return ResultPattern.SuccessResult("CaartItem Removed", "Product removed from cart successfully");
+            return ResultPattern.SuccessResult("Product removed from cart successfully");
         }
 
         public async Task<ResultPattern> ViewCartAsync(Guid customerId)
         {
             var cart = await _cartItemRepository.GetOrCreateCartAsync(customerId);
-            return ResultPattern.SuccessResult(MapCartToDto(cart), "Cart retrieved successfully");
+            if (cart is null)
+                return ResultPattern.FailResult("Cart does not exist");
+            return ResultPattern.SuccessResult(MapCartToDto(cart));
         }
 
         private static CartViewDto MapCartToDto(Cart cart)
@@ -47,8 +44,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
             {
                 CartId = cart.CartId,
                 CustomerId = cart.CustomerId,
-                CustomerEmail = cart.Customer.CustomerEmail ?? string.Empty,
-                CustomerName = $"{cart.Customer.FirstName} {cart.Customer.LastName}" ?? string.Empty,
+                CustomerEmail = cart.Customer.User.Email ?? string.Empty,
+                CustomerName = $"{cart.Customer.User.UserName}",
                 CartProductCount = cart.CartItemsCount,
                 CartTotalAmount = cart.CartTotalAmount,
                 CartItems = [.. cart.CartItems.Select(ci => new CartItemViewDto

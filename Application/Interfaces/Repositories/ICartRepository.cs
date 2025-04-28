@@ -7,7 +7,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
     {
         Task<Cart?> ADddToCartAsync(Guid customerId, AddToCartDto addToCartDto);
         Task<CartItem?> RemoveFromCartAsync(Guid customerID, Guid productId);
-        Task<Cart> GetOrCreateCartAsync(Guid customerId);
-        Task IUnitOfWork();
+        Task<Cart?> GetOrCreateCartAsync(Guid customerId);
+        Task SaveChangesAsync();
     }
 }

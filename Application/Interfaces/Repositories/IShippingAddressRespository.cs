@@ -9,6 +9,6 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId);
         Task<string?> DeleteShippingAddress(Guid customerId, Guid shippingid);
         Task<Customer?> GetCustomerByIdAsync(Guid customerId);
-        Task IUnitOfWork();
+        Task SaveChangesAsync();
     }
 }

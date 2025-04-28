@@ -60,5 +60,10 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             var cs = await _context.Customers.FindAsync(customerId);
             return cs is null ? null : cs;
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

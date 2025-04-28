@@ -8,6 +8,6 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task<Customer?> GetCustomerByIdAsync(Guid id);
         Task<string?> DeleteCustomerAsync(Guid customerId);
         Task<Customer?> GetCustomerByEmailAsync(string email);
-        Task IUnitOfWork();
+        Task SaveChangesAsync();
     }
 }

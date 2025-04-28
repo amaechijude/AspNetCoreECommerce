@@ -45,5 +45,10 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
                 return; // Log the exception
             }
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

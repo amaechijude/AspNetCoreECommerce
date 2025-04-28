@@ -11,6 +11,6 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task UpdateProductAsync();
         Task DeleteProductAsync(Guid vendorId, Guid productId);
         Task<Vendor?> GetVendorByIdAsync(Guid vendorId);
-        Task IUnitOfWork();
+        Task SaveChangesAsync();
     }
 }
