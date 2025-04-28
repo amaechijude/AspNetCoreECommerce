@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace AspNetCoreEcommerce.Authentication
+namespace AspNetCoreEcommerce.Application.UseCases.Authentication
 {
     public class RegisterDto
     {
@@ -11,7 +11,9 @@ namespace AspNetCoreEcommerce.Authentication
         [Required, MinLength(6)]
         [Compare(nameof(Password), ErrorMessage = "Passwords do not match")]
         public string ConfirmPassword { get; set; } = string.Empty;
+        [Required, MinLength(3)]
         public string FirstName {get; set;} = string.Empty;
+        [Required, MinLength(3)]
         public string LastName {get; set;} = string.Empty;
         public string PhoneNumber {get; set;} = string.Empty;
     }

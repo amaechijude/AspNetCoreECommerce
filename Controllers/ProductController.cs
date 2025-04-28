@@ -1,57 +1,54 @@
 ﻿using System.Security.Claims;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
-using AspNetCoreEcommerce.DTOs;
+using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCoreEcommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController(IProductService productService) : ControllerBase
+    public class ProductController(IProductService productService, UserManager<User> userManager) : ControllerBase
     {
         private readonly IProductService _productService = productService;
+        private readonly UserManager<User> _userManager = userManager;
 
-        [Authorize(Roles = GlobalConstants.vendorRole)]
+        [Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null)
+                return Unauthorized();
+            if (!user.IsVendor)
+                return Forbid("You are not a vendor yet");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(vendorId))
-                return BadRequest(ResultPattern.FailResult("Invalid Authentication", 400));
-
-            var isValidGuid = Guid.TryParse(vendorId, out Guid vid);
-            if (!isValidGuid)
-                return BadRequest(ResultPattern.FailResult("Invalid Vendor Id", 400));
-            var res = await _productService.CreateProductAsync(vid, createProduct, Request);
+            var res = await _productService.CreateProductAsync(user.VendorID, createProduct, Request);
             return res.Success
-                ? Ok(res)
-                : BadRequest(res);
+                ? Ok(res.Data)
+                : BadRequest(res.Error);
         }
 
-        [Authorize(Roles = GlobalConstants.vendorRole)]
+        [Authorize]
         [HttpPatch("update/{productID}")]
         public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productID, [FromForm] UpdateProductDto updateProduct)
         {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null)
+                return Unauthorized();
+            if (!user.IsVendor)
+                return Forbid("You are not a vendor yet");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(vendorId))
-                return BadRequest(ResultPattern.FailResult("Invalid Authentication", 400));
 
-            var isValidGuid = Guid.TryParse(vendorId, out Guid vid);
-            if (!isValidGuid)
-                return BadRequest(ResultPattern.FailResult("Invalid Vendor Id", 400));
-            
-            var res = await _productService.UpdateProductAsync(vid, productID, updateProduct, Request);
+            var res = await _productService.UpdateProductAsync(user.VendorID, productID, updateProduct, Request);
             return res.Success
-                ? Ok(res)
-                : BadRequest(res);
+                ? Ok(res.Data)
+                : BadRequest(res.Error);
         }
 
         [HttpGet]
@@ -65,27 +62,29 @@ namespace AspNetCoreEcommerce.Controllers
         {
             var isValidGuid = Guid.TryParse(productId, out Guid pid);
             if (!isValidGuid)
-                return BadRequest(ResultPattern.FailResult("Invalid Product Id", 400));
+                return NotFound();
             var res = await _productService.GetProductByIdAsync(pid, Request);
             return res.Success 
-                ? Ok(res) 
-                : NotFound(res);
+                ? Ok(res.Data) 
+                : NotFound(res.Error);
         }
 
         [Authorize(Roles = GlobalConstants.vendorRole)]
         [HttpDelete("delete/{productId}")]
         public async Task<IActionResult> DeleteProductAsync([FromRoute] string productId)
         {
-            var vendorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrWhiteSpace(vendorId))
-                return BadRequest(ResultPattern.FailResult("Invalid Authentication", 400));
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null)
+                return Unauthorized();
+            if (!user.IsVendor)
+                return Forbid();
 
             var isValidGuid = Guid.TryParse(productId, out Guid pid);
             if (!isValidGuid)
-                return BadRequest(ResultPattern.FailResult("Invalid Product Id", 400));
+                return BadRequest();
 
-            await _productService.DeleteProductAsync(Guid.Parse(vendorId), pid);
-            return Ok(ResultPattern.SuccessResult("", "Product deleted successfully"));
+            await _productService.DeleteProductAsync(user.VendorID, pid);
+            return NoContent();
         }
     }
 }

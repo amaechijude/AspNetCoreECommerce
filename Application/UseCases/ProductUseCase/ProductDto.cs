@@ -1,4 +1,4 @@
-﻿namespace AspNetCoreEcommerce.DTOs
+﻿namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
 {
     public class ProductDto
     {

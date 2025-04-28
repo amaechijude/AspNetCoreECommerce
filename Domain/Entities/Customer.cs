@@ -9,6 +9,10 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public object? CustomerId { get; internal set; }
         public required Guid UserId { get; set; }
         public required User User { get; set; }
+        public string? Email { get; set; } = string.Empty;
+        public required string FirstName { get; set; }
+        public required String LastName { get; set; }
+        public string FullName => $"{FirstName}  {LastName}";
         public bool IsDeleted { get; set; } = false;
         public Guid CartId {get; set;}
         public Cart? Cart { get; set; }

@@ -20,7 +20,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
             if (result is null)
                 return ResultPattern.FailResult("Error adding shipping address");
 
-            return ResultPattern.SuccessResult(MapShippingAddress(result), "Shipping address added successfully");
+            return ResultPattern.SuccessResult(MapShippingAddress(result));
         }
 
         public async Task<ResultPattern> DeleteShippingAddressAsync(Guid customerId, Guid shippingId)
@@ -33,7 +33,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
             if (data is null)
                 return ResultPattern.FailResult("Shipping address not found");
 
-            return ResultPattern.SuccessResult(data, "Shipping address removed");
+            return ResultPattern.SuccessResult(data);
         }
 
         public async Task<ResultPattern> GetShippingAddressByCustomerIdAsync(Guid customerId)
@@ -44,9 +44,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
                 return ResultPattern.FailResult("Shipping addresses not found");
             return ResultPattern
                 .SuccessResult(
-                    shippingAddresses.Select(sh => MapShippingAddress(sh)),
-                    "Fetched shipping Address"
-                 );
+                    shippingAddresses.Select(sh => MapShippingAddress(sh))
+                    );
         }
 
         public async Task<ResultPattern> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId)
@@ -57,8 +56,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
                 return ResultPattern.FailResult("Shipping address not found");
             return ResultPattern
                 .SuccessResult(
-                    MapShippingAddress(shippingAddress),
-                    "Fetched shipping Address"
+                    MapShippingAddress(shippingAddress)
                  );
         }
 
@@ -70,13 +68,13 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
                 CustomerId = shippingAddress.CustomerId,
                 CustomerName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
                 ShippingAddressName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
-                ShippingAddressPhone = shippingAddress.Phone,
-                AddressOne = shippingAddress.AddressOne,
-                SecondAddress = shippingAddress.SecondAddress,
+                ShippingAddressPhone = shippingAddress.PhoneNumber,
+                AddressOne = shippingAddress.AddressLine1,
+                SecondAddress = shippingAddress.AddressLine2,
                 City = shippingAddress.City,
                 State = shippingAddress.State,
                 Country = shippingAddress.Country,
-                PostalCode = shippingAddress.PostalCode,
+                PostalCode = shippingAddress.ZipCode,
             };
         }
 
@@ -85,16 +83,15 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
             return new ShippingAddress
             {
                 ShippingAddressId = Guid.CreateVersion7(),
-                Email = customer.CustomerEmail,
                 FirstName = shippingAddress.FirstName,
                 LastName = shippingAddress.LastName,
-                Phone = shippingAddress.Phone,
-                AddressOne = shippingAddress.AddressOne,
-                SecondAddress = shippingAddress.SecondAddress,
+                PhoneNumber = shippingAddress.Phone,
+                AddressLine1 = shippingAddress.AddressLine1,
+                AddressLine2 = shippingAddress.AddressLine2,
                 City = shippingAddress.City,
                 State = shippingAddress.State,
                 Country = shippingAddress.Country,
-                PostalCode = shippingAddress.PostalCode,
+                ZipCode = shippingAddress.PostalCode,
                 CustomerId = customer.CustomerID,
                 Customer = customer
             };

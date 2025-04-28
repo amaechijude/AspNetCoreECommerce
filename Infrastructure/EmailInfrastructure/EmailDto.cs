@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace AspNetCoreEcommerce.Infrastructure.EmailService
+namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
 {
     public class EmailDto
     {

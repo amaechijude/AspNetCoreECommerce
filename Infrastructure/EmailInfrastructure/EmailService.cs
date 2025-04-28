@@ -3,7 +3,7 @@ using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using MimeKit;
 
-namespace AspNetCoreEcommerce.Infrastructure.EmailService
+namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
 {
     public class EmailService : IEmailSender
     {

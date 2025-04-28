@@ -5,7 +5,7 @@ using AspNetCoreEcommerce.Domain.Enums;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Shared;
 
-namespace AspNetCoreEcommerce.Services.Implementations
+namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
 {
     public class PaymentService(IPaymentRepository paymentRepository , ErcasPay ercasPay) : IPaymentService
     {
@@ -32,20 +32,22 @@ namespace AspNetCoreEcommerce.Services.Implementations
 
         private static InitiateTransactionDto PrepareInitiateTransactionDto(Customer customer, Order order)
         {
+#pragma warning disable CS8601 // Possible null reference assignment.
             return new InitiateTransactionDto
             {
                 amount = order.TotalAmountToBePaid,
                 paymentReference = order.OrderRefrence,
-                customerEmail = customer.CustomerEmail,
+                customerEmail = customer.Email,
                 customerName = $"{customer.FirstName} {customer.LastName}",
                 metadata = new Metadata
                 {
                     firstname = customer.FirstName,
                     lastname = customer.LastName,
-                    email = customer.CustomerEmail
+                    email = customer.Email
                 }
 
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
         }
 
         private static Payment PreparePayment(Customer customer, Order order)

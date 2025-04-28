@@ -1,7 +1,5 @@
 ﻿using System.Security.Claims;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
-using AspNetCoreEcommerce.Authentication;
-using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,30 +10,8 @@ namespace AspNetCoreEcommerce.Controllers
     [ApiController]
     public class CustomerController(ICustomerService customerService) : ControllerBase
     {
-        private readonly ICustomerService _customerService = customerService;
-
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterCustomer([FromBody] CustomerRegistrationDTO registrationDTO)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var data = await _customerService.CreateCustomerAsync(registrationDTO);
-            return data.Success
-                ? Ok(data)
-                : BadRequest(data);
-        }
-        [HttpPost("login")]
-        public async Task<IActionResult> LoginCustomerAsync(LoginDto login)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var res = await _customerService.LoginCustomerAsync(login);
-            return res.Success
-                ? Ok(res)
-                : BadRequest(res);
-        }
+        private readonly ICustomerService _customerService = customerService;        
+        
         [Authorize(Roles = GlobalConstants.customerRole)]
         [HttpGet("profile")]
         public async Task<IActionResult> GetCustomerProfile()
@@ -54,21 +30,6 @@ namespace AspNetCoreEcommerce.Controllers
                 : BadRequest(res);
         }
 
-        [Authorize(Roles = GlobalConstants.customerRole)]
-        [HttpPut("update")]
-        public async Task<IActionResult> UpdateCustomerProfile([FromBody] UpdateCustomerDto customer)
-        {
-            var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrWhiteSpace(customerId))
-                return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
-            var isValidGuid = Guid.TryParse(customerId, out Guid customerIdGuid);
-            if (!isValidGuid)
-                return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
-            var res = await _customerService.UpdateCustomerAsync(customerIdGuid, customer);
-            return res.Success
-                ? Ok(res)
-                : BadRequest(res);
-        }
 
         [Authorize(Roles = GlobalConstants.customerRole)]
         [HttpDelete("delete")]
@@ -81,17 +42,6 @@ namespace AspNetCoreEcommerce.Controllers
             if (!isValidGuid)
                 return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
             var res = await _customerService.DeleteCustomerAsync(customerIdGuid);
-            return res.Success
-                ? Ok(res)
-                : BadRequest(res);
-        }
-        [HttpPost("verify")]
-        public async Task<IActionResult> VerifyCodeAsync(VerificationRequest verification)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ResultPattern.BadModelState(ModelState));
-
-            var res = await _customerService.VerifyCodeAsync(verification);
             return res.Success
                 ? Ok(res)
                 : BadRequest(res);

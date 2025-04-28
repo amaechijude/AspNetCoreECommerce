@@ -1,20 +1,20 @@
 using System.Text;
-using System.Threading.Channels;
 using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
+using AspNetCoreEcommerce.Application.UseCases.Authentication;
 using AspNetCoreEcommerce.Application.UseCases.CartUseCase;
+using AspNetCoreEcommerce.Application.UseCases.CustomerUseCase;
 using AspNetCoreEcommerce.Application.UseCases.OrderUseCase;
+using AspNetCoreEcommerce.Application.UseCases.PaymentUseCase;
 using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
 using AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase;
 using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
-using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.Data;
-using AspNetCoreEcommerce.Infrastructure.EmailService;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Infrastructure.Repositories;
-using AspNetCoreEcommerce.Services.Implementations;
 using AspNetCoreEcommerce.Shared;
+using AspNetCoreEcommerce.Shared.EmailConstants;
 using AspNetCoreEcommerce.Shared.ErrorHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +25,8 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
+// verfy email settings
+EmailSettings.Configure(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
@@ -106,10 +108,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderSevice, OrderSevice>();
 
-builder.Services.AddScoped<ErcasPay>();
-builder.Services.AddSingleton<EmailService>();
-builder.Services.AddSingleton(Channel.CreateUnbounded<EmailDto>());
-builder.Services.AddHostedService<EmailService.EmailBackgroundService>();
+builder.Services.AddScoped<ErcasPay>(); // Payment channel service
 
 
 builder.Services.AddControllers();

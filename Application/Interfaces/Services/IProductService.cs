@@ -1,5 +1,4 @@
 ﻿using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
-using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.Interfaces.Services

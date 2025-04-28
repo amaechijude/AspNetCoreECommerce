@@ -1,10 +1,12 @@
 using System.Threading.Channels;
+using AspNetCoreEcommerce.Application.Interfaces.Services;
+using AspNetCoreEcommerce.Application.UseCases.Authentication;
 using AspNetCoreEcommerce.Domain.Entities;
-using AspNetCoreEcommerce.Infrastructure.EmailService;
+using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreEcommerce.Authentication
+namespace AspNetCoreEcommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -12,13 +14,15 @@ namespace AspNetCoreEcommerce.Authentication
         UserManager<User> userManager,
         SignInManager<User> signInManager,
         TokenProvider tokenService,
-        Channel<EmailDto> emailChannel
+        Channel<EmailDto> emailChannel,
+        ICustomerService customerService
             ) : ControllerBase
     {
         private readonly UserManager<User> _userManager = userManager;
         private readonly SignInManager<User> _signInManager = signInManager;
         private readonly TokenProvider _tokenService = tokenService;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
+        private readonly ICustomerService _customerService = customerService;
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -31,10 +35,12 @@ namespace AspNetCoreEcommerce.Authentication
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
-            
             user.EmailConfirmed = true;
 
-            return Ok(user);
+            _ = await _userManager.AddToRoleAsync(user, "Customer");
+            await _customerService.CreateCustomerAsync(user, registerDto.FirstName, registerDto.LastName);
+
+            return Ok(user.Id);
         }
 
         private static User AppUserBuilder(RegisterDto registerDto)
@@ -43,9 +49,7 @@ namespace AspNetCoreEcommerce.Authentication
             {
                 UserName = registerDto.Email,
                 Email = registerDto.Email,
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName,
-                PhoneNumber = registerDto.PhoneNumber
+                PhoneNumber = registerDto.PhoneNumber,
             };
         }
     }

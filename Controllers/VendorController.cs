@@ -1,6 +1,5 @@
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
-using AspNetCoreEcommerce.Authentication;
 using AspNetCoreEcommerce.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -62,19 +61,6 @@ namespace AspNetCoreEcommerce.Controllers
                 return BadRequest("User is not a vendor");
 
             var result = await _vendorService.GetVendorByIdAsync(user.VendorID, Request);
-            return result.Success
-                ? Ok(result.Data)
-                : BadRequest(result.Error);
-        }
-
-        [HttpPost("activate")]
-        public async Task<IActionResult> ActivateVendorAsync([FromBody] VerificationRequest activateVendor)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await _vendorService
-                .ActivateVendorAsync(activateVendor.Email, activateVendor.Code, Request);
             return result.Success
                 ? Ok(result.Data)
                 : BadRequest(result.Error);

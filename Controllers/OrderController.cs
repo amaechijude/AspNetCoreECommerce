@@ -1,67 +1,58 @@
 ﻿using System.Security.Claims;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
+using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCoreEcommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController : ControllerBase
+    public class OrderController(IOrderSevice orderSevice, UserManager<User> userManager) : ControllerBase
     {
-        private readonly IOrderSevice _orderSevice;
-        public OrderController(IOrderSevice orderSevice)
-        {
-            _orderSevice = orderSevice;
-        }
+        private readonly IOrderSevice _orderSevice = orderSevice;
+        private readonly UserManager<User> _userManager = userManager;
 
-        [Authorize(Roles = GlobalConstants.customerRole)]
+        [Authorize]
         [HttpGet("all")]
         public async Task<IActionResult> GetOrdersByCustomerIdAsync()
         {
-            var customerIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
 
-            var isValid = Guid.TryParse(customerIdString, out Guid customerId);
-            if (!isValid)
-                return Unauthorized(ResultPattern.FailResult("Invalid Authentication"));
-
-            var res = await _orderSevice.GetOrdersByCustomerIdAsync(customerId);
+            var res = await _orderSevice.GetOrdersByCustomerIdAsync(user.CustomerID);
             return res.Success
-                ? Ok(res)
-                : BadRequest(res);
+                ? Ok(res.Data)
+                : BadRequest(res.Error);
         }
 
-        [Authorize(Roles = GlobalConstants.customerRole)]
+        [Authorize]
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetOrderbyIdAsync([FromRoute] Guid orderId)
         {
-            var customerIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+           User? user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-            var isValid = Guid.TryParse(customerIdString, out Guid customerId);
-            if (!isValid)
-                return Unauthorized(ResultPattern.FailResult("Invalid Authentication"));
-
-            var res = await _orderSevice.GetOrderByOrderIdAsync(orderId, customerId);
+            var res = await _orderSevice.GetOrderByOrderIdAsync(orderId, user.CustomerID);
             return res.Success
-                ? Ok(res)
-                : BadRequest(res);
+                ? Ok(res.Data)
+                : BadRequest(res.Error);
         }
 
         [Authorize(Roles = GlobalConstants.customerRole)]
         [HttpPost("create/{shippingaddressId}")]
         public async Task<IActionResult> CreateOrderAsync([FromRoute] Guid shippingaddressId)
         {
-            var customerIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-            var isValid = Guid.TryParse(customerIdString, out Guid customerId);
-            if (!isValid)
-                return Unauthorized(ResultPattern.FailResult("Invalid Authentication", 403));
-
-            var res = await _orderSevice.CreateOrderAsync(customerId, shippingaddressId);
+            var res = await _orderSevice.CreateOrderAsync(user.CustomerID, shippingaddressId);
             return res.Success
-                ? Ok(res)
-                : BadRequest(res);
+                ? Ok(res.Data)
+                : BadRequest(res.Error);
         }
     }
 }

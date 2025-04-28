@@ -3,7 +3,7 @@ using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
-using AspNetCoreEcommerce.Infrastructure.EmailService;
+using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase

@@ -3,7 +3,7 @@ using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Domain.Enums;
-using AspNetCoreEcommerce.Infrastructure.EmailService;
+using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
@@ -21,7 +21,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
         public async Task<ResultPattern> GetOrdersByCustomerIdAsync(Guid customerId)
         {
             var orders = await _orderRepository.GetCustomerOrdersAsync(customerId);
-            return ResultPattern.SuccessResult(orders.Select(o => MapOrderViewDto(o)), "");
+            return ResultPattern.SuccessResult(orders.Select(o => MapOrderViewDto(o)));
         }
 
         public async Task<ResultPattern> GetOrderByOrderIdAsync(Guid orderId, Guid customerId)
@@ -29,7 +29,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
             var order = await _orderRepository.GetOrderByOrderIdAsync(orderId, customerId);
             if (order is null)
                 return ResultPattern.FailResult("Order not found");
-            return ResultPattern.SuccessResult(MapOrderViewDto(order), "Order Found");
+            return ResultPattern.SuccessResult(MapOrderViewDto(order));
         }
 
 
@@ -61,8 +61,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
                 OrderId = Guid.CreateVersion7(),
                 CustomerId = customerId,
                 Customer = customer,
-                CustomerName = $"{customer.FirstName} {customer.LastName}",
-                ShippingAddressAddressId = shippingAddress.ShippingAddressId,
+                CustomerName = shippingAddress.FullName,
+                ShippingAddressId = shippingAddress.ShippingAddressId,
                 ShippingAddress = shippingAddress,
                 ReceiverName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
                 OrderRefrence = Guid.NewGuid().ToString(),
@@ -80,14 +80,14 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
             await _orderRepository.SaveChangesAsync();
             var EmailDto = new EmailDto
             {
-                EmailTo = customer.CustomerEmail,
-                Name = $"{customer.FirstName} {customer.LastName}",
+                EmailTo = $"{customer.User.Email}",
+                Name = $"{customer.User.Email}",
                 Subject = "Order Confirmation",
                 Body = $"Your order with reference {newOrder.OrderRefrence} has been created successfully"
             };
             await _emailChannel.Writer.WriteAsync(EmailDto);
             
-            return ResultPattern.SuccessResult(MapOrderViewDto(order), "Order created");
+            return ResultPattern.SuccessResult(MapOrderViewDto(order));
         }
 
 
@@ -99,7 +99,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
                 OrderId = newOrder.OrderId,
                 CustomerId = newOrder.CustomerId,
                 CustomerName = newOrder.CustomerName,
-                ShippingAddressAddressId = newOrder.ShippingAddressAddressId,
+                ShippingAddressAddressId = newOrder.ShippingAddressId,
                 OrderRefrence = newOrder.OrderRefrence,
                 TotalOrderAmount = newOrder.TotalOrderAmount,
                 ShippingCost = newOrder.ShippingCost,

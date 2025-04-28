@@ -15,13 +15,11 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             customer.Cart = cart;
             _context.Customers.Add(customer);
             _context.Carts.Add(cart);
-            await _context.SaveChangesAsync();
             return customer;
         }
         public async Task<Customer?> GetCustomerByIdAsync(Guid id)
         {
-            var cs = await _context.Customers.FindAsync(id);
-            return cs is null ? null : cs;
+            return await _context.Customers.FindAsync(id);
         }
         public async Task<string?> DeleteCustomerAsync(Guid id)
         {
@@ -35,9 +33,8 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
 
         public async Task<Customer?> GetCustomerByEmailAsync(string email)
         {
-            var customer = await _context.Customers
+            return await _context.Customers
                 .FirstOrDefaultAsync(c => c.User.Email == email);
-            return customer is null ? null : customer;
         }
         public async Task SaveChangesAsync()
         {
@@ -61,5 +58,10 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             return cart;
         }
 
+        public async Task<Customer?> GetCustomerByUserIdAsync(Guid id)
+        {
+            return await _context.Customers
+                .FirstOrDefaultAsync(c => c.UserId == id);
+        }
     }
 }

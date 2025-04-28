@@ -1,7 +1,6 @@
 ﻿using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Domain.Entities;
-using AspNetCoreEcommerce.DTOs;
 using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
@@ -14,7 +13,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         public async Task<ResultPattern> GetAllProductsAsync(HttpRequest request)
         {
             var data = await _productRepository.GetAllProductsAsync(request);
-            return ResultPattern.SuccessResult(data, "Products fetched successfully");
+            return ResultPattern.SuccessResult(data);
         }
 
         public async Task<ResultPattern> GetProductByIdAsync(Guid productId, HttpRequest request)
@@ -22,9 +21,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             var product = await _productRepository.GetProductByIdAsync(productId);
 
             if (product is null)
-                return ResultPattern.FailResult("Product not found", 404);
+                return ResultPattern.FailResult("Product not found");
             
-            return ResultPattern.SuccessResult(MapProductToDto(product, request), "Product found");
+            return ResultPattern.SuccessResult(MapProductToDto(product, request));
         }
 
         public async Task<ResultPattern> CreateProductAsync(Guid vendorId, CreateProductDto createProductDto, HttpRequest request)
@@ -41,14 +40,14 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             var imageUrl = await GlobalConstants.SaveImageAsync(createProductDto.Image, GlobalConstants.productSubPath);
             var vendor = await _productRepository.GetVendorByIdAsync(vendorId);
             if (vendor is null)
-                return ResultPattern.FailResult("Vendor not found", 404);
+                return ResultPattern.FailResult("Vendor not found");
 
             var product = new Product
             {
                 ProductId = Guid.CreateVersion7(),
-                ProductName = createProductDto.Name,
+                Name = createProductDto.Name,
                 Price = createProductDto.Price,
-                Description = createProductDto.Description,
+                Description = $"{createProductDto.Description}",
                 VendorId = vendor.VendorId,
                 VendorName = vendor.VendorName,
                 Vendor = vendor,
@@ -59,7 +58,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             var createdProduct = await _productRepository.CreateProductAsync(product, request);
 
             var data = MapProductToDto(createdProduct, request);
-            return ResultPattern.SuccessResult(data, "Product created successfully");
+            return ResultPattern.SuccessResult(data);
         }
 
         public async Task DeleteProductAsync(Guid vendorId, Guid productId)
@@ -71,24 +70,24 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         {
             var product = await _productRepository.GetProductByIdAsync(productId);
             if (product is null)
-                return ResultPattern.FailResult("Product not found", 404);
+                return ResultPattern.FailResult("Product not found");
 
             var vendor = await _productRepository.GetVendorByIdAsync(vendorId);
             if (vendor is null)
-                return ResultPattern.FailResult("Vendor not found", 404);
+                return ResultPattern.FailResult("Vendor not found"      );
 
             if (vendor.VendorId != product.VendorId)
-                return ResultPattern.FailResult("Vendor does not own this product", 403);
+                return ResultPattern.FailResult("Vendor does not own this product");
 
             var imageUrl = updateProduct.Image == null
                 ? null
                 : await GlobalConstants.SaveImageAsync(updateProduct.Image, GlobalConstants.productSubPath);
 
-            product.UpdateProduct(vendor, vendorId, updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
+            product.UpdateProduct(updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
             await _productRepository.UpdateProductAsync();
 
             var data = MapProductToDto(product, request);
-            return ResultPattern.SuccessResult(data, "Product updated successfully");
+            return ResultPattern.SuccessResult(data);
         }
 
 
@@ -97,7 +96,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             return new ProductViewDto
             {
                 ProductId = product.ProductId,
-                ProductName = product.ProductName,
+                ProductName = product.Name,
                 Price = product.Price,
                 Description = product.Description,
                 ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageUrl),
