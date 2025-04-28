@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text;
-using AspNetCoreEcommerce.Entities;
+using AspNetCoreEcommerce.Domain.Entities;
+using AspNetCoreEcommerce.Shared;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
@@ -8,7 +9,7 @@ namespace AspNetCoreEcommerce.Authentication
 {
     public class TokenProvider
     {
-         public string CreateAppUsertoken(AppUser appUser)
+         public string CreateAppUsertoken(User appUser)
         {
             DotNetEnv.Env.Load();
             var secretKey = $"{Environment.GetEnvironmentVariable("JWT_SECRET_KEY")}";

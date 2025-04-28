@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using AspNetCoreEcommerce.PaymentChannel;
-using AspNetCoreEcommerce.ResultResponse;
-using AspNetCoreEcommerce.Services.Contracts;
+using AspNetCoreEcommerce.Application.Interfaces.Services;
+using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
+using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

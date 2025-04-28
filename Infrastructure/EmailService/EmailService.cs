@@ -1,0 +1,80 @@
+﻿using System.Threading.Channels;
+using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using MimeKit;
+
+namespace AspNetCoreEcommerce.Infrastructure.EmailService
+{
+    public class EmailService : IEmailSender
+    {
+        private readonly string _emaiAddress;
+        private readonly string _emailPassword;
+        private readonly string _smtpServer;
+        private readonly int _port;
+
+        public EmailService()
+        {
+            DotNetEnv.Env.TraversePath().Load();
+            _emaiAddress = $"{Environment.GetEnvironmentVariable("EMAIL_HOST_ADDRESS")}";
+            _emailPassword = $"{Environment.GetEnvironmentVariable("EMAIL_HOST_PASSWORD")}";
+            _smtpServer = $"{Environment.GetEnvironmentVariable("EMAIL_SMTP_SERVER")}";
+            _port = int.Parse($"{Environment.GetEnvironmentVariable("EMAIL_PORT")}");
+        }
+
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            var emailDto = new EmailDto
+            {
+                EmailTo = email,
+                Subject = subject,
+                Body = htmlMessage,
+                Name = "AspNetCoreEcommerce"
+            };
+            await SendMail(emailDto);
+            //
+        }
+
+        public async Task SendMail(EmailDto emailDto)
+        {
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress("AspNetCoreEcommerce", _emaiAddress));
+            email.To.Add(new MailboxAddress(emailDto.Name, emailDto.EmailTo));
+            email.Subject = emailDto.Subject;
+            email.Body = new TextPart("html") { Text = emailDto.Body };
+
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(_smtpServer, _port, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_emaiAddress, _emailPassword);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
+        }
+
+        public class EmailBackgroundService : BackgroundService
+        {
+            private readonly EmailService _emailService;
+            private readonly Channel<EmailDto> _emailChannel;
+
+            public EmailBackgroundService(EmailService emailService, Channel<EmailDto> emailChannel) 
+            {
+                _emailService = emailService;
+                _emailChannel = emailChannel;
+            }
+
+            protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+            {
+                await foreach (var emailDto in _emailChannel.Reader.ReadAllAsync(stoppingToken))
+                {
+                    try
+                    {
+                        await _emailService.SendMail(emailDto);
+                    }
+                    catch (Exception)
+                    {
+                        //Log ex
+                    }
+                }
+            }
+        }
+
+    }
+}

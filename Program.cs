@@ -1,16 +1,21 @@
 using System.Text;
 using System.Threading.Channels;
-using AspNetCoreEcommerce;
+using AspNetCoreEcommerce.Application.Interfaces.Repositories;
+using AspNetCoreEcommerce.Application.Interfaces.Services;
+using AspNetCoreEcommerce.Application.UseCases.CartUseCase;
+using AspNetCoreEcommerce.Application.UseCases.OrderUseCase;
+using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
+using AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase;
+using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Authentication;
-using AspNetCoreEcommerce.Data;
-using AspNetCoreEcommerce.EmailService;
-using AspNetCoreEcommerce.Entities;
-using AspNetCoreEcommerce.ErrorHandling;
-using AspNetCoreEcommerce.PaymentChannel;
-using AspNetCoreEcommerce.Repositories.Contracts;
-using AspNetCoreEcommerce.Repositories.Implementations;
-using AspNetCoreEcommerce.Services.Contracts;
+using AspNetCoreEcommerce.Domain.Entities;
+using AspNetCoreEcommerce.Infrastructure.Data;
+using AspNetCoreEcommerce.Infrastructure.EmailService;
+using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
+using AspNetCoreEcommerce.Infrastructure.Repositories;
 using AspNetCoreEcommerce.Services.Implementations;
+using AspNetCoreEcommerce.Shared;
+using AspNetCoreEcommerce.Shared.ErrorHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -54,7 +59,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentity<AppUser, IdentityRole>(options => {
+builder.Services.AddIdentity<User, UserRole>(options => {
     options.User.RequireUniqueEmail = true;
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 6;

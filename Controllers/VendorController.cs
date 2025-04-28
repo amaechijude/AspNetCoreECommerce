@@ -1,93 +1,84 @@
-using System.Security.Claims;
-using AspNetCoreEcommerce.DTOs;
-using AspNetCoreEcommerce.ResultResponse;
-using AspNetCoreEcommerce.Services.Contracts;
+using AspNetCoreEcommerce.Application.Interfaces.Services;
+using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
+using AspNetCoreEcommerce.Authentication;
+using AspNetCoreEcommerce.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCoreEcommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class VendorController : ControllerBase
+    public class VendorController(IVendorService vendorService, UserManager<User> userManager) : ControllerBase
     {
-        private readonly IVendorService _vendorService;
-        public VendorController(IVendorService vendorService)
-        {
-            _vendorService = vendorService;
-        }
-
+        private readonly IVendorService _vendorService = vendorService;
+        private readonly UserManager<User> _userManager = userManager;
 
         [HttpPost("register")]
-        public async Task<IActionResult> SignupVendorAsync([FromForm] VendorDto vendorDto)
+        [Authorize]
+        public async Task<IActionResult> SignupVendorAsync([FromForm] CreateVendorDto vendorDto)
         {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null)
+                return Unauthorized();
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var res = await _vendorService.SignupVendorAsync(vendorDto, Request);
-            return res.Success
-                ? Ok(res)
-                : BadRequest(res);
+            var result = await _vendorService.CreateVendorAsync(user.Id, vendorDto, Request);
+            return result.Success
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
 
-        [Authorize(Roles = GlobalConstants.vendorRole)]
+        [Authorize]
         [HttpPatch("update")]
         public async Task<IActionResult> UpdateVendorAsync([FromForm] UpdateVendorDto updateVendor)
         {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null) return Unauthorized();
+
+            if (!user.IsVendor)
+                return BadRequest("User is not a vendor");
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var vendorClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var vid = Guid.TryParse(vendorClaim, out Guid VendorId);
-            if (!vid)
-                return BadRequest(ResultPattern.FailResult("Invalid VendorId"));
-
-            var re = await _vendorService.UpdateVendorAsync(VendorId, updateVendor, Request);
-            return re.Success
-                ? Ok(re)
-                : BadRequest(re);
+            var result = await _vendorService
+                .UpdateVendorAsync(user.VendorID, updateVendor, Request);
+            return result.Success
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
 
-        [Authorize(Roles = GlobalConstants.vendorRole)]
+        [Authorize]
         [HttpGet("profile")]
         public async Task<IActionResult> GetVendorByIdAsync()
         {
-            var vendorClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null) return Unauthorized();
 
-            var vid = Guid.TryParse(vendorClaim, out Guid VendorId);
-            if (!vid)
-                return BadRequest(ResultPattern.FailResult("Invalid VendorId"));
+            if (!user.IsVendor)
+                return BadRequest("User is not a vendor");
 
-            var res = await _vendorService.GetVendorByIdAsync(VendorId, Request);
-            return res.Success
-                ? Ok(res)
-                : BadRequest(res);
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> LoginVendorAsync([FromBody] LoginDto loginDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ResultPattern.BadModelState(ModelState));
-
-            var res = await _vendorService.LoginVendorAsync(loginDto);
-            return res.Success
-                ? Ok(res)
-                : BadRequest(res);
+            var result = await _vendorService.GetVendorByIdAsync(user.VendorID, Request);
+            return result.Success
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
 
         [HttpPost("activate")]
         public async Task<IActionResult> ActivateVendorAsync([FromBody] VerificationRequest activateVendor)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ResultPattern.BadModelState(ModelState));
+                return BadRequest(ModelState);
 
-            var res = await _vendorService
+            var result = await _vendorService
                 .ActivateVendorAsync(activateVendor.Email, activateVendor.Code, Request);
-            return res.Success
-                ? Ok(res)
-                : BadRequest(res);
+            return result.Success
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
     }
 }
+// Compare this snippet from Application/UseCases/VendorUseCase/VendorService.cs:

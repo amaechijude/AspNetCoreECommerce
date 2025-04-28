@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Channels;
-using System.Threading.Tasks;
-using AspNetCoreEcommerce.EmailService;
-using AspNetCoreEcommerce.Entities;
+using AspNetCoreEcommerce.Domain.Entities;
+using AspNetCoreEcommerce.Infrastructure.EmailService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,14 +9,14 @@ namespace AspNetCoreEcommerce.Authentication
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController(
-        UserManager<AppUser> userManager,
-        SignInManager<AppUser> signInManager,
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
         TokenProvider tokenService,
         Channel<EmailDto> emailChannel
             ) : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager = userManager;
-        private readonly SignInManager<AppUser> _signInManager = signInManager;
+        private readonly UserManager<User> _userManager = userManager;
+        private readonly SignInManager<User> _signInManager = signInManager;
         private readonly TokenProvider _tokenService = tokenService;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
 
@@ -41,9 +37,9 @@ namespace AspNetCoreEcommerce.Authentication
             return Ok(user);
         }
 
-        private static AppUser AppUserBuilder(RegisterDto registerDto)
+        private static User AppUserBuilder(RegisterDto registerDto)
         {
-            return new AppUser
+            return new User
             {
                 UserName = registerDto.Email,
                 Email = registerDto.Email,

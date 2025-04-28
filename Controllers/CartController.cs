@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using AspNetCoreEcommerce.DTOs;
-using AspNetCoreEcommerce.ResultResponse;
-using AspNetCoreEcommerce.Services.Contracts;
+using AspNetCoreEcommerce.Application.Interfaces.Services;
+using AspNetCoreEcommerce.Application.UseCases.CartUseCase;
+using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
