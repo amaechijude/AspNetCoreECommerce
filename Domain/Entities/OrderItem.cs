@@ -16,11 +16,10 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalPrice => UnitPrice * Quantity;
-
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
+
+        public decimal TotalPrice => UnitPrice * Quantity;
 
     }
 }

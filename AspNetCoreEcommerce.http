@@ -1,14 +1,15 @@
 @AspNetCoreEcommerce_HostAddress = http://localhost:5209
 
-POST {{AspNetCoreEcommerce_HostAddress}}/api/customer/register
+POST {{AspNetCoreEcommerce_HostAddress}}/api/auth/register
 Content-Type: application/json
 
 {
-    "customerEmail": "amaechijude178@gmail.com",
-    "password": "password",
-    "firstName": "Amaechi",
-    "lastName": "Jude",
-    "CustomerPhone": "09122999887709"
+  "email": "user2@gmail.com",
+  "password": "password",
+  "confirmPassword": "password",
+  "firstName": "First",
+  "lastName": "Last",
+  "phoneNumber": "0987654321123"
 }
 
 ###

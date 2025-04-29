@@ -1,5 +1,4 @@
-﻿using AspNetCoreEcommerce.Application.UseCases.Authentication;
-using AspNetCoreEcommerce.Domain.Entities;
+﻿using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.Interfaces.Services

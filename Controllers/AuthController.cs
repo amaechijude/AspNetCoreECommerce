@@ -3,6 +3,8 @@ using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.Authentication;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
+using AspNetCoreEcommerce.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,27 +32,111 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = AppUserBuilder(registerDto);
+            var user = new User(registerDto.Email, registerDto.PhoneNumber);
+
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded)
-                return BadRequest(result.Errors);
-            user.EmailConfirmed = true;
-
-            _ = await _userManager.AddToRoleAsync(user, "Customer");
+                return BadRequest("");
+            
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8604 // Possible null reference argument.
+            var email = new EmailDto
+            {
+                EmailTo = user.Email,
+                Subject = "Confirm your email",
+                Body = EmailBodyTemplates.ConfirmEmailBody(token, user.Email, Request)
+            };
+            await _emailChannel.Writer.WriteAsync(email);
             await _customerService.CreateCustomerAsync(user, registerDto.FirstName, registerDto.LastName);
 
             return Ok(user.Id);
         }
 
-        private static User AppUserBuilder(RegisterDto registerDto)
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
-            return new User
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var user = await _userManager.FindByEmailAsync(confirmEmailDto.Email);
+            if (user == null)
+                return BadRequest("Invalid Credentials");
+            var result = await _userManager.ConfirmEmailAsync(user, confirmEmailDto.Token);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+            return Ok("Email confirmed successfully.");
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            if (user == null)
+                return BadRequest("Invalid Credentials");
+            var verifyPassword = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+            if (!verifyPassword)
+                return BadRequest("Invalid Credentials");
+
+            var token = _tokenService.CreateAppUsertoken(user);
+            return Ok(new { token });
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var user = await _userManager.FindByEmailAsync(forgotPasswordDto.Email);
+            if (user == null)
+                return BadRequest("Invalid Credentials");
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8604 // Possible null reference argument.
+            var email = new EmailDto
             {
-                UserName = registerDto.Email,
-                Email = registerDto.Email,
-                PhoneNumber = registerDto.PhoneNumber,
-            };
+                EmailTo = user.Email,
+                Subject = "Reset Password",
+                Body = EmailBodyTemplates.ForgotPasswordBody(token, user.Email, Request)
+                };
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8601 // Possible null reference assignment.
+            await _emailChannel.Writer.WriteAsync(email);
+            return Ok("Check your email for the reset password link.");
+        }
+      
+        
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+            if (user == null)
+                return BadRequest("Invalid Credentials");
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.Password);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+            return Ok("Password reset successfully.");
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok("Logged out successfully.");
+        }
+
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null)
+                return Unauthorized();
+            return Ok(user);
         }
     }
 }

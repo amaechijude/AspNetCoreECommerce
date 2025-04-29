@@ -11,7 +11,6 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
             builder.HasKey(oi => oi.OrderItemId);
             builder.ToTable("OrderItems");
             builder.Property(oi => oi.UnitPrice).HasColumnType("decimal(18,2)");
-            builder.Property(oi => oi.TotalPrice).HasColumnType("decimal(18,2)");
 
             builder.ToTable("OrderItems");
         }

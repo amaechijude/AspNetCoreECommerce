@@ -1,12 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AspNetCoreEcommerce.Domain.Entities
+﻿namespace AspNetCoreEcommerce.Domain.Entities
 {
     public class Customer
     {
-        [Key]
         public Guid CustomerID { get; set; }
-        public object? CustomerId { get; internal set; }
         public required Guid UserId { get; set; }
         public required User User { get; set; }
         public string? Email { get; set; } = string.Empty;

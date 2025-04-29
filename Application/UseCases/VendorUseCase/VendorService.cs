@@ -87,7 +87,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
             await _emailChannel
                 .Writer.WriteAsync(new EmailDto
                 {
-                    Name = vendor.VendorName,
                     EmailTo = vendor.VendorEmail,
                     Subject = "Vendor Account Created",
                     Body = $"Hello {vendor.VendorName}, your account has been created successfully." +

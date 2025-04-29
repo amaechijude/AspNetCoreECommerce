@@ -8,15 +8,12 @@ using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
 {
-    public class OrderSevice : IOrderSevice
+    public class OrderSevice(
+        IOrderRepository orderRepository,
+        Channel<EmailDto> emailChannel) : IOrderSevice
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly Channel<EmailDto> _emailChannel;
-        public OrderSevice(IOrderRepository orderRepository, Channel<EmailDto> emailChannel)
-        {
-            _orderRepository = orderRepository;
-            _emailChannel = emailChannel;
-        }
+        private readonly IOrderRepository _orderRepository = orderRepository;
+        private readonly Channel<EmailDto> _emailChannel = emailChannel;
 
         public async Task<ResultPattern> GetOrdersByCustomerIdAsync(Guid customerId)
         {
@@ -81,7 +78,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
             var EmailDto = new EmailDto
             {
                 EmailTo = $"{customer.User.Email}",
-                Name = $"{customer.User.Email}",
                 Subject = "Order Confirmation",
                 Body = $"Your order with reference {newOrder.OrderRefrence} has been created successfully"
             };

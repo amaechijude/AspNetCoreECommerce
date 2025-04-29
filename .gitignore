@@ -13,6 +13,7 @@ Upload/*
 Migrations/*
 .env
 appsettings.json
+logs*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

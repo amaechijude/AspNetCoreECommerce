@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using AspNetCoreEcommerce.Application.Interfaces.Services;
+﻿using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;

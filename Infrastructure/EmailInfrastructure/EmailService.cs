@@ -11,6 +11,7 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
         private readonly string _emailPassword;
         private readonly string _smtpServer;
         private readonly int _port;
+        private readonly string Name = "AspNetCoreEcommerce";
 
         public EmailService()
         {
@@ -28,17 +29,16 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
                 EmailTo = email,
                 Subject = subject,
                 Body = htmlMessage,
-                Name = "AspNetCoreEcommerce"
             };
             await SendMail(emailDto);
             //
         }
 
-        public async Task SendMail(EmailDto emailDto)
+        private async Task SendMail(EmailDto emailDto)
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("AspNetCoreEcommerce", _emaiAddress));
-            email.To.Add(new MailboxAddress(emailDto.Name, emailDto.EmailTo));
+            email.From.Add(new MailboxAddress(Name, _emaiAddress));
+            email.To.Add(new MailboxAddress(Name, emailDto.EmailTo));
             email.Subject = emailDto.Subject;
             email.Body = new TextPart("html") { Text = emailDto.Body };
 
@@ -48,29 +48,39 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
         }
-
-        public class EmailBackgroundService : BackgroundService
+        private async Task Papercut(EmailDto emailDto)
         {
-            private readonly EmailService _emailService;
-            private readonly Channel<EmailDto> _emailChannel;
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress(Name, _emaiAddress));
+            email.To.Add(new MailboxAddress(Name, emailDto.EmailTo));
+            email.Subject = emailDto.Subject;
+            email.Body = new TextPart("html") { Text = emailDto.Body };
 
-            public EmailBackgroundService(EmailService emailService, Channel<EmailDto> emailChannel) 
-            {
-                _emailService = emailService;
-                _emailChannel = emailChannel;
-            }
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync("localhost", 25);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
+        }
+        public class EmailBackgroundService(
+            EmailService emailService,
+            Channel<EmailDto> emailChannel,
+            ILogger<EmailBackgroundService> logger) : BackgroundService
+        {
+            private readonly EmailService _emailService = emailService;
+            private readonly Channel<EmailDto> _emailChannel = emailChannel;
+            private readonly ILogger<EmailBackgroundService> _logger = logger;
 
             protected override async Task ExecuteAsync(CancellationToken stoppingToken)
             {
-                await foreach (var emailDto in _emailChannel.Reader.ReadAllAsync(stoppingToken))
+                await foreach (var e in _emailChannel.Reader.ReadAllAsync(stoppingToken))
                 {
                     try
                     {
-                        await _emailService.SendMail(emailDto);
+                        await _emailService.SendEmailAsync(e.EmailTo, e.Subject, e.Body);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        //Log ex
+                        _logger.LogError(ex, "Email failed to send", [e.EmailTo]);
                     }
                 }
             }

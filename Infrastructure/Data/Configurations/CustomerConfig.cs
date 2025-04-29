@@ -9,7 +9,6 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<Customer> builder)
         {
             builder.HasKey(c => c.CustomerID);
-            builder.HasIndex(c => c.CustomerId).IsUnique();
 
             // Customer Cart relationship
             builder.HasOne(c => c.Cart)

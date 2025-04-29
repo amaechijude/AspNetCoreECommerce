@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text.Json;
-using static AspNetCoreEcommerce.Infrastructure.Repositories.VendorRepository;
 namespace AspNetCoreEcommerce.Shared.ErrorHandling
 {
     public class ExceptionHandlingMiddleware(RequestDelegate next)
@@ -32,29 +31,12 @@ namespace AspNetCoreEcommerce.Shared.ErrorHandling
                 
                 return;
             }
-            catch (UnauthorizedAccessException ex)
-            {
-                context.Response.ContentType = httpContentType;
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-
-                var errorResponse = new 
-                {
-                    code = (int)HttpStatusCode.Unauthorized,
-                    status = "failed",
-                    message = $"{ex.Message}"
-                };
-
-                var jsonRespose = JsonSerializer.Serialize(errorResponse);
-                await context.Response.WriteAsync(jsonRespose);
-
-                return;
-            }
             catch (InvalidOperationException ex)
             {
                 context.Response.ContentType = httpContentType;
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-                var errorResponse = new 
+                var errorResponse = new
                 {
                     code = (int)HttpStatusCode.BadRequest,
                     status = "failed",
@@ -66,52 +48,10 @@ namespace AspNetCoreEcommerce.Shared.ErrorHandling
 
                 return;
             }
-            
-            catch (ArgumentException ex)
-            {
-                context.Response.ContentType = httpContentType;
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-                var errorResponse = new 
-                {
-                    code = (int)HttpStatusCode.BadRequest,
-                    status = "failed",
-                    message = $"{ex.Message}"
-                };
-
-                var jsonRespose = JsonSerializer.Serialize(errorResponse);
-                await context.Response.WriteAsync(jsonRespose);
-                
-                return;
-            }
-            catch(DuplicateException ex)
-            {
-                context.Response.ContentType = httpContentType;
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-                var errorResponse = new 
-                {
-                    code = (int)HttpStatusCode.BadRequest,
-                    status = "failed",
-                    message = $"{ex.Message}"
-                };
-
-                var jsonRespose = JsonSerializer.Serialize(errorResponse);
-                await context.Response.WriteAsync(jsonRespose);
-                
-                return;
-            }
         }
 
         
 
 }
-
-    public class ErroResponse
-    {
-        public int StatusCode {get; set;}
-        public bool Success {get; set;} = false;
-        public string? Message {get; set;}
-        public DateTimeOffset Timestamp {get; set;}
-    }
 }

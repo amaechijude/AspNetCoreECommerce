@@ -39,7 +39,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
             // Product Tags relationship
             builder.HasMany(p => p.Tags)
                 .WithMany(t => t.Products)
-                .UsingEntity(j => j.ToTable("ProductTags"));
+                .UsingEntity(j => j.ToTable("ProductProductTags"));
 
 
             builder.ToTable("Products");

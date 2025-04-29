@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading.Channels;
 using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.Authentication;
@@ -11,10 +12,10 @@ using AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase;
 using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.Data;
+using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Infrastructure.Repositories;
 using AspNetCoreEcommerce.Shared;
-using AspNetCoreEcommerce.Shared.EmailConstants;
 using AspNetCoreEcommerce.Shared.ErrorHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -22,11 +23,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Serilog;
+
+// Logging
+string logPath = Path.Combine(Directory.GetCurrentDirectory(), "logs");
+if (!Directory.Exists(logPath))
+    Directory.CreateDirectory(logPath);
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File($"{logPath}/log-.txt", rollingInterval: RollingInterval.Hour)
+    .CreateLogger();
+
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-// verfy email settings
-EmailSettings.Configure(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
@@ -54,7 +65,7 @@ var dbPort = Environment.GetEnvironmentVariable("DATABASE_PORT");
 var dbConnectionString = $"Host={dbHost};Username={dbUser};Database={dbName};Password={dbPassword};Port={dbPort}";
 
 //Register Application context with postgresql connection
-builder.Services.AddDbContext<ApplicationDbContext>(options => 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(dbConnectionString));
 
 //Authentication and Identity
@@ -75,7 +86,7 @@ builder.Services.AddIdentity<User, UserRole>(options => {
 // Register JWT
 builder.Services.AddSingleton<TokenProvider>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => 
+    .AddJwtBearer(options =>
     {
         var secretKey = $"{Environment.GetEnvironmentVariable("JWT_SECRET_KEY")}";
         options.RequireHttpsMetadata = false; // Set to true in production
@@ -110,6 +121,10 @@ builder.Services.AddScoped<IOrderSevice, OrderSevice>();
 
 builder.Services.AddScoped<ErcasPay>(); // Payment channel service
 
+builder.Services.AddSingleton<EmailService>(); // Email service
+builder.Services.AddSingleton(Channel.CreateBounded<EmailDto>(100));
+builder.Services.AddHostedService<EmailService.EmailBackgroundService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -129,7 +144,7 @@ var imageFilePath = Path.Combine(builder.Environment.ContentRootPath, GlobalCons
 if (!Directory.Exists(imageFilePath))
     Directory.CreateDirectory(imageFilePath);
 
-app.UseStaticFiles(new StaticFileOptions{
+app.UseStaticFiles(new StaticFileOptions {
     FileProvider = new PhysicalFileProvider(imageFilePath),
     RequestPath = $"/{GlobalConstants.uploadPath}"
 });

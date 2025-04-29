@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
-using AspNetCoreEcommerce.Application.UseCases.Authentication;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
 
@@ -21,7 +16,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.CustomerUseCase
 
             var customer = new Customer
             {
-                CustomerID = user.Id,
+                CustomerID = Guid.CreateVersion7(),
                 UserId = user.Id,
                 User = user,
                 FirstName = firstname,

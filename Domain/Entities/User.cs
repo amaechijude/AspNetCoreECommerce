@@ -9,6 +9,13 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public bool IsVendor { get; set; } = false;
         public Guid VendorID { get; set; }
         public Vendor? Vendor { get; set; }
+
+        public User(string email, string phoneNumber)
+        {
+            Email = email;
+            UserName = email;
+            PhoneNumber = phoneNumber;
+        }
     }
 
     public class UserRole : IdentityRole<Guid>
