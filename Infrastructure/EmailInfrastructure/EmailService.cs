@@ -30,7 +30,7 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
                 Subject = subject,
                 Body = htmlMessage,
             };
-            await SendMail(emailDto);
+            await Papercut(emailDto);
             //
         }
 
@@ -57,7 +57,7 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
             email.Body = new TextPart("html") { Text = emailDto.Body };
 
             using var smtp = new SmtpClient();
-            await smtp.ConnectAsync("localhost", 25);
+            await smtp.ConnectAsync("localhost", 25, MailKit.Security.SecureSocketOptions.None);
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
         }

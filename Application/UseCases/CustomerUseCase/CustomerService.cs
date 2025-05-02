@@ -24,10 +24,12 @@ namespace AspNetCoreEcommerce.Application.UseCases.CustomerUseCase
                 Email = user.Email
             };
             var createCustomer = await _customerRepository.CreateCustomerAsync(customer);
+            user.Customer = createCustomer;
+            user.CustomerID = createCustomer.CustomerID;
             await _customerRepository.SaveChangesAsync();
             if (createCustomer is null)
                 return ResultPattern.FailResult("Failed to create customer");
-            return ResultPattern.SuccessResult("Customer created successfully");
+            return ResultPattern.SuccessResult(createCustomer);
         }
 
         public Task<ResultPattern> DeleteCustomerAsync(Guid customerId)

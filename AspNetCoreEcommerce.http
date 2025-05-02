@@ -11,25 +11,30 @@ Content-Type: application/json
   "lastName": "Last",
   "phoneNumber": "0987654321123"
 }
-
 ###
-POST {{AspNetCoreEcommerce_HostAddress}}/api/customer/login
+POST {{AspNetCoreEcommerce_HostAddress}}/api/auth/confirm-email
 Content-Type: application/json
 
 {
-    "Email": "amaechijude178@gmail.com",
+  "email": "user2@gmail.com",
+  "token": "CfDJ8PZh6n2IbQpBidiE+PfU6rHZpLnLcScNHzRRTL5ZmUOuXTqmCk+K7gGtPnfuZ90jb6RnQZy/Ot4d9KNxdMFMa81j3H1gH1htYP4HxyoTeA3/gZ98C4XfeBRIorJoSZNGP2sYBqtjSQKl5DXyNSMqFDjH7L7OX5tJ36HLn8mFtfOeWIHoHOfORb5Z+1cvEHaxL6UddMuA653P1Yx6wz4RoUtAv/Iv79cCghjCDMiSTToX+l/TnJygNLjQ+UZiWOrpKg=="
+}
+###
+POST {{AspNetCoreEcommerce_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+    "Email": "user2@gmail.com",
     "password": "password"
 }
 
 ###
+GET {{AspNetCoreEcommerce_HostAddress}}/api/auth/profile/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb3JlV2ViQXBpIiwiaXNzIjoiQXNwTmV0Q29yZVdlYkFwaSIsImV4cCI6MTc0NjE3ODE4NSwic3ViIjoiMDE5NjkwMTktM2M3Ni03Y2ZjLWJkNTQtNTE0OGUxNjNmODVjIiwiZW1haWwiOiJ1c2VyMkBnbWFpbC5jb20iLCJpYXQiOjE3NDYxNzQ1ODUsIm5iZiI6MTc0NjE3NDU4NX0.Az3IMM31fxXkv2wr7LWLtk6FRWoxtfVjLnwCShlIHc4
 
-POST {{AspNetCoreEcommerce_HostAddress}}/api/vendor/login
-Content-Type: application/json
-
-{
-  "email": "scalar@email.com",
-  "password": "password"
-}
+###
+GET {{AspNetCoreEcommerce_HostAddress}}/api/auth/get-user-role/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb3JlV2ViQXBpIiwiaXNzIjoiQXNwTmV0Q29yZVdlYkFwaSIsImV4cCI6MTc0NjE3ODE4NSwic3ViIjoiMDE5NjkwMTktM2M3Ni03Y2ZjLWJkNTQtNTE0OGUxNjNmODVjIiwiZW1haWwiOiJ1c2VyMkBnbWFpbC5jb20iLCJpYXQiOjE3NDYxNzQ1ODUsIm5iZiI6MTc0NjE3NDU4NX0.Az3IMM31fxXkv2wr7LWLtk6FRWoxtfVjLnwCShlIHc4
 
 ###
 GET {{AspNetCoreEcommerce_HostAddress}}/api/product/

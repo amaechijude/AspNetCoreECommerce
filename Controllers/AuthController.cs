@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Threading.Channels;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.Authentication;
@@ -17,7 +18,8 @@ namespace AspNetCoreEcommerce.Controllers
         SignInManager<User> signInManager,
         TokenProvider tokenService,
         Channel<EmailDto> emailChannel,
-        ICustomerService customerService
+        ICustomerService customerService,
+        ILogger<AuthController> logger
             ) : ControllerBase
     {
         private readonly UserManager<User> _userManager = userManager;
@@ -25,6 +27,7 @@ namespace AspNetCoreEcommerce.Controllers
         private readonly TokenProvider _tokenService = tokenService;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
         private readonly ICustomerService _customerService = customerService;
+        private readonly ILogger<AuthController> _logger = logger;
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -37,7 +40,10 @@ namespace AspNetCoreEcommerce.Controllers
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded)
-                return BadRequest("");
+            {
+                _logger.LogError(result.Errors.ToString());
+                return BadRequest();
+            }
             
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 #pragma warning disable CS8601 // Possible null reference assignment.
@@ -48,10 +54,11 @@ namespace AspNetCoreEcommerce.Controllers
                 Subject = "Confirm your email",
                 Body = EmailBodyTemplates.ConfirmEmailBody(token, user.Email, Request)
             };
-            await _emailChannel.Writer.WriteAsync(email);
-            await _customerService.CreateCustomerAsync(user, registerDto.FirstName, registerDto.LastName);
 
-            return Ok(user.Id);
+            await _customerService.CreateCustomerAsync(user, registerDto.FirstName, registerDto.LastName);
+            await _emailChannel.Writer.WriteAsync(email);
+
+            return Ok("Check your email for confirmation link.");
         }
 
         [HttpPost("confirm-email")]
@@ -64,7 +71,8 @@ namespace AspNetCoreEcommerce.Controllers
                 return BadRequest("Invalid Credentials");
             var result = await _userManager.ConfirmEmailAsync(user, confirmEmailDto.Token);
             if (!result.Succeeded)
-                return BadRequest(result.Errors);
+                return BadRequest();
+            await _userManager.AddToRoleAsync(user, "User");
             return Ok("Email confirmed successfully.");
         }
 
@@ -79,6 +87,8 @@ namespace AspNetCoreEcommerce.Controllers
             var verifyPassword = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             if (!verifyPassword)
                 return BadRequest("Invalid Credentials");
+            if (!user.EmailConfirmed)
+                return Unauthorized("Email not confirmed");
 
             var token = _tokenService.CreateAppUsertoken(user);
             return Ok(new { token });
@@ -129,14 +139,37 @@ namespace AspNetCoreEcommerce.Controllers
             return Ok("Logged out successfully.");
         }
 
-        [HttpGet("profile")]
         [Authorize]
+        [HttpGet("profile")]
         public async Task<IActionResult> Profile()
         {
             User? user = await _userManager.GetUserAsync(User);
-            if (user is null)
-                return Unauthorized();
-            return Ok(user);
+            if (user == null)
+                return BadRequest("Login again");
+            if (!user.EmailConfirmed)
+                return Unauthorized("Email not confirmed");
+
+            // var result = await _customerService.GetCustomerByIdAsync(user.Id);
+            return Ok(new 
+            {
+                Id = user.Id,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+            });
+        }
+
+        [Authorize]
+        [HttpGet("get-user-role")]
+        public async Task<IActionResult> GetUserRole()
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return BadRequest("Login again");
+            if (!user.EmailConfirmed)
+                return Unauthorized("Email not confirmed");
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return Ok(new { roles });
         }
     }
 }

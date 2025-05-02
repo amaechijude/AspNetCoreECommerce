@@ -13,6 +13,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
         {
             DotNetEnv.Env.Load();
             var secretKey = $"{Environment.GetEnvironmentVariable("JWT_SECRET_KEY")}";
+            var jwtIssuer = $"{Environment.GetEnvironmentVariable("JWT_ISSUER")}";
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -22,21 +23,19 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
                 Subject = new ClaimsIdentity(
                     [
                         new Claim(JwtRegisteredClaimNames.Sub, appUser.Id.ToString()),
-                        new Claim(JwtRegisteredClaimNames.Email, appUser.Email),
-                        new Claim(ClaimTypes.Role, GlobalConstants.customerRole)
+                        new Claim(JwtRegisteredClaimNames.Email, appUser.Email)
                     ]
                 ),
                 Expires = DateTime.UtcNow.AddMinutes(60),
                 SigningCredentials = credentials,
-                Issuer = $"{Environment.GetEnvironmentVariable("JWT_ISSUER")}",
-                Audience = GlobalConstants.customerRole
+                Issuer = jwtIssuer,
+                Audience = jwtIssuer
             };
 #pragma warning restore CS8604 // Possible null reference argument.
 
             JsonWebTokenHandler handler = new();
-            string token = handler.CreateToken(tokenDescriptor);
 
-            return token;
+            return handler.CreateToken(tokenDescriptor);
         }
     }
 }

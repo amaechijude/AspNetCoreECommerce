@@ -20,6 +20,10 @@ namespace AspNetCoreEcommerce.Domain.Entities
 
     public class UserRole : IdentityRole<Guid>
     {
-
+        public UserRole(string name)
+        {
+            Name = name;
+            NormalizedName = name.ToUpper();
+        }
     }
 }

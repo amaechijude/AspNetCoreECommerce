@@ -43,5 +43,9 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.1.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="logs\" />
+  </ItemGroup>
+
 </Project>
 
