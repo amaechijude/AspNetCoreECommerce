@@ -26,7 +26,7 @@ namespace AspNetCoreEcommerce.Controllers
                 return Forbid("You are not a vendor yet");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var res = await _productService.CreateProductAsync(user.VendorID, createProduct, Request);
+            var res = await _productService.CreateProductAsync(user.VendorId, createProduct, Request);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);
@@ -44,7 +44,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var res = await _productService.UpdateProductAsync(user.VendorID, productID, updateProduct, Request);
+            var res = await _productService.UpdateProductAsync(user.VendorId, productID, updateProduct, Request);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);
@@ -82,7 +82,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!isValidGuid)
                 return BadRequest();
 
-            await _productService.DeleteProductAsync(user.VendorID, pid);
+            await _productService.DeleteProductAsync(user.VendorId, pid);
             return NoContent();
         }
     }

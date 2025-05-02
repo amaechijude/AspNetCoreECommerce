@@ -4,7 +4,6 @@ using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.Authentication;
 using AspNetCoreEcommerce.Application.UseCases.CartUseCase;
-using AspNetCoreEcommerce.Application.UseCases.CustomerUseCase;
 using AspNetCoreEcommerce.Application.UseCases.OrderUseCase;
 using AspNetCoreEcommerce.Application.UseCases.PaymentUseCase;
 using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
@@ -131,7 +130,6 @@ try
     // --- Dependency Injection (Repositories & Services) ---
     // Repositories
     builder.Services.AddScoped<ICartRepository, CartRepository>();
-    builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
     builder.Services.AddScoped<IOrderRepository, OrderRepository>();
     builder.Services.AddScoped<IShippingAddressRespository, ShippingAddressRespository>();
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -139,7 +137,6 @@ try
     builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 
     // Services
-    builder.Services.AddScoped<ICustomerService, CustomerService>();
     builder.Services.AddScoped<IShippingAddressService, ShippingAddressService>();
     builder.Services.AddScoped<IVendorService, VendorService>();
     builder.Services.AddScoped<IProductService, ProductService>();

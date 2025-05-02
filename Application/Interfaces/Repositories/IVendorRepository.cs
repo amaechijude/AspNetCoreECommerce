@@ -8,7 +8,6 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task<Vendor?> GetVendorByIdAsync(Guid veondorId);
         Task<Vendor?> GetVendorByEmailAsync(string email);
         Task<bool> CheckUniqueNameEmail(Guid userId, string email, string name);
-        Task<User?> GetUserByIdAsync(Guid id);
         Task SaveChangesAsync();
     }
 }

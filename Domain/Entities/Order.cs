@@ -8,9 +8,9 @@ namespace AspNetCoreEcommerce.Domain.Entities
     {
         [Key]
         public Guid OrderId { get; set; }
-        public Guid CustomerId { get; set; }
-        public required Customer Customer { get; set; }
-        public required string CustomerName { get; set; }
+        public Guid UserId { get; set; }
+        public required User User { get; set; }
+        public string UserName { get; set; } = string.Empty;
         public Guid ShippingAddressId { get; set; }
         public required ShippingAddress ShippingAddress { get; set; }
         public required string ReceiverName { get; set; }

@@ -5,16 +5,15 @@ using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
 {
-    public class ShippingAddressService(IShippingAddressRespository shippingAddressRespository) : IShippingAddressService
+    public class ShippingAddressService(
+        IShippingAddressRespository shippingAddressRespository
+        ) : IShippingAddressService
     {
         private readonly IShippingAddressRespository _shippingAddressRespository = shippingAddressRespository;
 
-        public async Task<ResultPattern> AddShippingAddressAsync(Guid customerId, ShippingAddressDto shippingAddress)
+        public async Task<ResultPattern> AddShippingAddressAsync(User user, ShippingAddressDto shippingAddress)
         {
-            var customer = await _shippingAddressRespository.GetCustomerByIdAsync(customerId);
-            if (customer == null)
-                return ResultPattern.FailResult("User not found");
-            var shippingAddressEntity = CreatePrivatesShAdrr(customer, shippingAddress);
+            var shippingAddressEntity = CreatePrivatesShAdrr(user, shippingAddress);
 
             var result = await _shippingAddressRespository.AddShippingAddress(shippingAddressEntity);
             if (result is null)
@@ -23,23 +22,19 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
             return ResultPattern.SuccessResult(MapShippingAddress(result));
         }
 
-        public async Task<ResultPattern> DeleteShippingAddressAsync(Guid customerId, Guid shippingId)
+        public async Task<ResultPattern> DeleteShippingAddressAsync(Guid userId, Guid shippingId)
         {
-            var customer = await _shippingAddressRespository
-                .GetCustomerByIdAsync(customerId);
-            if (customer is null)
-                return ResultPattern.FailResult("User not found");
-            var data = await _shippingAddressRespository.DeleteShippingAddress(customer.CustomerID, shippingId);
+            var data = await _shippingAddressRespository.DeleteShippingAddress(userId, shippingId);
             if (data is null)
                 return ResultPattern.FailResult("Shipping address not found");
 
             return ResultPattern.SuccessResult(data);
         }
 
-        public async Task<ResultPattern> GetShippingAddressByCustomerIdAsync(Guid customerId)
+        public async Task<ResultPattern> GetShippingAddressByUserIdAsync(Guid customerId)
         {
             var shippingAddresses = await _shippingAddressRespository
-                .GetShippingAddressByCustomerId(customerId);
+                .GetShippingAddressByUserId(customerId);
             if (shippingAddresses is null)
                 return ResultPattern.FailResult("Shipping addresses not found");
             return ResultPattern
@@ -65,8 +60,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
             return new ShippingAddressViewDto
             { 
                 ShippingAddressId = shippingAddress.ShippingAddressId,
-                CustomerId = shippingAddress.CustomerId,
-                CustomerName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
+                UserId = shippingAddress.UserId,
+                UserName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
                 ShippingAddressName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
                 ShippingAddressPhone = shippingAddress.PhoneNumber,
                 AddressOne = shippingAddress.AddressLine1,
@@ -78,7 +73,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
             };
         }
 
-        private static ShippingAddress CreatePrivatesShAdrr(Customer customer, ShippingAddressDto shippingAddress)
+        private static ShippingAddress CreatePrivatesShAdrr(User user, ShippingAddressDto shippingAddress)
         {
             return new ShippingAddress
             {
@@ -92,8 +87,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
                 State = shippingAddress.State,
                 Country = shippingAddress.Country,
                 ZipCode = shippingAddress.PostalCode,
-                CustomerId = customer.CustomerID,
-                Customer = customer
+                UserId = user.Id,
+                User = user
             };
         }
     }

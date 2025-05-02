@@ -11,8 +11,8 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public Guid OrderId {get; set;}
         public required string PaymentReference { get; set; }
         public Order? Order { get; set; }
-        public required Guid CustormerId { get; set; }
-        public required Customer Customer { get; set; }
+        public required Guid UserId { get; set; }
+        public User? User { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
         public string? TransactionReference { get; set; }

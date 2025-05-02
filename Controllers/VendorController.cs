@@ -9,18 +9,21 @@ namespace AspNetCoreEcommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class VendorController(IVendorService vendorService, UserManager<User> userManager) : ControllerBase
+    public class VendorController(
+        IVendorService vendorService,
+        UserManager<User> userManager
+        ) : ControllerBase
     {
         private readonly IVendorService _vendorService = vendorService;
         private readonly UserManager<User> _userManager = userManager;
 
+        [Authorize(Roles = "User")]
         [HttpPost("register")]
-        [Authorize]
         public async Task<IActionResult> SignupVendorAsync([FromForm] CreateVendorDto vendorDto)
         {
             User? user = await _userManager.GetUserAsync(User);
-            if (user is null)
-                return Unauthorized();
+            if (user is null || !user.EmailConfirmed) 
+                return Forbid("Confirm user email");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -38,32 +41,39 @@ namespace AspNetCoreEcommerce.Controllers
             User? user = await _userManager.GetUserAsync(User);
             if (user is null) return Unauthorized();
 
-            if (!user.IsVendor)
+            if (!IsVendorActivated(user))
                 return BadRequest("User is not a vendor");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var result = await _vendorService
-                .UpdateVendorAsync(user.VendorID, updateVendor, Request);
+                .UpdateVendorAsync(user.VendorId, updateVendor, Request);
             return result.Success
                 ? Ok(result.Data)
                 : BadRequest(result.Error);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Vendor")]
         [HttpGet("profile")]
         public async Task<IActionResult> GetVendorByIdAsync()
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user is null) return Unauthorized();
 
-            if (!user.IsVendor)
-                return BadRequest("User is not a vendor");
+            if (!IsVendorActivated(user))
+                return BadRequest("User is not a vendor or Activated as vendor");
 
-            var result = await _vendorService.GetVendorByIdAsync(user.VendorID, Request);
+            var result = await _vendorService.GetVendorByIdAsync(user.VendorId, Request);
             return result.Success
                 ? Ok(result.Data)
                 : BadRequest(result.Error);
+        }
+
+        private static bool IsVendorActivated(User user)
+        {
+            if (user.Vendor is null || !user.IsVendor)
+                return false;
+            return true;
         }
     }
 }

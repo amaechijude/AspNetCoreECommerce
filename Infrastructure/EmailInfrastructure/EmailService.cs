@@ -26,6 +26,7 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
         {
             var emailDto = new EmailDto
             {
+                Name = Name,
                 EmailTo = email,
                 Subject = subject,
                 Body = htmlMessage,
@@ -51,7 +52,7 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
         private async Task Papercut(EmailDto emailDto)
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress(Name, _emaiAddress));
+            email.From.Add(new MailboxAddress(emailDto.Name, _emaiAddress));
             email.To.Add(new MailboxAddress(Name, emailDto.EmailTo));
             email.Subject = emailDto.Subject;
             email.Body = new TextPart("html") { Text = emailDto.Body };
@@ -76,7 +77,7 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
                 {
                     try
                     {
-                        await _emailService.SendEmailAsync(e.EmailTo, e.Subject, e.Body);
+                        await _emailService.Papercut(e);
                     }
                     catch (Exception ex)
                     {

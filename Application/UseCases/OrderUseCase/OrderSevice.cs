@@ -15,9 +15,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
         private readonly IOrderRepository _orderRepository = orderRepository;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
 
-        public async Task<ResultPattern> GetOrdersByCustomerIdAsync(Guid customerId)
+        public async Task<ResultPattern> GetOrdersByUserIdAsync(Guid customerId)
         {
-            var orders = await _orderRepository.GetCustomerOrdersAsync(customerId);
+            var orders = await _orderRepository.GetUserOrdersAsync(customerId);
             return ResultPattern.SuccessResult(orders.Select(o => MapOrderViewDto(o)));
         }
 
@@ -30,14 +30,14 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
         }
 
 
-        public async Task<ResultPattern> CreateOrderAsync(Guid customerId, Guid ShippingAddressId)
+        public async Task<ResultPattern> CreateOrderAsync(Guid userId, Guid ShippingAddressId)
         {
-            var (customer, cart) = await _orderRepository.GetCartByIdAsync(customerId);
+            var (user, cart) = await _orderRepository.GetCartByIdAsync(userId);
             if (cart.CartTotalAmount < 1)
                 return ResultPattern.FailResult("Cannot create order with empty cart");
 
             var shippingAddress = await _orderRepository
-                .GetShippingAddressByIdAsync(customerId, ShippingAddressId);
+                .GetShippingAddressByIdAsync(userId, ShippingAddressId);
             if (shippingAddress is null)
                 return ResultPattern.FailResult("Shipping Address not found");
 
@@ -56,9 +56,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
             var order = new Order
             {
                 OrderId = Guid.CreateVersion7(),
-                CustomerId = customerId,
-                Customer = customer,
-                CustomerName = shippingAddress.FullName,
+                UserId = userId,
+                User = user,
+                UserName = shippingAddress.FullName,
                 ShippingAddressId = shippingAddress.ShippingAddressId,
                 ShippingAddress = shippingAddress,
                 ReceiverName = $"{shippingAddress.FirstName} {shippingAddress.LastName}",
@@ -77,7 +77,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
             await _orderRepository.SaveChangesAsync();
             var EmailDto = new EmailDto
             {
-                EmailTo = $"{customer.User.Email}",
+                Name = $"{user.UserName}",
+                EmailTo = $"{user.Email}",
                 Subject = "Order Confirmation",
                 Body = $"Your order with reference {newOrder.OrderRefrence} has been created successfully"
             };
@@ -93,8 +94,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
             {
                 ReceiverName = newOrder.ReceiverName,
                 OrderId = newOrder.OrderId,
-                CustomerId = newOrder.CustomerId,
-                CustomerName = newOrder.CustomerName,
+                UserId = newOrder.UserId,
+                UserName = newOrder.UserName,
                 ShippingAddressAddressId = newOrder.ShippingAddressId,
                 OrderRefrence = newOrder.OrderRefrence,
                 TotalOrderAmount = newOrder.TotalOrderAmount,

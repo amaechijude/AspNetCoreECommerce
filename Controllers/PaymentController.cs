@@ -21,7 +21,7 @@ namespace AspNetCoreEcommerce.Controllers
                 return Unauthorized();
 
             if (!Guid.TryParse(customerIdString, out Guid customerId))
-                return BadRequest("Invalid Customer ID");
+                return BadRequest("Invalid User ID");
 
             var response = await _paymentService.InitiateTransaction(customerId, OrderId);
 

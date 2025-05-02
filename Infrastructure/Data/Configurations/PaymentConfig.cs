@@ -9,8 +9,10 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
             builder.HasKey(p => p.PaymentId);
+            builder.Property(p => p.TotalAmount)
+                .HasColumnType("decimal(18,2)");
+
             builder.ToTable("Payments");
-            builder.Property(p => p.TotalAmount).HasColumnType("decimal(18,2)");
         }
     }
 }

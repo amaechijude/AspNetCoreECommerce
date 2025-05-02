@@ -7,8 +7,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
     public class OrderViewDto
     {
         public Guid OrderId { get; set; }
-        public Guid CustomerId { get; set; }
-        public string? CustomerName { get; set; }
+        public Guid UserId { get; set; }
+        public string? UserName { get; set; }
         public Guid ShippingAddressAddressId { get; set; }
         public required string ReceiverName { get; set; }
         public required string OrderRefrence { get; set; }

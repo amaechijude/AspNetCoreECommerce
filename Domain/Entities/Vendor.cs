@@ -13,7 +13,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public string VendorPhone {  get; set; } = string.Empty;
         public string? VendorBannerUri { get; set; }
         public required string Location { get; set; }
-        public string? VerificationCode { get; set; } = string.Empty;
+        public string? VerificationCode { get; set; }
         public bool IsActivated { get; set; } = false;
         [Url]
         public string? GoogleMapUrl { get; set; }
@@ -53,6 +53,19 @@ namespace AspNetCoreEcommerce.Domain.Entities
         {
             IsActivated = true;
             VerificationCode = string.Empty;
+        }
+
+        public VerificationCode CreateVerificationCode(Vendor vendor)
+        {
+            return new VerificationCode
+            {
+                MinutesToExpire = 20,
+                Code = GlobalConstants.GenerateVerificationCode(), // Generate a unique code
+                Email = vendor.VendorEmail, // Use the vendor's email
+                VendorId = vendor.VendorId, // Associate with the vendor
+                Vendor = vendor, // Set the vendor reference
+                ExpiresIn = DateTime.UtcNow.AddMinutes(20) // Set expiration to 20 minutes from now
+            };
         }
 
     }

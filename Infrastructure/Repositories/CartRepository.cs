@@ -90,16 +90,16 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             return null;
         }
 
-        public async Task<Cart?> GetOrCreateCartAsync(Guid customerId)
+        public async Task<Cart?> GetOrCreateCartAsync(Guid userId)
         {
-            var customer = await _context.Customers.FindAsync(customerId);
-            if (customer is null)
+            var user = await _context.Users.FindAsync(userId);
+            if (user is null)
                 return null;
 
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                  .ThenInclude(ci => ci.Product)
-                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+                .FirstOrDefaultAsync(c => c.UserId == user.Id);
 
             if (cart != null)
                 return cart;
@@ -107,14 +107,14 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             var ncart = new Cart
             {
                 CartId = Guid.CreateVersion7(),
-                CustomerId = customer.CustomerID,
-                Customer = customer,
+                UserId = user.Id,
+                User = user,
                 CreatedAt = DateTimeOffset.UtcNow,
             };
 
             _context.Carts.Add(ncart);
-            customer.Cart = ncart;
-            customer.CartId = ncart.CartId;
+            user.Cart = ncart;
+            user.CartId = ncart.CartId;
             await SaveChangesAsync();
             return ncart;
         }

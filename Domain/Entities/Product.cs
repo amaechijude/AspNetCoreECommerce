@@ -10,11 +10,10 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public required string Name { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
-        [Range(0.01, 10_000_000, ErrorMessage = "Price must be between 0.01 and 10,000,000")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
         public int StockQuantity {get; set;}
-        public bool IsAvailable {get; set;}
+        public bool IsAvailable => StockQuantity > 0;
         [Range(0, 100, ErrorMessage = "Discount percentage must by between 0 and 100")]
         [Column(TypeName = "decimal(4,2)")]
         public decimal DiscountPercentage {get; set;}

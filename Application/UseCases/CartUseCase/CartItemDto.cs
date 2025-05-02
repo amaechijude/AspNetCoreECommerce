@@ -5,9 +5,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
     public class CartViewDto
     {
         public Guid CartId {get; set;}
-        public Guid CustomerId {get; set;}
-        public string CustomerEmail {get; set;} = string.Empty;
-        public string CustomerName {get; set;} = string.Empty;
+        public Guid UserId {get; set;}
+        public string UserEmail {get; set;} = string.Empty;
+        public string UserName {get; set;} = string.Empty;
         public int CartProductCount { get; set; }
         public decimal CartTotalAmount{ get; set; }
         public ICollection<CartItemViewDto> CartItems {get; set;} = [];

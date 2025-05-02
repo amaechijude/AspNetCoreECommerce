@@ -4,11 +4,20 @@ namespace AspNetCoreEcommerce.Domain.Entities
 {
     public class User : IdentityUser<Guid>
     {
-        public Guid CustomerID { get; set; } = Guid.Empty;
-        public Customer? Customer { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string FullName => $"{FirstName}  {LastName}";
+        public Guid OrderId { get; set; }
+        public Order? Order { get; set; }
         public bool IsVendor { get; set; } = false;
-        public Guid VendorID { get; set; }
-        public Vendor? Vendor { get; set; }
+        public Guid VendorId { get; set; }
+        public Vendor? Vendor { get; set; } = null;
+        public Guid CartId { get; set; }
+        public Cart? Cart { get; set; }
+        public ICollection<Feedback> Feedbacks { get; set; } = [];
+        public ICollection<Order> Orders { get; set; } = [];
+        public ICollection<Payment> Payments { get; set; } = [];
+        public ICollection<ShippingAddress> ShippingAddresses { get; set; } = [];
 
         public User(string email, string phoneNumber)
         {

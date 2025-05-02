@@ -44,7 +44,5 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         {
             _context.Vendors.Add(vendor);
         }
-
-        public class DuplicateException(string errorMessage) : Exception(errorMessage);
     }
 }

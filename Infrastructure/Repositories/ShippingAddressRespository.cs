@@ -5,9 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreEcommerce.Infrastructure.Repositories
 {
-    public class ShippingAddressRespository(ApplicationDbContext context) : IShippingAddressRespository
+    public class ShippingAddressRespository(
+        ApplicationDbContext context,
+        ILogger<ShippingAddressRespository> logger
+        ) : IShippingAddressRespository
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly ILogger<ShippingAddressRespository> _logger = logger;
 
         public async Task<ShippingAddress?> AddShippingAddress(ShippingAddress shippingAddress)
         {
@@ -17,10 +21,9 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
                 return shippingAddress;
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                //throw new DbUpdateException("Error adding shipping address", ex)
-                // log exception
+                _logger.LogError(ex, "Error adding shipping address");
                 return null;
             }
         }
@@ -28,7 +31,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         public async Task<string?> DeleteShippingAddress(Guid customerId, Guid shippingid)
         {
             var shippingAddress = await _context.ShippingAddresses
-                .Where(sh => sh.ShippingAddressId == shippingid && sh.CustomerId == customerId)
+                .Where(sh => sh.ShippingAddressId == shippingid && sh.UserId == customerId)
                 .FirstOrDefaultAsync();
             if (shippingAddress == null)
                 return null;
@@ -38,27 +41,18 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             return "Shipping address removed";
         }
 
-        public async Task<IEnumerable<ShippingAddress>> GetShippingAddressByCustomerId(Guid customerId)
+        public async Task<IEnumerable<ShippingAddress>> GetShippingAddressByUserId(Guid customerId)
         {
-            var sh = await _context.ShippingAddresses
-                .Where(sh => sh.CustomerId == customerId)
+            return await _context.ShippingAddresses
+                .Where(sh => sh.UserId == customerId)
                 .ToListAsync();
-
-            return sh.Count == 0 ? [] : sh;
         }
 
-        public async Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId)
+        public async Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid userId, Guid shippingAddId)
         {
-            var sh = await _context.ShippingAddresses
-                .Where(sh => sh.CustomerId == customerId && sh.ShippingAddressId == shippingAddId)
+            return await _context.ShippingAddresses
+                .Where(sh => sh.UserId == userId && sh.ShippingAddressId == shippingAddId)
                 .FirstOrDefaultAsync();
-            return sh is null ? null: sh;
-        }
-
-        public async Task<Customer?> GetCustomerByIdAsync(Guid customerId)
-        {
-            var cs = await _context.Customers.FindAsync(customerId);
-            return cs is null ? null : cs;
         }
 
         public async Task SaveChangesAsync()

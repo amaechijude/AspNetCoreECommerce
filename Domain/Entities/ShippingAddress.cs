@@ -14,8 +14,8 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public string City { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
-        public Guid CustomerId { get; set; }
-        public required Customer Customer { get; set; }
+        public Guid UserId { get; set; }
+        public required User User { get; set; }
         public ICollection<Order> Orders { get; set; } = [];
         public required string ZipCode { get; set; }
         public required string PhoneNumber { get; set; } = string.Empty;

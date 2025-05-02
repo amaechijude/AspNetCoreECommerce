@@ -9,5 +9,6 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
         public required string EmailTo {get; set;}
         public required string Subject {get; set;}
         public required string Body {get; set;}
+        public string? Name {get; set;}
     }
 }

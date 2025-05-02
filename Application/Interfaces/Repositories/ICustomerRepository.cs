@@ -2,13 +2,13 @@ using AspNetCoreEcommerce.Domain.Entities;
 
 namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
 {
-    public interface ICustomerRepository
+    public interface IUserRepository
     {
-        Task<Customer> CreateCustomerAsync(Customer customer);
-        Task<Customer?> GetCustomerByIdAsync(Guid id);
-        Task<Customer?> GetCustomerByUserIdAsync(Guid id);
-        Task<string?> DeleteCustomerAsync(Guid customerId);
-        Task<Customer?> GetCustomerByEmailAsync(string email);
+        Task<User> CreateUserAsync(User customer);
+        Task<User?> GetUserByIdAsync(Guid id);
+        Task<User?> GetUserByUserIdAsync(Guid id);
+        Task<string?> DeleteUserAsync(Guid customerId);
+        Task<User?> GetUserByEmailAsync(string email);
         Task SaveChangesAsync();
     }
 }

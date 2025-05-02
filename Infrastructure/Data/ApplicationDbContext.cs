@@ -8,7 +8,6 @@ namespace AspNetCoreEcommerce.Infrastructure.Data
     {
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<Customer> Customers { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -16,6 +15,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ShippingAddress> ShippingAddresses { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<VerificationCode> VerificationCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

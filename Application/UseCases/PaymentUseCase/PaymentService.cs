@@ -12,12 +12,12 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
         private readonly IPaymentRepository _paymentRepository = paymentRepository; 
         private readonly ErcasPay _ercasPay = ercasPay;
 
-        public async Task<object?> InitiateTransaction(Guid CustomerId, Guid OrderId)
+        public async Task<object?> InitiateTransaction(Guid UserId, Guid OrderId)
         {
-            var customer = await _paymentRepository.GetCustomerByIdAsync(CustomerId);
+            var customer = await _paymentRepository.GetUserByIdAsync(UserId);
             if (customer is null)
-                return ResultPattern.FailResult("Invalid Customer");
-            var order = await _paymentRepository.GetCustomerOrderById(CustomerId, OrderId);
+                return ResultPattern.FailResult("Invalid User");
+            var order = await _paymentRepository.GetUserOrderById(UserId, OrderId);
             if (order is null)
                 return ResultPattern.FailResult("Invalid Order");
 
@@ -30,7 +30,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
 
 
 
-        private static InitiateTransactionDto PrepareInitiateTransactionDto(Customer customer, Order order)
+        private static InitiateTransactionDto PrepareInitiateTransactionDto(User customer, Order order)
         {
 #pragma warning disable CS8601 // Possible null reference assignment.
             return new InitiateTransactionDto
@@ -50,7 +50,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
 #pragma warning restore CS8601 // Possible null reference assignment.
         }
 
-        private static Payment PreparePayment(Customer customer, Order order)
+        private static Payment PreparePayment(User user, Order order)
         {
             return new Payment
             {
@@ -58,8 +58,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
                 OrderId = order.OrderId,
                 Order = order,
                 PaymentReference = order.OrderRefrence,
-                CustormerId = customer.CustomerID,
-                Customer = customer,
+                UserId = user.Id,
+                User = user,
                 TotalAmount = order.TotalAmountToBePaid,
                 PaymentStatus = PaymentStatusEnum.Pending,
                 CreatedDate = DateTimeOffset.UtcNow

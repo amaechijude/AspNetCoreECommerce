@@ -3,10 +3,10 @@ using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.Interfaces.Services
 {
-    public interface ICustomerService
+    public interface IUserService
     {
-        Task<ResultPattern> CreateCustomerAsync(User user, string firstname, string lastName);
-        Task<ResultPattern> GetCustomerByIdAsync(Guid id);
-        Task<ResultPattern> DeleteCustomerAsync(Guid customerId);
+        Task<ResultPattern> CreateUserAsync(User user, string firstname, string lastName);
+        Task<ResultPattern> GetUserByIdAsync(Guid id);
+        Task<ResultPattern> DeleteUserAsync(Guid customerId);
     }
 }

@@ -26,8 +26,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
     public class ShippingAddressViewDto
     {
         public Guid ShippingAddressId { get; set; }
-        public Guid CustomerId { get; set; }
-        public string? CustomerName { get; set; }
+        public Guid UserId { get; set; }
+        public string? UserName { get; set; }
         public string? ShippingAddressName { get; set; }
         public string? ShippingAddressPhone { get; set; }
         public string? AddressOne { get; set; }

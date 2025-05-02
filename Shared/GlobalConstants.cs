@@ -4,7 +4,7 @@ namespace AspNetCoreEcommerce.Shared
 {
     public static class GlobalConstants
     {
-        public const string customerRole = "Customer";
+        public const string customerRole = "User";
         public const string vendorRole = "Vendor";
         public const string adminRole = "Admin";
         public const string httpContentType = "application/json";

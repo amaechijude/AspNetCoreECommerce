@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using System.Text;
 using AspNetCoreEcommerce.Domain.Entities;
-using AspNetCoreEcommerce.Shared;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 

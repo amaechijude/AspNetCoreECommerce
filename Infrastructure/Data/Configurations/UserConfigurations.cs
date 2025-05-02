@@ -21,11 +21,29 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
                 .HasForeignKey<Vendor>(v => v.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // User Customer relationship
-            builder.HasOne(u => u.Customer)
-                .WithOne(c => c.User)
-                .HasForeignKey<Customer>(c => c.UserId)
+            // User Order relationship
+            builder.HasMany(u => u.Orders)
+                .WithOne(o => o.User)
+                .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // User Cart relationship
+            builder.HasOne(u => u.Cart)
+                .WithOne(c => c.User)
+                .HasForeignKey<Cart>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // User Feedback relationship
+            builder.HasMany(u => u.Feedbacks)
+                .WithOne(f => f.User)
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // User Payment relationship
+            builder.HasMany(u => u.Payments)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.ToTable("Users");
         }

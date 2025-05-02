@@ -16,13 +16,13 @@ namespace AspNetCoreEcommerce.Controllers
 
         [Authorize]
         [HttpGet("all")]
-        public async Task<IActionResult> GetOrdersByCustomerIdAsync()
+        public async Task<IActionResult> GetOrdersByUserIdAsync()
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
 
-            var res = await _orderSevice.GetOrdersByCustomerIdAsync(user.CustomerID);
+            var res = await _orderSevice.GetOrdersByUserIdAsync(user.Id);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);
@@ -35,7 +35,7 @@ namespace AspNetCoreEcommerce.Controllers
            User? user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            var res = await _orderSevice.GetOrderByOrderIdAsync(orderId, user.CustomerID);
+            var res = await _orderSevice.GetOrderByOrderIdAsync(orderId, user.Id);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);
@@ -48,7 +48,7 @@ namespace AspNetCoreEcommerce.Controllers
             User? user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            var res = await _orderSevice.CreateOrderAsync(user.CustomerID, shippingaddressId);
+            var res = await _orderSevice.CreateOrderAsync(user.Id, shippingaddressId);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);

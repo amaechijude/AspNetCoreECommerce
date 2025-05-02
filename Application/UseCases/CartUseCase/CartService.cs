@@ -43,9 +43,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
             var cartview = new CartViewDto
             {
                 CartId = cart.CartId,
-                CustomerId = cart.CustomerId,
-                CustomerEmail = cart.Customer.User.Email ?? string.Empty,
-                CustomerName = $"{cart.Customer.User.UserName}",
+                UserId = cart.UserId,
+                UserEmail = cart.User.Email ?? string.Empty,
+                UserName = $"{cart.User.UserName}",
                 CartProductCount = cart.CartItemsCount,
                 CartTotalAmount = cart.CartTotalAmount,
                 CartItems = [.. cart.CartItems.Select(ci => new CartItemViewDto

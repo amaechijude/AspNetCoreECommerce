@@ -8,13 +8,13 @@ namespace AspNetCoreEcommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController(ICustomerService customerService) : ControllerBase
+    public class UserController(IUserService customerService) : ControllerBase
     {
-        private readonly ICustomerService _customerService = customerService;        
+        private readonly IUserService _customerService = customerService;        
         
         [Authorize(Roles = GlobalConstants.customerRole)]
         [HttpGet("profile")]
-        public async Task<IActionResult> GetCustomerProfile()
+        public async Task<IActionResult> GetUserProfile()
         {
             var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(customerId))
@@ -24,7 +24,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!isValidGuid)
                 return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
 
-            var res = await _customerService.GetCustomerByIdAsync(customerIdGuid);
+            var res = await _customerService.GetUserByIdAsync(customerIdGuid);
             return res.Success
                 ? Ok(res)
                 : BadRequest(res);
@@ -33,7 +33,7 @@ namespace AspNetCoreEcommerce.Controllers
 
         [Authorize(Roles = GlobalConstants.customerRole)]
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteCustomerProfile()
+        public async Task<IActionResult> DeleteUserProfile()
         {
             var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(customerId))
@@ -41,7 +41,7 @@ namespace AspNetCoreEcommerce.Controllers
             var isValidGuid = Guid.TryParse(customerId, out Guid customerIdGuid);
             if (!isValidGuid)
                 return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
-            var res = await _customerService.DeleteCustomerAsync(customerIdGuid);
+            var res = await _customerService.DeleteUserAsync(customerIdGuid);
             return res.Success
                 ? Ok(res)
                 : BadRequest(res);

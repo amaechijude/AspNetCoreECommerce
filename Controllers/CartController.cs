@@ -24,7 +24,7 @@ namespace AspNetCoreEcommerce.Controllers
                 return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
             var isValidId = Guid.TryParse(customerId, out Guid cId);
             if (!isValidId)
-                return BadRequest(ResultPattern.FailResult("Invalid Customer Id"));
+                return BadRequest(ResultPattern.FailResult("Invalid User Id"));
 
             var isValid = Guid.TryParse(addToCartDto.ProductId, out var _);
             if (!isValid)
@@ -45,7 +45,7 @@ namespace AspNetCoreEcommerce.Controllers
                 return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
             var isValidId = Guid.TryParse(customerId, out Guid cId);
             if (!isValidId)
-                return BadRequest(ResultPattern.FailResult("Invalid Customer Id"));
+                return BadRequest(ResultPattern.FailResult("Invalid User Id"));
 
             var isValid = Guid.TryParse(productId, out Guid pid);
             if (!isValid)
@@ -66,7 +66,7 @@ namespace AspNetCoreEcommerce.Controllers
                 return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
             var isValidId = Guid.TryParse(customerId, out Guid cId);
             if (!isValidId)
-                return BadRequest(ResultPattern.FailResult("Invalid Customer Id"));
+                return BadRequest(ResultPattern.FailResult("Invalid User Id"));
             var data =await _cartService.ViewCartAsync(cId);
             return data.Success
                 ? Ok(data)

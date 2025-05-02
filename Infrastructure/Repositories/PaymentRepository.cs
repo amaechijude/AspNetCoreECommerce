@@ -9,18 +9,18 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<Customer?> GetCustomerByIdAsync(Guid CustomerId)
+        public async Task<User?> GetUserByIdAsync(Guid UserId)
         {
-            var customer = await _context.Customers.FindAsync(CustomerId);
+            var customer = await _context.Users.FindAsync(UserId);
                 return customer is null
                 ? null
                 : customer;
         }
 
-        public async Task<Order?> GetCustomerOrderById(Guid CustomerId, Guid OrderId)
+        public async Task<Order?> GetUserOrderById(Guid UserId, Guid OrderId)
         {
             var order = await _context.Orders
-                .Where(o => o.OrderId == OrderId && o.CustomerId == CustomerId)
+                .Where(o => o.OrderId == OrderId && o.UserId == UserId)
                 .FirstOrDefaultAsync();
             return order is null
                 ? null

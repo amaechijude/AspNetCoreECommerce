@@ -47,13 +47,13 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
     public class CreateVendorDto
     {
         [Required(ErrorMessage = "Vendor name is required")]
-        public string? Name { get; set; }
-        [Required(ErrorMessage = "Vendor Email is required"), EmailAddress]
-        public string? Email { get; set; }
-        [Required(ErrorMessage = "Vendor Phone is required"), Phone]
-        public string? Phone { get; set; }
-        [Required(ErrorMessage = "Vendor Location is required")]
-        public string? Location { get; set; }
+        public required string Name { get; set; }
+        [Required, EmailAddress]
+        public required string Email { get; set; }
+        [Required, Phone]
+        public required string Phone { get; set; }
+        [Required]
+        public required string Location { get; set; }
         public IFormFile? Logo { get; set; }
     }
 }

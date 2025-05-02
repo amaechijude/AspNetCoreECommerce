@@ -7,9 +7,8 @@ namespace AspNetCoreEcommerce.Domain.Entities
     {
         [Key]
         public Guid CartId {get; set;}
-        public Guid CustomerId {get; set;}
-        public required Customer Customer {get; set;}
-        public bool IsCheckedOut {get; set;}
+        public Guid UserId {get; set;}
+        public required User User {get; set;}
         public DateTimeOffset CreatedAt {get; set;}
         public DateTimeOffset UpdatedAt {get; set;}
         public ICollection<CartItem> CartItems {get; set;} = [];

@@ -18,7 +18,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
 
         private static Vendor PrepareVendorSignUp(User user,CreateVendorDto vendorDto)
         {
-#pragma warning disable CS8601 // Possible null reference assignment.
             return new Vendor
             {
                 User = user,
@@ -30,7 +29,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 Location = vendorDto.Location,
                 DateJoined = DateTimeOffset.UtcNow
             };
-#pragma warning restore CS8601 // Possible null reference assignment.
         }
 
         private static VendorViewDto MapToVendorViewDto(Vendor vendor, HttpRequest request)
@@ -71,22 +69,21 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
             var user = await _vendorRepository.GetUserByIdAsync(userId);
             if (user is null)
                 return ResultPattern.FailResult("Creation failed");
-#pragma warning disable CS8604 // Possible null reference argument.
             if (await _vendorRepository.CheckUniqueNameEmail(userId, createVerndor.Email, createVerndor.Name))
                 return ResultPattern.FailResult("Creation failed");
-#pragma warning restore CS8604 // Possible null reference argument.
 
             var vendor = PrepareVendorSignUp(user, createVerndor);
             vendor.VendorBannerUri = await GlobalConstants.SaveImageAsync(createVerndor.Logo, GlobalConstants.vendorSubPath);
             vendor.VerificationCode = GlobalConstants.GenerateVerificationCode();
             _vendorRepository.CreateVendor(vendor);
             user.Vendor = vendor;
-            user.VendorID = vendor.VendorId;
+            user.VendorId = vendor.VendorId;
             user.IsVendor = true;
             await _vendorRepository.SaveChangesAsync();
             await _emailChannel
                 .Writer.WriteAsync(new EmailDto
                 {
+                    Name = vendor.VendorName,
                     EmailTo = vendor.VendorEmail,
                     Subject = "Vendor Account Created",
                     Body = $"Hello {vendor.VendorName}, your account has been created successfully." +
