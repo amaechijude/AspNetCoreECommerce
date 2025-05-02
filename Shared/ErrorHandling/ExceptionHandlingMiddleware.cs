@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using AspNetCoreEcommerce.Application.UseCases.Authentication;
 namespace AspNetCoreEcommerce.Shared.ErrorHandling
 {
     public class ExceptionHandlingMiddleware(RequestDelegate next)
@@ -39,6 +40,23 @@ namespace AspNetCoreEcommerce.Shared.ErrorHandling
                 var errorResponse = new
                 {
                     code = (int)HttpStatusCode.BadRequest,
+                    status = "failed",
+                    message = $"{ex.Message}"
+                };
+
+                var jsonRespose = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonRespose);
+
+                return;
+            }
+            catch (EmailNotConfirmedException ex)
+            {
+                context.Response.ContentType = httpContentType;
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+                var errorResponse = new
+                {
+                    code = (int)HttpStatusCode.Forbidden,
                     status = "failed",
                     message = $"{ex.Message}"
                 };

@@ -11,6 +11,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
     {
          public string CreateAppUsertoken(User appUser)
         {
+            // check if the user email is confirmed
+            if (!appUser.EmailConfirmed)
+                throw new EmailNotConfirmedException("Email not confirmed");
             DotNetEnv.Env.Load();
             var secretKey = $"{Environment.GetEnvironmentVariable("JWT_SECRET_KEY")}";
             var jwtIssuer = $"{Environment.GetEnvironmentVariable("JWT_ISSUER")}";
@@ -33,9 +36,10 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
             };
 #pragma warning restore CS8604 // Possible null reference argument.
 
-            JsonWebTokenHandler handler = new();
-
+            var handler = new JsonWebTokenHandler();
             return handler.CreateToken(tokenDescriptor);
         }
     }
+
+    public class EmailNotConfirmedException(string message) : Exception(message);
 }

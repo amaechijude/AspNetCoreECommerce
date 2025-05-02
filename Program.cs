@@ -77,6 +77,7 @@ try
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequireLowercase = false;
         options.Password.RequireUppercase = false;
+        options.SignIn.RequireConfirmedEmail = true; // Require email confirmation for sign-in
     })
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();

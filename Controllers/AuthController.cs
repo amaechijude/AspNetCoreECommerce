@@ -87,8 +87,6 @@ namespace AspNetCoreEcommerce.Controllers
             var verifyPassword = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             if (!verifyPassword)
                 return BadRequest("Invalid Credentials");
-            if (!user.EmailConfirmed)
-                return Unauthorized("Email not confirmed");
 
             var token = _tokenService.CreateAppUsertoken(user);
             return Ok(new { token });

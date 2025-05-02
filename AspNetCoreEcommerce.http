@@ -4,7 +4,7 @@ POST {{AspNetCoreEcommerce_HostAddress}}/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "user2@gmail.com",
+  "email": "user@gmail.com",
   "password": "password",
   "confirmPassword": "password",
   "firstName": "First",
@@ -24,7 +24,7 @@ POST {{AspNetCoreEcommerce_HostAddress}}/api/auth/login
 Content-Type: application/json
 
 {
-    "Email": "user2@gmail.com",
+    "Email": "user@gmail.com",
     "password": "password"
 }
 
