@@ -16,60 +16,17 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
         private readonly IVendorRepository _vendorRepository = vendorRepository;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
 
-        private static Vendor PrepareVendorSignUp(User user,CreateVendorDto vendorDto)
-        {
-            return new Vendor
-            {
-                User = user,
-                UserId = user.Id,
-                VendorId = Guid.CreateVersion7(),
-                VendorName = vendorDto.Name,
-                VendorEmail = vendorDto.Email,
-                VendorPhone = vendorDto.Phone,
-                Location = vendorDto.Location,
-                DateJoined = DateTimeOffset.UtcNow
-            };
-        }
-
-        private static VendorViewDto MapToVendorViewDto(Vendor vendor, HttpRequest request)
-        {
-             return new VendorViewDto
-            {
-                VendorId = vendor.VendorId,
-                VendorName = vendor.VendorName,
-                VendorEmail = vendor.VendorEmail,
-                VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorBannerUri),
-                Location = vendor.Location,
-                GoogleMapUrl = vendor.GoogleMapUrl,
-                TwitterUrl = vendor.TwitterUrl,
-                InstagramUrl = vendor.InstagramUrl,
-                FacebookUrl = vendor.FacebookUrl,
-                DateJoined = vendor.DateJoined,
-                DateUpdated = vendor.DateUpdated,
-                Products = [.. vendor.Products.Select(v => new ProductViewDto {
-                    ProductId = v.ProductId,
-                    ProductName = v.Name,
-                    Description = v.Description,
-                    ImageUrl = GlobalConstants.GetImagetUrl(request, v.ImageUrl),
-                    Price = v.Price,
-                    VendorId = v.VendorId,
-                    VendorName = v.VendorName
-                })]
-            };
-        }
-
-        public async Task<ResultPattern> CreateVendorAsync(Guid userId, CreateVendorDto createVerndor, HttpRequest request)
+        public async Task<ResultPattern> CreateVendorAsync(User user, CreateVendorDto createVerndor, HttpRequest request)
         {
             var validator = new CreateVendorValidator();
             var result = await validator.ValidateAsync(createVerndor);
             if (!result.IsValid)
                 return ResultPattern.FailResult(result.Errors);
 
-            var user = await _vendorRepository.GetUserByIdAsync(userId);
+            
             if (user is null)
                 return ResultPattern.FailResult("Creation failed");
-            if (await _vendorRepository.CheckUniqueNameEmail(userId, createVerndor.Email, createVerndor.Name))
+            if (await _vendorRepository.CheckUniqueNameEmail(user.Id, createVerndor.Email, createVerndor.Name))
                 return ResultPattern.FailResult("Creation failed");
 
             var vendor = PrepareVendorSignUp(user, createVerndor);
@@ -120,6 +77,49 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 return ResultPattern.FailResult("");
             var vendorView = MapToVendorViewDto(vendor, request);
             return ResultPattern.SuccessResult(vendorView);
+        }
+
+        private static Vendor PrepareVendorSignUp(User user, CreateVendorDto vendorDto)
+        {
+            return new Vendor
+            {
+                User = user,
+                UserId = user.Id,
+                VendorId = Guid.CreateVersion7(),
+                VendorName = vendorDto.Name,
+                VendorEmail = vendorDto.Email,
+                VendorPhone = vendorDto.Phone,
+                Location = vendorDto.Location,
+                DateJoined = DateTimeOffset.UtcNow
+            };
+        }
+
+        private static VendorViewDto MapToVendorViewDto(Vendor vendor, HttpRequest request)
+        {
+            return new VendorViewDto
+            {
+                VendorId = vendor.VendorId,
+                VendorName = vendor.VendorName,
+                VendorEmail = vendor.VendorEmail,
+                VendorPhone = vendor.VendorPhone,
+                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorBannerUri),
+                Location = vendor.Location,
+                GoogleMapUrl = vendor.GoogleMapUrl,
+                TwitterUrl = vendor.TwitterUrl,
+                InstagramUrl = vendor.InstagramUrl,
+                FacebookUrl = vendor.FacebookUrl,
+                DateJoined = vendor.DateJoined,
+                DateUpdated = vendor.DateUpdated,
+                Products = [.. vendor.Products.Select(v => new ProductViewDto {
+                    ProductId = v.ProductId,
+                    ProductName = v.Name,
+                    Description = v.Description,
+                    ImageUrl = GlobalConstants.GetImagetUrl(request, v.ImageUrl),
+                    Price = v.Price,
+                    VendorId = v.VendorId,
+                    VendorName = v.VendorName
+                })]
+            };
         }
     }
 }

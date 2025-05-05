@@ -9,6 +9,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
     public class ProductService(IProductRepository productRepository) : IProductService
     {
         private readonly IProductRepository _productRepository = productRepository;
+        private const int MaxPageSize = 50;
 
         public async Task<ResultPattern> GetAllProductsAsync(HttpRequest request)
         {
@@ -105,6 +106,23 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             };
         }
 
+        public async Task<PagedResponse<ProductViewDto>> GetPagedProductsAsync(int pageNumber, int pageSize, HttpRequest httpRequest)
+        {
+            pageNumber = pageNumber < 1 ? 1 : pageNumber;
+            pageSize = pageNumber > MaxPageSize ? MaxPageSize : pageSize;
+
+            var (products, totalCount) = await _productRepository
+                .GetPagedProductAsync(pageNumber, pageSize);
+
+            var productDto = products.Select(p => MapProductToDto(p, httpRequest));
+
+            return new PagedResponse<ProductViewDto>(
+                productDto,
+                pageNumber,
+                pageSize,
+                totalCount
+            );
+        }
     }
 
 }

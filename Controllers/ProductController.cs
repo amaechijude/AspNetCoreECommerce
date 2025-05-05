@@ -15,7 +15,7 @@ namespace AspNetCoreEcommerce.Controllers
         private readonly IProductService _productService = productService;
         private readonly UserManager<User> _userManager = userManager;
 
-        [Authorize]
+        [Authorize(Roles = "Vendor")] 
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {
@@ -32,7 +32,7 @@ namespace AspNetCoreEcommerce.Controllers
                 : BadRequest(res.Error);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Vendor")]
         [HttpPatch("update/{productID}")]
         public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productID, [FromForm] UpdateProductDto updateProduct)
         {
@@ -51,9 +51,9 @@ namespace AspNetCoreEcommerce.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProductAsync()
+        public async Task<IActionResult> GetAllProductAsync([FromQuery] int pageNumber = 1, int pageSize = 50)
         {
-            return Ok(await _productService.GetAllProductsAsync(Request));
+            return Ok(await _productService.GetPagedProductsAsync(pageNumber, pageSize, Request));
         }
 
         [HttpGet("{productId}")]
@@ -68,7 +68,7 @@ namespace AspNetCoreEcommerce.Controllers
                 : NotFound(res.Error);
         }
 
-        [Authorize(Roles = GlobalConstants.vendorRole)]
+        [Authorize(Roles = "Vendor")]
         [HttpDelete("delete/{productId}")]
         public async Task<IActionResult> DeleteProductAsync([FromRoute] string productId)
         {

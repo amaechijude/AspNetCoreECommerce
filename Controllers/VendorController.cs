@@ -28,7 +28,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _vendorService.CreateVendorAsync(user.Id, vendorDto, Request);
+            var result = await _vendorService.CreateVendorAsync(user, vendorDto, Request);
             return result.Success
                 ? Ok(result.Data)
                 : BadRequest(result.Error);

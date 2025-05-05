@@ -77,5 +77,18 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<(IEnumerable<Product> Items, int TotalCount)> GetPagedProductAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Products.AsQueryable();
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
     }
 }

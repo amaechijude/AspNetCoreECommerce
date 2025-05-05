@@ -6,6 +6,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
     public interface IProductRepository
     {
         Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request);
+        Task<(IEnumerable<Product> Items, int TotalCount)> GetPagedProductAsync(int pageNumber, int PageSize);
         Task<Product?> GetProductByIdAsync(Guid productId);
         Task<Product> CreateProductAsync(Product product, HttpRequest request);
         Task UpdateProductAsync();
