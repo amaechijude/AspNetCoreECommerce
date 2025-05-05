@@ -7,7 +7,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string FullName => $"{FirstName}  {LastName}";
-        public Guid OrderId { get; set; }
+        public Guid? OrderId { get; set; }
         public Order? Order { get; set; }
         public bool IsVendor { get; set; } = false;
         public Guid VendorId { get; set; }
