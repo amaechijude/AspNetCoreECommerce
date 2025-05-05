@@ -117,7 +117,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                     ImageUrl = GlobalConstants.GetImagetUrl(request, v.ImageUrl),
                     Price = v.Price,
                     VendorId = v.VendorId,
-                    VendorName = v.VendorName
+                    VendorName = v.VendorName,
+                    Quantity = v.StockQuantity
                 })]
             };
         }

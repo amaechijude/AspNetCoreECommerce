@@ -23,7 +23,8 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
                     ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageUrl),
                     Price = p.Price,
                     VendorId = p.VendorId,
-                    VendorName = p.Vendor.VendorName
+                    VendorName = p.Vendor.VendorName,
+                    Quantity = p.StockQuantity
                 })
                 .ToListAsync();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.

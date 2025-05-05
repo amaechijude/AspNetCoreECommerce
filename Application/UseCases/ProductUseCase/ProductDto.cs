@@ -30,8 +30,11 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public decimal Price { get; set; }
+        public required int Quantity {get; set;}
         public Guid VendorId { get; set; }
         public string? VendorName { get; set; }
+        public int Rating => 4;
+        public int ReveiwCount => 5;
     }
     public class UpdateProductDto
     {
