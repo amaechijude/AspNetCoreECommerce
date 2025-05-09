@@ -18,12 +18,13 @@ namespace AspNetCoreEcommerce.Controllers
         private readonly IShippingAddressService _shippingAddressService = shippingAddressService;
         private readonly UserManager<User> _userManager = userManager;
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddShippingAddress([FromBody] ShippingAddressDto shippingAddressDto)
         {
             User? user = await _userManager.GetUserAsync(User);
-            if (user == null) return Unauthorized();
+            if (user == null)
+                return Unauthorized("You need to login");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -45,19 +46,6 @@ namespace AspNetCoreEcommerce.Controllers
             if (!isValidGuid)
                 return BadRequest();
             var res = await _shippingAddressService.DeleteShippingAddressAsync(user.Id, shId);
-            return res.Success
-                ? Ok(res.Data)
-                : BadRequest(res.Error);
-        }
-
-        [Authorize(Roles = "User")]
-        [HttpGet("view")]
-        public async Task<IActionResult> GetShippingAddressAsync()
-        {
-            User? user = await _userManager.GetUserAsync(User);
-            if (user == null) return Unauthorized();
-
-            var res = await _shippingAddressService.GetShippingAddressByUserIdAsync(user.Id);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);

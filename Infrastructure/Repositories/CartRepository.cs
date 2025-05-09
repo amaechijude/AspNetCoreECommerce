@@ -2,18 +2,22 @@ using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.UseCases.CartUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreEcommerce.Infrastructure.Repositories
 {
-    public class CartRepository(ApplicationDbContext context) : ICartRepository
+    public class CartRepository(ApplicationDbContext context,
+        UserManager<User> userManager
+        ) : ICartRepository
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly UserManager<User> _userManager = userManager;
 
-        public async Task<Cart?> ADddToCartAsync(Guid customerId, AddToCartDto cartItemDto)
+        public async Task<Cart?> ADddToCartAsync(Guid userId, AddToCartDto cartItemDto)
         {
             var pid = Guid.Parse(cartItemDto.ProductId);
-            var userCart = await GetOrCreateCartAsync(customerId);
+            var userCart = await GetOrCreateCartAsync(userId);
             if (userCart is null)
                 return null;
             var product = await _context.Products.FindAsync(pid);
@@ -92,7 +96,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
 
         public async Task<Cart?> GetOrCreateCartAsync(Guid userId)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null)
                 return null;
 

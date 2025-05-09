@@ -24,7 +24,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public Vendor? Vendor { get; set; }
         public ICollection<CartItem> CartItems { get; set; } = [];
         public ICollection<OrderItem> OrderItems {get; set;} = [];
-        public ICollection<Feedback> Feedbacks { get; set; } = [];
+        public ICollection<Reveiw> Reveiws { get; set; } = [];
         public ICollection<ProductTags> Tags { get; set; } = [];
 
         public void UpdateProduct(string? name, string? description, string? imageName, decimal? price)

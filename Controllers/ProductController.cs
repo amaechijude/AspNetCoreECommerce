@@ -85,5 +85,18 @@ namespace AspNetCoreEcommerce.Controllers
             await _productService.DeleteProductAsync(user.VendorId, pid);
             return NoContent();
         }
+
+        [Authorize]
+        [HttpPost("reveiw/{pid}")]
+        public async Task<IActionResult> ReviewAsync([FromQuery] Guid pid, [FromBody]AddProductReveiwDto dto)
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null)
+                return NotFound();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var res = await _productService.AddProductReviewAsync(user, pid, dto);
+            return res.Success ? Ok(res.Data) : NotFound(res.Error);
+        }
     }
 }

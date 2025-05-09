@@ -4,8 +4,6 @@ namespace AspNetCoreEcommerce.Infrastructure.EmailInfrastructure
 {
     public class EmailDto
     {
-        [EmailAddress]
-        [Required]
         public required string EmailTo {get; set;}
         public required string Subject {get; set;}
         public required string Body {get; set;}

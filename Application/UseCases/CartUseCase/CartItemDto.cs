@@ -24,6 +24,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
         public decimal TotalPrice {get; set;}
         public Guid ProductId {get; set;}
         public string ProductName {get; set;} = string.Empty;
+        public required string ProductImageUrl {get; set;}
+        public required Guid VendorId {get; set;}
         public string VendorName {get; set;} = string.Empty;
     }
 

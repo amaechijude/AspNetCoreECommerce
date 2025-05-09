@@ -16,8 +16,8 @@ POST {{AspNetCoreEcommerce_HostAddress}}/api/auth/confirm-email
 Content-Type: application/json
 
 {
-  "email": "user2@gmail.com",
-  "token": "CfDJ8PZh6n2IbQpBidiE+PfU6rHZpLnLcScNHzRRTL5ZmUOuXTqmCk+K7gGtPnfuZ90jb6RnQZy/Ot4d9KNxdMFMa81j3H1gH1htYP4HxyoTeA3/gZ98C4XfeBRIorJoSZNGP2sYBqtjSQKl5DXyNSMqFDjH7L7OX5tJ36HLn8mFtfOeWIHoHOfORb5Z+1cvEHaxL6UddMuA653P1Yx6wz4RoUtAv/Iv79cCghjCDMiSTToX+l/TnJygNLjQ+UZiWOrpKg=="
+  "email": "user@gmail.com",
+  "token": "CfDJ8PZh6n2IbQpBidiE%2BPfU6rFCtHa203hq%2Fn3cWpyzff%2Fh1wLv4b1wpFeA4lMIsuhXdtulVyE1zWGlHSRlqZGpTYNKeHitL0J9tfJqbWSUXgAAYTTOncpalpl6mGKv0GOaSbK1CdWbgw71KCyR7Pqa7Ye8ETrjYnXnKtLn56iLwhWLxbx80K%2F%2BN4NaRkDwsUQf3hdc9ZyrZ6szwdsgQHKkkV%2BzXvddiP7ZMBYrTGxc4OWqt2aFHh44P0DR2VzoooKmag%3D%3D"
 }
 ###
 POST {{AspNetCoreEcommerce_HostAddress}}/api/auth/login
@@ -30,7 +30,7 @@ Content-Type: application/json
 
 ###
 GET {{AspNetCoreEcommerce_HostAddress}}/api/auth/profile/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb3JlV2ViQXBpIiwiaXNzIjoiQXNwTmV0Q29yZVdlYkFwaSIsImV4cCI6MTc0NjE3ODE4NSwic3ViIjoiMDE5NjkwMTktM2M3Ni03Y2ZjLWJkNTQtNTE0OGUxNjNmODVjIiwiZW1haWwiOiJ1c2VyMkBnbWFpbC5jb20iLCJpYXQiOjE3NDYxNzQ1ODUsIm5iZiI6MTc0NjE3NDU4NX0.Az3IMM31fxXkv2wr7LWLtk6FRWoxtfVjLnwCShlIHc4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb3JlV2ViQXBpIiwiaXNzIjoiQXNwTmV0Q29yZVdlYkFwaSIsImV4cCI6MTc0NzAwMDg1OSwic3ViIjoiMDE5NmI0ZDItNzMyZS03NjVlLWJlMzYtNjE1NDVkNzc2ODI5IiwiZW1haWwiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTc0NjgyODA1OSwibmJmIjoxNzQ2ODI4MDU5fQ.Tqgl6TXUM6YYbs100JXkKM6nK91wIw0S3INwQgYPwYE
 
 ###
 GET {{AspNetCoreEcommerce_HostAddress}}/api/auth/get-user-role/
@@ -40,15 +40,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb
 GET {{AspNetCoreEcommerce_HostAddress}}/api/product/
 ###
 
-GET {{AspNetCoreEcommerce_HostAddress}}/api/product/01951487-ed0b-72ac-b7f1-a562259107c8/
+GET {{AspNetCoreEcommerce_HostAddress}}/api/product/0196a187-f7ba-7527-aea7-3b884db4168e/
 ###
 
 POST {{AspNetCoreEcommerce_HostAddress}}/api/cart/add/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDE2MzE0MTAsInN1YiI6IjAxOTU4MTE1LWFmN2EtNzJiMy1iNDE3LTJhMmYxOTliMDg5MyIsImVtYWlsIjoiYW1hZWNoaWp1ZGUxNzhAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE3NDE2Mjc4MTAsIm5iZiI6MTc0MTYyNzgxMH0.fEV7wgm42nKcxD7KDJo7j__GXKKwG8jl11a6_KBUMtQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb3JlV2ViQXBpIiwiaXNzIjoiQXNwTmV0Q29yZVdlYkFwaSIsImV4cCI6MTc0NjgyNzA4Nywic3ViIjoiMDE5NmI0ZDItNzMyZS03NjVlLWJlMzYtNjE1NDVkNzc2ODI5IiwiZW1haWwiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTc0NjgyMzQ4NywibmJmIjoxNzQ2ODIzNDg3fQ.SFoV-YeEBlW33XxUZtjXXH4YiXGuKyoVwxlTUGqdZCw
 
 {
-  "productId": "01951487-ed0b-72ac-b7f1-a562259107c8",
+  "productId": "0196a187-f7ba-7527-aea7-3b884db4168e",
   "quantity": 5
 }
 
@@ -56,16 +56,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lc
 ###
 GET {{AspNetCoreEcommerce_HostAddress}}/api/cart/view/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDE2MzE0MTAsInN1YiI6IjAxOTU4MTE1LWFmN2EtNzJiMy1iNDE3LTJhMmYxOTliMDg5MyIsImVtYWlsIjoiYW1hZWNoaWp1ZGUxNzhAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE3NDE2Mjc4MTAsIm5iZiI6MTc0MTYyNzgxMH0.fEV7wgm42nKcxD7KDJo7j__GXKKwG8jl11a6_KBUMtQ
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb3JlV2ViQXBpIiwiaXNzIjoiQXNwTmV0Q29yZVdlYkFwaSIsImV4cCI6MTc0NzAwMDg1OSwic3ViIjoiMDE5NmI0ZDItNzMyZS03NjVlLWJlMzYtNjE1NDVkNzc2ODI5IiwiZW1haWwiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTc0NjgyODA1OSwibmJmIjoxNzQ2ODI4MDU5fQ.Tqgl6TXUM6YYbs100JXkKM6nK91wIw0S3INwQgYPwYE
 ###
 
 POST {{AspNetCoreEcommerce_HostAddress}}/api/cart/add/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDE2MzE0MTAsInN1YiI6IjAxOTU4MTE1LWFmN2EtNzJiMy1iNDE3LTJhMmYxOTliMDg5MyIsImVtYWlsIjoiYW1hZWNoaWp1ZGUxNzhAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE3NDE2Mjc4MTAsIm5iZiI6MTc0MTYyNzgxMH0.fEV7wgm42nKcxD7KDJo7j__GXKKwG8jl11a6_KBUMtQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb3JlV2ViQXBpIiwiaXNzIjoiQXNwTmV0Q29yZVdlYkFwaSIsImV4cCI6MTc0NzAwMDg1OSwic3ViIjoiMDE5NmI0ZDItNzMyZS03NjVlLWJlMzYtNjE1NDVkNzc2ODI5IiwiZW1haWwiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTc0NjgyODA1OSwibmJmIjoxNzQ2ODI4MDU5fQ.Tqgl6TXUM6YYbs100JXkKM6nK91wIw0S3INwQgYPwYE
 
 {
-  "productId": "97951466-ed0b-72ac-b7f1-a562259107c8",
+  "productId": "0196a187-f7bb-7f78-aecd-4c1e30f81cb3",
   "quantity": 7
 }
 ###
@@ -76,14 +75,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lc
 ###
 POST {{AspNetCoreEcommerce_HostAddress}}/api/shippingaddress/add/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJDdXN0b21lciIsImlzcyI6IkFzcE5ldENvcmVXZWJBcGkiLCJleHAiOjE3NDE2MzE0MTAsInN1YiI6IjAxOTU4MTE1LWFmN2EtNzJiMy1iNDE3LTJhMmYxOTliMDg5MyIsImVtYWlsIjoiYW1hZWNoaWp1ZGUxNzhAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE3NDE2Mjc4MTAsIm5iZiI6MTc0MTYyNzgxMH0.fEV7wgm42nKcxD7KDJo7j__GXKKwG8jl11a6_KBUMtQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb3JlV2ViQXBpIiwiaXNzIjoiQXNwTmV0Q29yZVdlYkFwaSIsImV4cCI6MTc0Njc5NzMyMywic3ViIjoiMDE5NmI0ZDItNzMyZS03NjVlLWJlMzYtNjE1NDVkNzc2ODI5IiwiZW1haWwiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTc0Njc5MzcyMywibmJmIjoxNzQ2NzkzNzIzfQ.OTyAM2RrXzUYMieGKpkUAg-xwSbJVKXDb_yJ1L8E0DA
 
 {
   "firstName": "Amaechi",
   "lastName": "Jude",
   "phone": "0987654321",
-  "addressOne": "Ajah",
-  "secondAddress": "Lagos",
+  "addressLine1": "Ajah",
+  "addressLine2": "Lagos",
   "city": "Lagos",
   "state": "Lagos",
   "country": "Nigeria",

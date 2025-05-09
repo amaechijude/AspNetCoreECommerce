@@ -31,7 +31,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Product Feedback relationship
-            builder.HasMany(p => p.Feedbacks)
+            builder.HasMany(p => p.Reveiws)
                 .WithOne(f => f.Product)
                 .HasForeignKey(f => f.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);

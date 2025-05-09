@@ -17,7 +17,7 @@ namespace AspNetCoreEcommerce.Controllers
         SignInManager<User> signInManager,
         TokenProvider tokenService,
         Channel<EmailDto> emailChannel,
-        IUserService customerService,
+        AuthServices authServices,
         ILogger<AuthController> logger
             ) : ControllerBase
     {
@@ -25,8 +25,8 @@ namespace AspNetCoreEcommerce.Controllers
         private readonly SignInManager<User> _signInManager = signInManager;
         private readonly TokenProvider _tokenService = tokenService;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
-        private readonly IUserService _customerService = customerService;
         private readonly ILogger<AuthController> _logger = logger;
+        private readonly AuthServices _authServices = authServices;
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -34,7 +34,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = new User(registerDto.Email, registerDto.PhoneNumber);
+            var user = new User(registerDto.Email, registerDto.PhoneNumber, DateTimeOffset.UtcNow);
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
@@ -52,10 +52,8 @@ namespace AspNetCoreEcommerce.Controllers
                 Name = registerDto.Email,
                 EmailTo = user.Email,
                 Subject = "Confirm your email",
-                Body = EmailBodyTemplates.ConfirmEmailBody(token, user.Email, Request)
+                Body = EmailBodyTemplates.ConfirmEmailBody(token, user.Email)
             };
-
-            await _customerService.CreateUserAsync(user, registerDto.FirstName, registerDto.LastName);
             await _emailChannel.Writer.WriteAsync(email);
 
             return Ok("Check your email for confirmation link.");
@@ -108,7 +106,7 @@ namespace AspNetCoreEcommerce.Controllers
                 Name = forgotPasswordDto.Email,
                 EmailTo = user.Email,
                 Subject = "Reset Password",
-                Body = EmailBodyTemplates.ForgotPasswordBody(token, user.Email, Request)
+                Body = EmailBodyTemplates.ForgotPasswordBody(token, user.Email)
                 };
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8601 // Possible null reference assignment.
@@ -148,27 +146,19 @@ namespace AspNetCoreEcommerce.Controllers
             if (!user.EmailConfirmed)
                 return Unauthorized("Email not confirmed");
 
-            // var result = await _customerService.GetUserByIdAsync(user.Id);
-            return Ok(new 
+            try
             {
-                Id = user.Id,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-            });
-        }
-
-        [Authorize]
-        [HttpGet("get-user-role")]
-        public async Task<IActionResult> GetUserRole()
-        {
-            User? user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return BadRequest("Login again");
-            if (!user.EmailConfirmed)
-                return Unauthorized("Email not confirmed");
-
-            var roles = await _userManager.GetRolesAsync(user);
-            return Ok(new { roles });
+                var result = await _authServices.GetUserProfile(user.Id.ToString());
+                return result.Success
+                    ? Ok(result.Data)
+                    : BadRequest(result.Error);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Profile not found");
+                return BadRequest();
+            }
         }
     }
+
 }

@@ -1,39 +1,39 @@
 using System.Security.Claims;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.CartUseCase;
+using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCoreEcommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CartController(ICartService cartService) : ControllerBase
+    public class CartController(ICartService cartService, UserManager<User> userManager) : ControllerBase
     {
         private readonly ICartService _cartService = cartService;
+        private readonly UserManager<User> _userManager = userManager;
 
-        [Authorize(Roles = GlobalConstants.customerRole)]
+        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddToCartAsync([FromBody] AddToCartDto addToCartDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrWhiteSpace(customerId))
-                return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
-            var isValidId = Guid.TryParse(customerId, out Guid cId);
-            if (!isValidId)
-                return BadRequest(ResultPattern.FailResult("Invalid User Id"));
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
 
             var isValid = Guid.TryParse(addToCartDto.ProductId, out var _);
             if (!isValid)
-                return BadRequest(ResultPattern.FailResult("Invalid Product Id"));
-
-            var data = await _cartService.ADddToCartAsync(cId, addToCartDto);
+                return BadRequest("Invalid Product Id");
+            Guid id = user.Id;
+            var data = await _cartService.ADddToCartAsync(id ,addToCartDto, Request);
             return data.Success
-                ? Ok(data)
-                : BadRequest(data);
+                ? Ok(data.Data)
+                : BadRequest(data.Error);
         }
 
         [Authorize(Roles = GlobalConstants.customerRole)]
@@ -53,24 +53,21 @@ namespace AspNetCoreEcommerce.Controllers
 
             var data = await _cartService.RemoveFromCartAsync(cId, pid);
             return data.Success
-                ? Ok(data)
-                : BadRequest(data);
+                ? Ok(data.Data)
+                : BadRequest(data.Error);
         }
 
-        [Authorize(Roles = GlobalConstants.customerRole)]
+        [Authorize]
         [HttpGet("view")]
         public async Task<IActionResult> ViewCartAsync()
         {
-            var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrWhiteSpace(customerId))
-                return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
-            var isValidId = Guid.TryParse(customerId, out Guid cId);
-            if (!isValidId)
-                return BadRequest(ResultPattern.FailResult("Invalid User Id"));
-            var data =await _cartService.ViewCartAsync(cId);
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+            var data = await _cartService.ViewCartAsync(user.Id, Request);
             return data.Success
-                ? Ok(data)
-                : BadRequest(data);
+                ? Ok(data.Data)
+                : BadRequest(data.Error);
         }
     }
 }

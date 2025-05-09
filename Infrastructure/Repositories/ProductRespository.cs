@@ -7,9 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreEcommerce.Infrastructure.Repositories
 {
-    public class ProductRepository(ApplicationDbContext context) : IProductRepository
+    public class ProductRepository(ApplicationDbContext context, ILogger<ProductRepository> logger) : IProductRepository
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly ILogger<ProductRepository> _logger = logger;   
 
         public async Task<IEnumerable<ProductViewDto>> GetAllProductsAsync(HttpRequest request)
         {
@@ -53,6 +54,13 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
+        public async Task<bool> CheckExistingReviewAsync(Guid productId, Guid userId)
+        {
+            var review = await _context.Reviews
+                .Where(r => r.ProductId == productId && r.UserId == userId)
+                .FirstOrDefaultAsync();
+            return review is not null;
+        }
 
         public async Task DeleteProductAsync(Guid vendorId, Guid productId)
         {
@@ -87,9 +95,25 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .Include(p => p.Reveiws)
                 .ToListAsync();
 
             return (items, totalCount);
+        }
+
+        public async Task<bool> CreateReviewAsync(Reveiw reveiw)
+        {
+            try
+            {
+                await _context.Reviews.AddAsync(reveiw);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Reveiw not added");
+                return false;
+            }
         }
     }
 }

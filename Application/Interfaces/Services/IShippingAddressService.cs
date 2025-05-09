@@ -8,7 +8,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Services
     {
         Task<ResultPattern> AddShippingAddressAsync(User user, ShippingAddressDto shippingAddress);
         Task<ResultPattern> DeleteShippingAddressAsync(Guid customerid, Guid shippingId);
-        Task<ResultPattern> GetShippingAddressByUserIdAsync(Guid customerId);
+        Task<IEnumerable<ShippingAddressViewDto>> GetShippingAddressByUserIdAsync(Guid userId);
         Task<ResultPattern> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId);
     }
 }

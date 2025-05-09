@@ -91,7 +91,33 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             return ResultPattern.SuccessResult(data);
         }
 
+        public async Task<ResultPattern> AddProductReviewAsync(
+            User user, Guid productId, AddProductReveiwDto reveiwDto
+            )
+        {
+            var reviewExists = await _productRepository.CheckExistingReviewAsync(productId, user.Id);
+            if (reviewExists)
+                return ResultPattern.FailResult("Review already exists");
 
+            var product = await _productRepository.GetProductByIdAsync(productId);
+            if (product is null)
+                return ResultPattern.FailResult("product not found");
+            var reveiew = new Reveiw
+            {
+                Id = productId,
+                UserId = user.Id,
+                User = user,
+                ProductId = product.ProductId,
+                Product = product,
+                Comment = reveiwDto.Comment,
+                Rating = reveiwDto.StarRating,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+            var cr = await _productRepository.CreateReviewAsync(reveiew);
+            if (!cr)
+                return ResultPattern.FailResult("failed");
+            return ResultPattern.SuccessResult("Added");
+        }
         private static ProductViewDto MapProductToDto (Product product, HttpRequest request)
         {
             return new ProductViewDto
@@ -125,5 +151,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             );
         }
     }
+
+    public record AddProductReveiwDto(int StarRating, string Comment);
 
 }

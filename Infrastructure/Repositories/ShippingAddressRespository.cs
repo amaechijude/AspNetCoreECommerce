@@ -41,10 +41,10 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             return "Shipping address removed";
         }
 
-        public async Task<IEnumerable<ShippingAddress>> GetShippingAddressByUserId(Guid customerId)
+        public async Task<IEnumerable<ShippingAddress>> GetShippingAddressByUserId(Guid userId)
         {
             return await _context.ShippingAddresses
-                .Where(sh => sh.UserId == customerId)
+                .Where(sh => sh.UserId == userId)
                 .ToListAsync();
         }
 

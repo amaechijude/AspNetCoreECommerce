@@ -31,16 +31,14 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
             return ResultPattern.SuccessResult(data);
         }
 
-        public async Task<ResultPattern> GetShippingAddressByUserIdAsync(Guid customerId)
+        public async Task<IEnumerable<ShippingAddressViewDto>> GetShippingAddressByUserIdAsync(Guid userId)
         {
             var shippingAddresses = await _shippingAddressRespository
-                .GetShippingAddressByUserId(customerId);
+                .GetShippingAddressByUserId(userId);
             if (shippingAddresses is null)
-                return ResultPattern.FailResult("Shipping addresses not found");
-            return ResultPattern
-                .SuccessResult(
-                    shippingAddresses.Select(sh => MapShippingAddress(sh))
-                    );
+                return [];
+            return shippingAddresses
+                .Select(sh => MapShippingAddress(sh));
         }
 
         public async Task<ResultPattern> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId)

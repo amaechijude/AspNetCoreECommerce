@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
 {
-    public class FeedbackConfig : IEntityTypeConfiguration<Feedback>
+    public class ReviewConfig : IEntityTypeConfiguration<Reveiw>
     {
-        public void Configure(EntityTypeBuilder<Feedback> builder)
+        public void Configure(EntityTypeBuilder<Reveiw> builder)
         {
-            builder.HasKey(f => f.FeedbackId);
-            builder.ToTable("Feedbacks");
+            builder.HasKey(f => f.Id);
+            builder.ToTable("Reviews");
         }
     }
 }

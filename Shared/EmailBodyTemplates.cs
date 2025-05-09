@@ -5,7 +5,8 @@ namespace AspNetCoreEcommerce.Shared
 {
     public static class EmailBodyTemplates
     {
-        public static string ConfirmEmailBody(string token, string email, HttpRequest httpReques)
+        private const string _baseUrl = "http://localhost:3000/auth";
+        public static string ConfirmEmailBody(string token, string email)
         {
             var urlEncodedEmail = Uri.EscapeDataString(email);
             var urlEncodedToken = Uri.EscapeDataString(token);
@@ -80,7 +81,7 @@ namespace AspNetCoreEcommerce.Shared
 
             // Usage example:
 
-            var confirmLink = $"/confirm-email?email={urlEncodedEmail}&token={urlEncodedToken}";
+            var confirmLink = $"{_baseUrl}/confirm-email?email={urlEncodedEmail}&token={urlEncodedToken}";
             string formattedHtml = htmlTemplate
                 .Replace("{{ConfirmationLink}}", confirmLink)
                 .Replace("{{UserName}}", email)
@@ -92,7 +93,7 @@ namespace AspNetCoreEcommerce.Shared
             return formattedHtml;
         }
 
-        public static string ForgotPasswordBody(string token, string email, HttpRequest httpRequest)
+        public static string ForgotPasswordBody(string token, string email)
         {
             var urlEncodedEmail = Uri.EscapeDataString(email);
             var urlEncodedToken = Uri.EscapeDataString(token);
@@ -103,13 +104,12 @@ namespace AspNetCoreEcommerce.Shared
                             <a href='{{ResetLink}}'>Reset Password</a>
                         </body>
                     </html>";
-            var resetLink = $"{httpRequest.Scheme}/{httpRequest.Host}/reset-password?email={urlEncodedEmail}&token={urlEncodedToken}";
+            var resetLink = $"{_baseUrl}/reset-password?email={urlEncodedEmail}&token={urlEncodedToken}";
             return html.Replace("{{ResetLink}}", resetLink);
         }
 
         public static string VendorOtpBody(Vendor vendor, string code, HttpRequest httpRequest)
         {
-            var urlEncodedEmail = Uri.EscapeDataString(vendor.VendorEmail);
             string otpEmailTemplate = @"
 <!DOCTYPE html>
 <html>

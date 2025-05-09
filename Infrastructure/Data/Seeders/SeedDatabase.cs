@@ -24,7 +24,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Seeders
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
             if (!await userManager.Users.AnyAsync())
             {
-                var user1 = new User("user@email.com", "09876543210")
+                var user1 = new User("user@email.com", "09876543210", DateTimeOffset.UtcNow)
                 {
                     Id = Guid.Parse("64f3720e-f189-411e-aa8d-209ece4bd40f"),
                     IsVendor = true,
@@ -33,8 +33,10 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Seeders
                 if (!result.Succeeded) return;
                 var user = await userManager.FindByEmailAsync("user@email.com");
                 if (user is null) return;
+                user.EmailConfirmed = true;
                 await userManager.AddToRoleAsync(user, "User");
                 await userManager.AddToRoleAsync(user, "Vendor");
+
 
                 var vendor = new Vendor
                 {

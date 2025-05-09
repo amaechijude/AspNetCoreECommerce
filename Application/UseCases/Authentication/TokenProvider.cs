@@ -28,7 +28,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
                         new Claim(JwtRegisteredClaimNames.Email, appUser.Email)
                     ]
                 ),
-                Expires = DateTime.UtcNow.AddMinutes(60),
+                Expires = DateTime.UtcNow.AddDays(2),
                 SigningCredentials = credentials,
                 Issuer = jwtIssuer,
                 Audience = jwtIssuer
