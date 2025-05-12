@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Ocsp;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -110,6 +111,15 @@ try
                 ValidAudience = jwtIssuer,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
             };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    context.Token = context.Request.Cookies["X-Access-Token"];
+                    return Task.CompletedTask;
+                }
+            };
         });
 
     // --- Authorization Configuration ---
@@ -123,7 +133,8 @@ try
         {
             policy.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader()
+                .AllowCredentials();
         });
     });
 
@@ -166,20 +177,20 @@ try
     app.UseMiddleware<ExceptionHandlingMiddleware>();
 
     // Seed role
-    using (var scope = app.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        try
-        {
-            // Seed the database with roles
-            await SeedDatabase.SeedRoleAsync(services, db);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred while seeding the database.");
-        }
-    }
+    // using (var scope = app.Services.CreateScope())
+    // {
+    //     var services = scope.ServiceProvider;
+    //     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    //     try
+    //     {
+    //         // Seed the database with roles
+    //         await SeedDatabase.SeedRoleAsync(services, db);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Log.Error(ex, "An error occurred while seeding the database.");
+    //     }
+    // }
 
     // Scalar Config
     if (app.Environment.IsDevelopment())

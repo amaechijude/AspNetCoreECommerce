@@ -63,6 +63,20 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
             });
         }
 
+        public async Task<ResultPattern> FetchUserAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null || string.IsNullOrEmpty(user.Email))
+                return ResultPattern.FailResult("User not found");
+            var data = new FetchUserDto
+            {
+                Email = user.Email,
+                Name = user.FullName,
+                CartCount = user.CartItemsCount
+            };
+            return ResultPattern.SuccessResult(data);
+        }
+
         private static UserInfoDto MapUserInfo(User user)
         {
             return new UserInfoDto

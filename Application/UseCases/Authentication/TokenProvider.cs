@@ -8,7 +8,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
 {
     public class TokenProvider
     {
-         public string CreateAppUsertoken(User appUser)
+        public string CreateAppUsertoken(User appUser)
         {
             // check if the user email is confirmed
             if (!appUser.EmailConfirmed)
@@ -38,7 +38,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
             var handler = new JsonWebTokenHandler();
             return handler.CreateToken(tokenDescriptor);
         }
-    }
-
+ }
     public class EmailNotConfirmedException(string message) : Exception(message);
 }

@@ -6,7 +6,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
     {
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public string FullName => $"{FirstName}  {LastName}";
+        public string FullName => $"{FirstName }{LastName}";
         public DateTimeOffset DateJoined { get; set; }
         public bool IsVendor { get; set; } = false;
         public Guid VendorId { get; set; }
@@ -30,6 +30,16 @@ namespace AspNetCoreEcommerce.Domain.Entities
         {
             var timeSpan = DateTimeOffset.UtcNow - DateJoined;
             return timeSpan.TotalDays < 365 ? "Gold" : "Platinum";
+        }
+
+        public int CartItemsCount
+        {
+            get
+            {
+                if (Cart == null)
+                    return 0;
+                return Cart.CartItemsCount;
+            }
         }
     }
 

@@ -87,7 +87,25 @@ namespace AspNetCoreEcommerce.Controllers
                 return BadRequest("Invalid Credentials");
 
             var token = _tokenService.CreateAppUsertoken(user);
-            return Ok(new { token });
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.Unspecified,
+                Path = "/",
+                Domain = "localhost",
+                // Secure = true, // Set to true in production
+                MaxAge = TimeSpan.FromDays(1),
+                Expires = DateTimeOffset.Now.AddHours(24),
+            };
+
+            Response.Cookies.Append("X-Access-Token", token, cookieOptions);
+            return Ok();
+        }
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("X-Access-Token");
+            return Ok();
         }
 
         [HttpPost("forgot-password")]
@@ -129,13 +147,6 @@ namespace AspNetCoreEcommerce.Controllers
             return Ok("Password reset successfully.");
         }
 
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return Ok("Logged out successfully.");
-        }
-
         [Authorize]
         [HttpGet("profile")]
         public async Task<IActionResult> Profile()
@@ -158,6 +169,18 @@ namespace AspNetCoreEcommerce.Controllers
                 _logger.LogError(ex, "Profile not found");
                 return BadRequest();
             }
+        }
+        [Authorize]
+        [HttpGet("fetch-user")]
+        public async Task<IActionResult> FetchUser()
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized("Login again");
+            var response = await _authServices.FetchUserAsync(user.Id.ToString());
+            return response.Success
+                ? Ok(response.Data)
+                : BadRequest(response.Error);
         }
     }
 

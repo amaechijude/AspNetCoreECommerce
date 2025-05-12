@@ -45,7 +45,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
                     CreatedAt = DateTimeOffset.UtcNow,
                     UpdatedAt = DateTimeOffset.UtcNow,
                 };
-                userCart.AddCartItem(cartItem);
+                _context.CartItems.Add(cartItem);
             }else{
                 cartItem.UpdateCartItem(quantity);
             }

@@ -91,4 +91,11 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
         public DateTimeOffset ReviewedAt { get; set; }
     }
 
+    public class FetchUserDto
+    {
+        public required string Email { get; set; }
+        public required string Name { get; set; }
+        public int CartCount { get; set; } = 0;
+    }
+
 }
