@@ -51,9 +51,9 @@ namespace AspNetCoreEcommerce.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProductAsync([FromQuery] int pageNumber = 1, int pageSize = 50)
+        public async Task<IActionResult> GetAllProductAsync([FromQuery] int page = 1, int pageSize = 50)
         {
-            return Ok(await _productService.GetPagedProductsAsync(pageNumber, pageSize, Request));
+            return Ok(await _productService.GetPagedProductsAsync(page, pageSize, Request));
         }
 
         [HttpGet("{productId}")]
@@ -88,7 +88,7 @@ namespace AspNetCoreEcommerce.Controllers
 
         [Authorize]
         [HttpPost("reveiw/{pid}")]
-        public async Task<IActionResult> ReviewAsync([FromQuery] Guid pid, [FromBody]AddProductReveiwDto dto)
+        public async Task<IActionResult> ReviewAsync([FromRoute]Guid pid, [FromBody]AddProductReveiwDto dto)
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user is null)

@@ -59,9 +59,11 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Seeders
                         ProductId = Guid.CreateVersion7(),
                         Name = "Product 1",
                         CreatedAt = DateTimeOffset.UtcNow,
+                        ImageUrl = "Upload/Products/product1.jpg",
                         Price = 2033,
                         VendorId = vendor.VendorId,
                         Vendor = vendor,
+                        VendorName = vendor.VendorName
                     },
 
                     new Product
@@ -69,9 +71,11 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Seeders
                         ProductId = Guid.CreateVersion7(),
                         Name = "Product 2",
                         CreatedAt = DateTimeOffset.UtcNow,
+                        ImageUrl = "Upload/Products/product2.jpg",
                         Price = 9500,
                         VendorId = vendor.VendorId,
                         Vendor = vendor,
+                        VendorName = vendor.VendorName
                     },
 
                     new Product
@@ -79,9 +83,11 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Seeders
                         ProductId = Guid.CreateVersion7(),
                         Name = "Product 3",
                         CreatedAt = DateTimeOffset.UtcNow,
+                        ImageUrl = "Upload/Products/product3.jpg",
                         Price = 4590,
                         VendorId = vendor.VendorId,
                         Vendor = vendor,
+                        VendorName = vendor.VendorName
                     }
                 ];
                 await context.Products.AddRangeAsync(products);

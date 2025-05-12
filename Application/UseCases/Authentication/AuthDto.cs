@@ -85,9 +85,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
     {
         public Guid Id { get; set; }
         public Guid ProductId { get; set; }
-        public string ProductName { get; set; }
+        public string ProductName { get; set; } = string.Empty;
         public int Rating { get; set; }   // 
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
         public DateTimeOffset ReviewedAt { get; set; }
     }
 

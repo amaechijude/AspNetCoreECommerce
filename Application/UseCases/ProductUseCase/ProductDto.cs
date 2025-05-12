@@ -29,13 +29,25 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         public string? ProductName { get; set; }
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
+        public List<string> Images { get; set; } = [];
         public decimal Price { get; set; }
-        public required int Quantity {get; set;}
+        public required int Stock {get; set;}
         public Guid VendorId { get; set; }
         public string? VendorName { get; set; }
-        public int Rating => 4;
-        public int ReveiwCount => 5;
+        public int Rating { get; set; }
+        public int ReveiwCount { get; set; }
+        public ICollection<RelatedProductDto> RelatedProducts { get; set; } = [];
     }
+
+    public class RelatedProductDto
+    {
+        public Guid ProductId { get; set; }
+        public string? ProductName { get; set; }
+        public decimal Price { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+
+
     public class UpdateProductDto
     {
         public string? Name { get; set; }

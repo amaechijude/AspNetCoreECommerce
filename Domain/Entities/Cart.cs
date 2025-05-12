@@ -12,8 +12,22 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public DateTimeOffset CreatedAt {get; set;}
         public DateTimeOffset UpdatedAt {get; set;}
         public ICollection<CartItem> CartItems {get; set;} = [];
-        public int CartItemsCount {get; set;}
+        public int CartItemsCount => CartItems.Count;
         [Column(TypeName = "decimal(18,2)")]
-        public decimal CartTotalAmount {get; set;}
+        public decimal CartTotalAmount => CartItems.Select(ci => ci.TotalPrice).Sum();
+
+        public void RemoveCartItem(CartItem cartItem)
+        {
+            CartItems.Remove(cartItem);
+            UpdatedAt = DateTimeOffset.UtcNow;
+            return;
+        }
+
+        public void AddCartItem(CartItem cartItem)
+        {
+            CartItems.Add(cartItem);
+            UpdatedAt = DateTimeOffset.UtcNow;
+            return;
+        }
     }
 }

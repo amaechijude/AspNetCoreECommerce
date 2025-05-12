@@ -13,28 +13,25 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
 
         public async Task<ResultPattern> ADddToCartAsync(Guid userId, AddToCartDto addToCartDto, HttpRequest request)
         {
-            var cart = await _cartItemRepository.ADddToCartAsync(userId, addToCartDto);
-            if (cart is null)
+            var add = await _cartItemRepository.ADddToCartAsync(userId, addToCartDto.ProductId, addToCartDto.Quantity);
+            if (!add)
                 return ResultPattern.FailResult("Product does not exist");
-
-            var data = MapCartToDto(cart, request);
-            return ResultPattern.SuccessResult(data);
+            return ResultPattern.SuccessResult("Product added to cart successfully");
         }
 
         public async Task<ResultPattern> RemoveFromCartAsync(Guid userId, Guid productId)
         {
             var cartItem = await _cartItemRepository.RemoveFromCartAsync(userId, productId);
-            if (cartItem is null)
+            if (!cartItem)
                 return ResultPattern.FailResult("Product does not exist in your Cart");
-            
             return ResultPattern.SuccessResult("Product removed from cart successfully");
         }
 
         public async Task<ResultPattern> ViewCartAsync(Guid userId, HttpRequest request)
         {
-            var cart = await _cartItemRepository.GetOrCreateCartAsync(userId);
+            var cart = await _cartItemRepository.ViewCartAsync(userId);
             if (cart is null)
-                return ResultPattern.FailResult("Cart does not exist");
+                return ResultPattern.FailResult("Cart is empty");
             return ResultPattern.SuccessResult(MapCartToDto(cart, request));
         }
 

@@ -20,38 +20,25 @@ namespace AspNetCoreEcommerce.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddToCartAsync([FromBody] AddToCartDto addToCartDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             User? user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
 
-            var isValid = Guid.TryParse(addToCartDto.ProductId, out var _);
-            if (!isValid)
-                return BadRequest("Invalid Product Id");
-            Guid id = user.Id;
-            var data = await _cartService.ADddToCartAsync(id ,addToCartDto, Request);
+            var data = await _cartService.ADddToCartAsync(user.Id, addToCartDto, Request);
             return data.Success
                 ? Ok(data.Data)
                 : BadRequest(data.Error);
         }
 
-        [Authorize(Roles = GlobalConstants.customerRole)]
+        [Authorize]
         [HttpDelete("remove/{productId}")]
-        public async Task<IActionResult> RemoveFromCartAsync([FromRoute] string productId)
+        public async Task<IActionResult> RemoveFromCartAsync([FromRoute] Guid productId)
         {
-            var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrWhiteSpace(customerId))
-                return BadRequest(ResultPattern.FailResult("Invalid Authentication"));
-            var isValidId = Guid.TryParse(customerId, out Guid cId);
-            if (!isValidId)
-                return BadRequest(ResultPattern.FailResult("Invalid User Id"));
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
 
-            var isValid = Guid.TryParse(productId, out Guid pid);
-            if (!isValid)
-                return BadRequest(ResultPattern.FailResult("Invalid Product Id"));
-
-            var data = await _cartService.RemoveFromCartAsync(cId, pid);
+            var data = await _cartService.RemoveFromCartAsync(user.Id, productId);
             return data.Success
                 ? Ok(data.Data)
                 : BadRequest(data.Error);
@@ -67,7 +54,7 @@ namespace AspNetCoreEcommerce.Controllers
             var data = await _cartService.ViewCartAsync(user.Id, Request);
             return data.Success
                 ? Ok(data.Data)
-                : BadRequest(data.Error);
+                : NotFound(data.Error);
         }
     }
 }

@@ -22,6 +22,8 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public required Guid VendorId { get; set; }
         public string? VendorName {get; set;}
         public Vendor? Vendor { get; set; }
+        public int Rating { get; set; }
+        public int ReveiwCount { get; set; }
         public ICollection<CartItem> CartItems { get; set; } = [];
         public ICollection<OrderItem> OrderItems {get; set;} = [];
         public ICollection<Reveiw> Reveiws { get; set; } = [];

@@ -102,7 +102,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorBannerUri),
+                VendorBannerUrl = GlobalConstants.GetImagetUrl(request,vendor.VendorBannerUri),
                 Location = vendor.Location,
                 GoogleMapUrl = vendor.GoogleMapUrl,
                 TwitterUrl = vendor.TwitterUrl,
@@ -118,7 +118,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                     Price = v.Price,
                     VendorId = v.VendorId,
                     VendorName = v.VendorName,
-                    Quantity = v.StockQuantity
+                    Stock = v.StockQuantity
                 })]
             };
         }

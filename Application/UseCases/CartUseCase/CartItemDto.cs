@@ -37,8 +37,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
 
     public class AddToCartDto
     {
-        [Required(ErrorMessage = "Product id Required")]
-        public required string ProductId {get; set;}
+        [Required]
+        public Guid ProductId {get; set;}
         public int Quantity {get; set;} = 1;
     }
 

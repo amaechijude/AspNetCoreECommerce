@@ -7,120 +7,93 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreEcommerce.Infrastructure.Repositories
 {
-    public class CartRepository(ApplicationDbContext context,
-        UserManager<User> userManager
+    public class CartRepository(
+        ApplicationDbContext context,
+        UserManager<User> userManager,
+        ILogger<CartRepository> logger
         ) : ICartRepository
     {
         private readonly ApplicationDbContext _context = context;
         private readonly UserManager<User> _userManager = userManager;
+        private readonly ILogger<CartRepository> _logger = logger;
 
-        public async Task<Cart?> ADddToCartAsync(Guid userId, AddToCartDto cartItemDto)
+        public async Task<bool> ADddToCartAsync(Guid userId, Guid productId, int quantity)
         {
-            var pid = Guid.Parse(cartItemDto.ProductId);
             var userCart = await GetOrCreateCartAsync(userId);
-            if (userCart is null)
-                return null;
-            var product = await _context.Products.FindAsync(pid);
+            var product = await _context.Products.FindAsync(productId);
             if (product is null)
-                return null;
+                return false;
 
             var cartItem = await _context.CartItems
-                .Where(ci => ci.ProductId == pid && ci.CartId == userCart.CartId && ci.Product == product)
+                .Where(ci => ci.ProductId == productId && ci.CartId == userCart.CartId)
                 .FirstOrDefaultAsync();
 
-            if (cartItem == null)
+            if (cartItem is null)
             {
-                var newCartItem = new CartItem
+                cartItem = new CartItem
                 {
                     CartItemId = Guid.CreateVersion7(),
                     CartId = userCart.CartId,
                     Cart = userCart,
-                    UnitPrice = product.Price,
-                    TotalPrice = product.Price * cartItemDto.Quantity,
                     ProductId = product.ProductId,
                     Product = product,
-                    ProductName = product.Name,
                     VendorId = product.VendorId,
                     VendorName = product.VendorName,
-                    Quantity = cartItemDto.Quantity,
+                    ProductName = product.Name,
+                    Quantity = quantity,
+                    UnitPrice = product.Price,
                     CreatedAt = DateTimeOffset.UtcNow,
+                    UpdatedAt = DateTimeOffset.UtcNow,
                 };
-
-                _context.CartItems.Add(newCartItem);
-                // userCart.CartItems.Add(newCartItem);
-                userCart.CartTotalAmount += product.Price * cartItemDto.Quantity;
-                userCart.CartItemsCount += 1;
-                await _context.SaveChangesAsync();
-
-                return userCart;
-
-            }
-            else
-            {
-                cartItem.Quantity += cartItemDto.Quantity;
-                cartItem.TotalPrice += product.Price * cartItemDto.Quantity;
-                cartItem.UpdatedAt = DateTimeOffset.UtcNow;
-                userCart.CartTotalAmount += product.Price * cartItemDto.Quantity;
-                userCart.UpdatedAt = DateTimeOffset.UtcNow;
-                await _context.SaveChangesAsync();
-
-                return userCart;
+                userCart.AddCartItem(cartItem);
+            }else{
+                cartItem.UpdateCartItem(quantity);
             }
 
+            await _context.SaveChangesAsync();
+            return true;
         }
-        public async Task<CartItem?> RemoveFromCartAsync(Guid customerID, Guid productId)
+        public async Task<bool> RemoveFromCartAsync(Guid userId, Guid productId)
         {
-            var userCart = await GetOrCreateCartAsync(customerID);
-            if (userCart is null)
-                return null;
-            var product = await _context.Products.FindAsync(productId);
-            if (product is null)
-                return null;
-
+            var userCart = await GetOrCreateCartAsync(userId);
             var cartItem = await _context.CartItems
-                .Where(ci => ci.CartId == userCart.CartId && ci.ProductId == product.ProductId)
+                .Where(ci => ci.CartId == userCart.CartId && ci.ProductId == productId)
                 .FirstOrDefaultAsync();
-
-            if (cartItem != null && userCart.CartItems.Contains(cartItem))
-            {
-                userCart.CartTotalAmount -= cartItem.Product.Price * cartItem.Quantity;
-                userCart.CartItemsCount -= 1;
-                userCart.CartItems.Remove(cartItem);
-                _context.CartItems.Remove(cartItem);
-                await _context.SaveChangesAsync();
-
-                return cartItem;
-            }
-            return null;
+            if (cartItem is null)
+                return false;
+            userCart.RemoveCartItem(cartItem);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<Cart?> GetOrCreateCartAsync(Guid userId)
+        private async Task<Cart> GetOrCreateCartAsync(Guid userId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user is null)
-                return null;
-
             var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                 .ThenInclude(ci => ci.Product)
-                .FirstOrDefaultAsync(c => c.UserId == user.Id);
-
-            if (cart != null)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+            if (cart is not null)
                 return cart;
-
+            var user = await _userManager.FindByIdAsync(userId.ToString())
+                ?? throw new NullCartException("User does not exist");
             var ncart = new Cart
             {
                 CartId = Guid.CreateVersion7(),
-                UserId = user.Id,
+                UserId = userId,
                 User = user,
                 CreatedAt = DateTimeOffset.UtcNow,
+                UpdatedAt = DateTimeOffset.UtcNow
             };
-
             _context.Carts.Add(ncart);
-            user.Cart = ncart;
-            user.CartId = ncart.CartId;
             await SaveChangesAsync();
             return ncart;
+        }
+        public async Task<Cart> ViewCartAsync(Guid userId)
+        {
+            var cart = await _context.Carts
+                .Include(c => c.CartItems)
+                .ThenInclude(ci => ci.Product)
+                .FirstOrDefaultAsync(c => c.UserId == userId)
+                ?? await GetOrCreateCartAsync(userId);
+            return cart;
         }
 
         public async Task SaveChangesAsync()
@@ -128,5 +101,5 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
     }
-
+    public class NullCartException(string message) : Exception(message);
 }

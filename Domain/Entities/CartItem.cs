@@ -9,7 +9,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
         [Key]
         public Guid CartItemId { get; set; }
         public Guid CartId {get; set;}
-        public required Cart Cart {get; set;}
+        public Cart? Cart {get; set;}
         public Guid ProductId { get; set; }
         public required Product Product { get; set; }
         public string? ProductName {get; set;}
@@ -19,9 +19,15 @@ namespace AspNetCoreEcommerce.Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice {get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalPrice {get; set;}
-
+        public decimal TotalPrice => UnitPrice * Quantity;
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
+
+        public void UpdateCartItem(int quantity)
+        {
+            Quantity = quantity;
+            UpdatedAt = DateTimeOffset.UtcNow;
+            return;
+        }
     }
 }

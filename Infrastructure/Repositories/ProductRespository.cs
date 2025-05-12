@@ -21,11 +21,11 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
                     ProductId = p.ProductId,
                     ProductName = p.Name,
                     Description = p.Description,
-                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageUrl),
+                    ImageUrl = GlobalConstants.GetImagetUrl( request, p.ImageUrl),
                     Price = p.Price,
                     VendorId = p.VendorId,
                     VendorName = p.Vendor.VendorName,
-                    Quantity = p.StockQuantity
+                    Stock = p.StockQuantity
                 })
                 .ToListAsync();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -33,8 +33,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
 
         public async Task<Product?> GetProductByIdAsync(Guid productId)
         {
-            var product = await _context.Products.FindAsync(productId);
-            return product is null ? null : product;
+            return await _context.Products.FindAsync(productId);
         }
 
         public async Task<Product> CreateProductAsync(Product product, HttpRequest request)

@@ -120,16 +120,20 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         }
         private static ProductViewDto MapProductToDto (Product product, HttpRequest request)
         {
+            var img = GlobalConstants.GetImagetUrl(request, product.ImageUrl);
             return new ProductViewDto
             {
                 ProductId = product.ProductId,
                 ProductName = product.Name,
                 Price = product.Price,
                 Description = product.Description,
-                ImageUrl = GlobalConstants.GetImagetUrl(request, product.ImageUrl),
+                ImageUrl = img,
+                Images = [img, img, img, img],
                 VendorId = product.VendorId,
                 VendorName = product.VendorName,
-                Quantity = product.StockQuantity
+                Stock = product.StockQuantity,
+                Rating = product.Rating,
+                ReveiwCount = product.ReveiwCount
             };
         }
 
