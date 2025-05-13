@@ -6,7 +6,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Services
 {
     public interface IShippingAddressService
     {
-        Task<ResultPattern> AddShippingAddressAsync(User user, ShippingAddressDto shippingAddress);
+        Task<ResultPattern> AddShippingAddressAsync(User user, AddShippingAddressDto shippingAddress);
         Task<ResultPattern> DeleteShippingAddressAsync(Guid customerid, Guid shippingId);
         Task<IEnumerable<ShippingAddressViewDto>> GetShippingAddressByUserIdAsync(Guid userId);
         Task<ResultPattern> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId);

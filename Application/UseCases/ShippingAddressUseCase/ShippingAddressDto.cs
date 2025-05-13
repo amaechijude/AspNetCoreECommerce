@@ -2,7 +2,7 @@
 
 namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
 {
-    public class ShippingAddressDto
+    public class AddShippingAddressDto
     {
         [Required(ErrorMessage = "First name is required")]
         public required string FirstName { get; set; }

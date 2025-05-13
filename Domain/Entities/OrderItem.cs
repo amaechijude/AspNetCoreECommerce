@@ -8,6 +8,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
         [Key]
         public Guid OrderItemId { get; set; }
         public Guid OrdeId { get; set; }
+        public Order? Order { get; set; }
         public Guid ProductId { get; set; }
         public required Product Product { get; set; }
         public string? ProductName { get; set; }

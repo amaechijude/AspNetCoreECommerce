@@ -11,7 +11,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
     {
         private readonly IShippingAddressRespository _shippingAddressRespository = shippingAddressRespository;
 
-        public async Task<ResultPattern> AddShippingAddressAsync(User user, ShippingAddressDto shippingAddress)
+        public async Task<ResultPattern> AddShippingAddressAsync(User user, AddShippingAddressDto shippingAddress)
         {
             var shippingAddressEntity = CreatePrivatesShAdrr(user, shippingAddress);
 
@@ -71,7 +71,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
             };
         }
 
-        private static ShippingAddress CreatePrivatesShAdrr(User user, ShippingAddressDto shippingAddress)
+        private static ShippingAddress CreatePrivatesShAdrr(User user, AddShippingAddressDto shippingAddress)
         {
             return new ShippingAddress
             {

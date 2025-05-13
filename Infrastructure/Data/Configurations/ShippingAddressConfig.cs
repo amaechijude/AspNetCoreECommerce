@@ -12,10 +12,10 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
             builder.Property(sa => sa.AddressLine1).IsRequired();
 
             // ShippingAddress Order relationship
-            builder.HasMany(sa => sa.Orders)
-                .WithOne(o => o.ShippingAddress)
-                .HasForeignKey(o => o.ShippingAddressId)
-                .OnDelete(DeleteBehavior.SetNull);
+            // builder.HasMany(sa => sa.Orders)
+            //     .WithOne(o => o.ShippingAddress)
+            //     .HasForeignKey(o => o.ShippingAddressId)
+            //     .OnDelete(DeleteBehavior.SetNull);
 
             builder.ToTable("ShippingAddresses");
         }

@@ -11,7 +11,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public Guid UserId { get; set; }
         public required User User { get; set; }
         public string UserName { get; set; } = string.Empty;
-        public Guid ShippingAddressId { get; set; }
+        public Guid? ShippingAddressId { get; set; }
         public ShippingAddress? ShippingAddress { get; set; }
         public string ReceiverName { get; set; } = string.Empty;
         public required string OrderRefrence { get; set; }

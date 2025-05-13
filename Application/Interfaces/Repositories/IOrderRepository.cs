@@ -11,5 +11,6 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddressId);
         ICollection<OrderItem> CreateOrderItemsAsync(ICollection<OrderItem> createOrderItems);
         Task SaveChangesAsync();
+    
     }
 }

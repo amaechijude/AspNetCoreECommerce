@@ -9,19 +9,19 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.HasKey(o => o.OrderId);
-            builder.HasIndex(o => o.OrderId).IsUnique();
-
-            // Order ShippingAddress relationship
-            builder.HasOne(o => o.ShippingAddress)
-                .WithMany(sa => sa.Orders)
-                .HasForeignKey(o => o.ShippingAddressId)
-                .OnDelete(DeleteBehavior.SetNull);
+            builder.HasIndex(o => o.OrderId);
 
             // Order Payment relationship
             builder.HasOne(o => o.Payment)
                 .WithOne(p => p.Order)
                 .HasForeignKey<Payment>(p => p.OrderId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Order OrderItem relationship
+            builder.HasMany(o => o.OrderItems)
+                .WithOne(oi => oi.Order)
+                .HasForeignKey(oi => oi.OrdeId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("Orders");
         }

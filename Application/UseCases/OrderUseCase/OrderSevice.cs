@@ -6,6 +6,7 @@ using AspNetCoreEcommerce.Domain.Enums;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
 
 namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
 {
@@ -75,6 +76,17 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
             };
 
             var newOrder = await _orderRepository.CreateOrderAsync(order);
+
+            try
+            {
+                
+            await _orderRepository.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message, "Error");
+                return ResultPattern.FailResult("Error creating order");
+            }
             var EmailDto = new EmailDto
             {
                 Name = $"{user.UserName}",
@@ -82,7 +94,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
                 Subject = "Order Confirmation",
                 Body = $"Your order with reference {newOrder.OrderRefrence} has been created successfully"
             };
-            await _orderRepository.SaveChangesAsync();
             await _emailChannel.Writer.WriteAsync(EmailDto);
             
             return ResultPattern.SuccessResult(order.OrderId);
@@ -97,7 +108,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
                 OrderId = newOrder.OrderId,
                 UserId = newOrder.UserId,
                 UserName = newOrder.UserName,
-                ShippingAddressAddressId = newOrder.ShippingAddressId,
+                ShippingAddressAddressId = newOrder.ShippingAddressId ?? Guid.Empty,
                 OrderRefrence = newOrder.OrderRefrence,
                 TotalOrderAmount = newOrder.TotalOrderAmount,
                 ShippingCost = newOrder.ShippingCost,

@@ -19,8 +19,20 @@ namespace AspNetCoreEcommerce.Controllers
         private readonly UserManager<User> _userManager = userManager;
 
         [Authorize]
+        [HttpGet("view")]
+        public async Task<IActionResult> GetShippingAddressByUserIdAsync()
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized("You need to login");
+
+            var res = await _shippingAddressService.GetShippingAddressByUserIdAsync(user.Id);
+            return Ok(res);
+        }
+
+        [Authorize]
         [HttpPost("add")]
-        public async Task<IActionResult> AddShippingAddress([FromBody] ShippingAddressDto shippingAddressDto)
+        public async Task<IActionResult> AddShippingAddress([FromBody] AddShippingAddressDto shippingAddressDto)
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -35,33 +47,25 @@ namespace AspNetCoreEcommerce.Controllers
                 : BadRequest(res.Error);
         }
 
-        [Authorize(Roles = "User")]
-        [HttpDelete("delete/{shippingId}")]
-        public async Task<IActionResult> DeleteShippingAddress([FromRoute] string shippingId)
+        [Authorize]
+        [HttpDelete("delete/{shId}")]
+        public async Task<IActionResult> DeleteShippingAddress([FromRoute] Guid shId)
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
-
-            var isValidGuid = Guid.TryParse(shippingId, out Guid shId);
-            if (!isValidGuid)
-                return BadRequest();
             var res = await _shippingAddressService.DeleteShippingAddressAsync(user.Id, shId);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpGet("view/{shippingId}")]
-        public async Task<IActionResult> GetShippingAddressByIdAsync([FromRoute] string shippingId)
+        public async Task<IActionResult> GetShippingAddressByIdAsync([FromRoute] Guid shippingId)
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
-
-            var isValidGuid = Guid.TryParse(shippingId, out Guid shId);
-            if (!isValidGuid)
-                return BadRequest();
-            var res = await _shippingAddressService.GetShippingAddressByIdAsync(user.Id, shId);
+            var res = await _shippingAddressService.GetShippingAddressByIdAsync(user.Id, shippingId);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);
