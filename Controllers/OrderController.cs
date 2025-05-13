@@ -41,14 +41,14 @@ namespace AspNetCoreEcommerce.Controllers
                 : BadRequest(res.Error);
         }
 
-        [Authorize(Roles = GlobalConstants.customerRole)]
-        [HttpPost("create/{shippingaddressId}")]
-        public async Task<IActionResult> CreateOrderAsync([FromRoute] Guid shippingaddressId)
+        [Authorize]
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateOrderAsync()
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            var res = await _orderSevice.CreateOrderAsync(user.Id, shippingaddressId);
+            var res = await _orderSevice.CreateOrderAsync(user.Id);
             return res.Success
                 ? Ok(res.Data)
                 : BadRequest(res.Error);

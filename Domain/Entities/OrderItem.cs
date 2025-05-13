@@ -18,7 +18,6 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public decimal UnitPrice { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
-
         public decimal TotalPrice => UnitPrice * Quantity;
 
     }

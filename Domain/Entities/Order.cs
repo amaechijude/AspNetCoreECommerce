@@ -12,8 +12,8 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public required User User { get; set; }
         public string UserName { get; set; } = string.Empty;
         public Guid ShippingAddressId { get; set; }
-        public required ShippingAddress ShippingAddress { get; set; }
-        public required string ReceiverName { get; set; }
+        public ShippingAddress? ShippingAddress { get; set; }
+        public string ReceiverName { get; set; } = string.Empty;
         public required string OrderRefrence { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalOrderAmount { get; set; }

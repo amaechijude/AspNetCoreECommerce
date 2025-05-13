@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using AspNetCoreEcommerce.Domain.Enums;
+using AspNetCoreEcommerce.Domain.Entities;
 
 namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
 {
@@ -19,13 +20,13 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalDiscountAmount { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalAmountToBePaid { get; set; }
+        public required decimal TotalAmountToBePaid { get; set; }
 
         [EnumDataType(typeof(OrderStatusEnum), ErrorMessage = "Invalid Order Status")]
         public OrderStatusEnum OrderStatus { get; set; }
-        //public required ICollection<OrderItem> OrderItems { get; set; } = [];
         public DateTimeOffset DateCreated { get; set; }
         public DateTimeOffset? DateUpdated { get; set; }
+        //public ICollection<OrderItem> OrderItems { get; set; } = [];
     }
 
     public class CreateOrderDto

@@ -13,7 +13,7 @@ namespace AspNetCoreEcommerce.Controllers
     {
         private readonly IPaymentService _paymentService = paymentService;
 
-        [Authorize(Roles = GlobalConstants.customerRole)]
+        [Authorize]
         [HttpPost("initiate/{OrderId}")]
         public async Task<IActionResult> InitiateTransaction(Guid OrderId)
         {

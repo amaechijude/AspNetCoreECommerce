@@ -15,7 +15,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             if (cart is not null)
                 _context.Carts.Remove(cart);
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            
             return order;
         }
         public async Task<IEnumerable<Order>> GetUserOrdersAsync(Guid customerId)
@@ -26,34 +26,25 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
 
             return order.Count > 0 ? order : [];
         }
-        public async Task<Order?> GetOrderByOrderIdAsync(Guid orderId, Guid customerId)
+        public async Task<Order?> GetOrderByOrderIdAsync(Guid userId, Guid orderId)
         {
-            var order = await _context.Orders
-                .Where(o => o.OrderId == orderId && o.UserId == customerId)
+            return await _context.Orders
+                .Include(o => o.OrderItems)
+                .Where(o => o.OrderId == orderId && o.UserId == userId)
                 .FirstOrDefaultAsync();
-
-            return order is null
-                ? null
-                : order;
-                ;
         }
-
 
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }
 
-        public async Task<(User, Cart)> GetCartByIdAsync(Guid customerId)
+        public async Task<Cart?> GetCartByUserIdAsync(Guid userId)
         {
-            var customer = await _context.Users.FindAsync(customerId)
-                ?? throw new KeyNotFoundException("User does not exist");
-
-            var cart = await _context.Carts
-                .FirstOrDefaultAsync(c => c.UserId == customer.Id)
-                ?? throw new KeyNotFoundException("Cart is Empty");
-
-            return (customer, cart);
+            return await _context.Carts
+                .Include(c => c.CartItems)
+                .ThenInclude(ci => ci.Product)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 
         public async Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddressId)
@@ -66,10 +57,9 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
                 : shippingAddress;
         }
 
-        public async Task<ICollection<OrderItem>> CreateOrderItemsAsync(ICollection<OrderItem> orderItems)
+        public ICollection<OrderItem> CreateOrderItemsAsync(ICollection<OrderItem> orderItems)
         {
             _context.OrderItems.AddRange(orderItems);
-            await _context.SaveChangesAsync();
             return orderItems;
         }
     }
