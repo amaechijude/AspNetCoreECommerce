@@ -31,7 +31,7 @@ namespace AspNetCoreEcommerce.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await _paymentService.InitiateTransaction(user.Id, pto.OrderId);
+            var response = await _paymentService.InitiateTransaction(user, pto);
 
             return response switch
             {

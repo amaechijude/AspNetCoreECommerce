@@ -21,7 +21,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
             var initiateTransaction = PrepareInitiateTransactionDto(user, order);
 
             var payment = PreparePayment(user, order);
-            await _paymentRepository.AddPaymentAsync(payment);
+            _paymentRepository.AddPayment(payment);
+            await _paymentRepository.SaveChangesAsync();
             return await _ercasPay.InitiateTransaction(initiateTransaction);
         }
 
