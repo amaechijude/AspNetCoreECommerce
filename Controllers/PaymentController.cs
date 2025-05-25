@@ -1,29 +1,37 @@
 using System.Security.Claims;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
+using AspNetCoreEcommerce.Application.UseCases.PaymentUseCase;
+using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCoreEcommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PaymentController(IPaymentService paymentService) : ControllerBase
+    public class PaymentController(
+        IPaymentService paymentService,
+        UserManager<User> userManager
+        ) : ControllerBase
     {
         private readonly IPaymentService _paymentService = paymentService;
+        private readonly UserManager<User> _userManager = userManager;
 
         [Authorize]
-        [HttpPost("initiate/{OrderId}")]
-        public async Task<IActionResult> InitiateTransaction(Guid OrderId)
+        [HttpPost("initiate")]
+        public async Task<IActionResult> InitiateTransaction([FromBody] PaymentDto pto)
         {
-            if (User.FindFirst(ClaimTypes.NameIdentifier)?.Value is not string customerIdString)
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
                 return Unauthorized();
 
-            if (!Guid.TryParse(customerIdString, out Guid customerId))
-                return BadRequest("Invalid User ID");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var response = await _paymentService.InitiateTransaction(customerId, OrderId);
+            var response = await _paymentService.InitiateTransaction(user.Id, pto.OrderId);
 
             return response switch
             {

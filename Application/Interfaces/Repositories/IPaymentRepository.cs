@@ -4,9 +4,10 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
 {
     public interface IPaymentRepository
     {
-        Task<User?> GetUserByIdAsync(Guid UserId);
+        Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid UserId, Guid ShippingAddressId);
+        Task<bool> CheckExistingPaymentAsync(Guid orderId);
         Task<Order?> GetUserOrderById(Guid UserId, Guid OrderId);
-        Task AddPaymentAsync(Payment payment);
+        void AddPayment(Payment payment);
         Task SaveChangesAsync();
     }
 }

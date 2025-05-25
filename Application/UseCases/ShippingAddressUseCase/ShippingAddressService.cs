@@ -35,10 +35,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
         {
             var shippingAddresses = await _shippingAddressRespository
                 .GetShippingAddressByUserId(userId);
-            if (shippingAddresses is null)
-                return [];
-            return shippingAddresses
-                .Select(sh => MapShippingAddress(sh));
+            return [..shippingAddresses
+                .Select(sh => MapShippingAddress(sh))];
         }
 
         public async Task<ResultPattern> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId)

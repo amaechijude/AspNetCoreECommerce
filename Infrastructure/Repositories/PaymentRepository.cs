@@ -9,46 +9,34 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<User?> GetUserByIdAsync(Guid UserId)
+        public async Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid UserId, Guid ShippingAddressId)
         {
-            var customer = await _context.Users.FindAsync(UserId);
-                return customer is null
-                ? null
-                : customer;
+            return await _context.ShippingAddresses
+                .Where(s => s.UserId == UserId && s.ShippingAddressId == ShippingAddressId)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Order?> GetUserOrderById(Guid UserId, Guid OrderId)
         {
-            var order = await _context.Orders
+            return await _context.Orders
                 .Where(o => o.OrderId == OrderId && o.UserId == UserId)
                 .FirstOrDefaultAsync();
-            return order is null
-                ? null
-                : order;
         }
 
-        public async Task AddPaymentAsync(Payment payment)
+
+        public async Task<bool> CheckExistingPaymentAsync(Guid orderId)
         {
-            var existingPayment = await _context.Payments
-                .FirstOrDefaultAsync(p => p.OrderId == payment.OrderId);
-
-            if (existingPayment != null)
-                return; // Avoid duplicate insertion
-
-            try
-            {
-                _context.Payments.Add(payment);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                return; // Log the exception
-            }
+            return await _context.Payments.AnyAsync(p => p.OrderId == orderId);
+        }
+        public void AddPayment(Payment payment)
+        {
+            _context.Payments.Add(payment);
         }
 
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }
+
     }
 }

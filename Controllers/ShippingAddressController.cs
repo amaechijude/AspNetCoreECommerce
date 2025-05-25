@@ -1,7 +1,6 @@
 ﻿using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
-using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ namespace AspNetCoreEcommerce.Controllers
         private readonly UserManager<User> _userManager = userManager;
 
         [Authorize]
-        [HttpGet("view")]
+        [HttpGet("me")]
         public async Task<IActionResult> GetShippingAddressByUserIdAsync()
         {
             User? user = await _userManager.GetUserAsync(User);

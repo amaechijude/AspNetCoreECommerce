@@ -12,18 +12,15 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
         private readonly IPaymentRepository _paymentRepository = paymentRepository; 
         private readonly ErcasPay _ercasPay = ercasPay;
 
-        public async Task<object?> InitiateTransaction(Guid UserId, Guid OrderId)
+        public async Task<object?> InitiateTransaction(User user, PaymentDto dto)
         {
-            var customer = await _paymentRepository.GetUserByIdAsync(UserId);
-            if (customer is null)
-                return ResultPattern.FailResult("Invalid User");
-            var order = await _paymentRepository.GetUserOrderById(UserId, OrderId);
+            var order = await _paymentRepository.GetUserOrderById(user.Id, dto.OrderId);
             if (order is null)
                 return ResultPattern.FailResult("Invalid Order");
 
-            var initiateTransaction = PrepareInitiateTransactionDto(customer, order);
+            var initiateTransaction = PrepareInitiateTransactionDto(user, order);
 
-            var payment = PreparePayment(customer, order);
+            var payment = PreparePayment(user, order);
             await _paymentRepository.AddPaymentAsync(payment);
             return await _ercasPay.InitiateTransaction(initiateTransaction);
         }
