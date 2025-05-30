@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿﻿using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreEcommerce.Domain.Entities
 {
@@ -12,8 +12,8 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public Guid VendorId { get; set; }
         public Vendor? Vendor { get; set; } = null;
         public Guid CartId { get; set; }
-        public Cart? Cart { get; set; }
-        public ICollection<Reveiw> Feedbacks { get; set; } = [];
+        public Cart? Cart { get; set; } 
+        public ICollection<Review> Feedbacks { get; set; } = [];
         public ICollection<Order> Orders { get; set; } = [];
         public ICollection<Payment> Payments { get; set; } = [];
         public ICollection<ShippingAddress> ShippingAddresses { get; set; } = [];

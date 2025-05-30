@@ -12,7 +12,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task UpdateProductAsync();
         Task DeleteProductAsync(Guid vendorId, Guid productId);
         Task<Vendor?> GetVendorByIdAsync(Guid vendorId);
-        Task<bool> CreateReviewAsync(Reveiw reveiw);
+        Task<bool> CreateReviewAsync(Review review);
         Task SaveChangesAsync();
         Task<bool> CheckExistingReviewAsync(Guid productId, Guid userId);
     }

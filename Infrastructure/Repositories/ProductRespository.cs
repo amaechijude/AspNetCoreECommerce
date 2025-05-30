@@ -94,13 +94,13 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .Include(p => p.Reveiws)
+                .Include(p => p.Reviews)
                 .ToListAsync();
 
             return (items, totalCount);
         }
 
-        public async Task<bool> CreateReviewAsync(Reveiw reveiw)
+        public async Task<bool> CreateReviewAsync(Review reveiw)
         {
             try
             {

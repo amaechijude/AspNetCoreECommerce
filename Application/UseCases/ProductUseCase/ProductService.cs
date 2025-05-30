@@ -91,9 +91,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             return ResultPattern.SuccessResult(data);
         }
 
-        public async Task<ResultPattern> AddProductReviewAsync(
-            User user, Guid productId, AddProductReveiwDto reveiwDto
-            )
+        public async Task<ResultPattern> AddProductReviewAsync(User user, Guid productId, AddProductReveiwDto reveiwDto)
         {
             var reviewExists = await _productRepository.CheckExistingReviewAsync(productId, user.Id);
             if (reviewExists)
@@ -102,7 +100,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             var product = await _productRepository.GetProductByIdAsync(productId);
             if (product is null)
                 return ResultPattern.FailResult("product not found");
-            var reveiew = new Reveiw
+            var reveiew = new Review
             {
                 Id = productId,
                 UserId = user.Id,
@@ -133,7 +131,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
                 VendorName = product.VendorName,
                 Stock = product.StockQuantity,
                 Rating = product.Rating,
-                ReveiwCount = product.ReveiwCount
+                ReveiwCount = product.ReviewCount,
+                CreatedAt = product.CreatedAt,
+                UpdatedAt = product.UpdatedAt,
             };
         }
 

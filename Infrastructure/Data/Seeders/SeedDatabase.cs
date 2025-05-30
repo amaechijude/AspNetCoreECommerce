@@ -1,4 +1,5 @@
 ﻿using AspNetCoreEcommerce.Domain.Entities;
+using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,44 +53,32 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Seeders
                 user.Vendor = vendor;
                 user.VendorId = vendor.VendorId;
 
+                var random = new Random();
+                var products = new List<Product>();
+                var now = DateTimeOffset.UtcNow;
+
                 // seed new products
-                List<Product> products = [
-                    new Product
+                for (int i = 1; i <= 100; i++)
+                {
+                    products.Add(new Product
                     {
                         ProductId = Guid.CreateVersion7(),
-                        Name = "Product 1",
-                        CreatedAt = DateTimeOffset.UtcNow,
-                        ImageUrl = "Products/product1.jpg",
-                        Price = 2033,
+                        Name = $"Product {i}",
+                        Description = $"This is a detailed description for Product {i}. It offers great quality and value. Perfect for your needs.",
+                        ImageUrl = $"{GlobalConstants.productSubPath}/product{random.Next(1, 11)}.jpg", 
+                        Price = Math.Round(new decimal(random.Next(1000, 500000)) / 100m, 2), // Price between 10.00 and 5000.00
+                        StockQuantity = random.Next(10, 200), // Stock between 10 and 199
+                        DiscountPercentage = Math.Round(new decimal(random.Next(0, 3001)) / 100m, 2), // Discount 0.00% to 30.00%
+                        CreatedAt = now,
+                        UpdatedAt = now, // Using current name from Product.cs
                         VendorId = vendor.VendorId,
                         Vendor = vendor,
-                        VendorName = vendor.VendorName
-                    },
+                        VendorName = vendor.VendorName,
+                        Rating = random.Next(1, 6), // Rating 1 to 5
+                        ReviewCount = random.Next(0, 251) // Review count 0 to 250, using current name from Product.cs
+                    });
+                }
 
-                    new Product
-                    {
-                        ProductId = Guid.CreateVersion7(),
-                        Name = "Product 2",
-                        CreatedAt = DateTimeOffset.UtcNow,
-                        ImageUrl = "Products/product2.jpg",
-                        Price = 9500,
-                        VendorId = vendor.VendorId,
-                        Vendor = vendor,
-                        VendorName = vendor.VendorName
-                    },
-
-                    new Product
-                    {
-                        ProductId = Guid.CreateVersion7(),
-                        Name = "Product 3",
-                        CreatedAt = DateTimeOffset.UtcNow,
-                        ImageUrl = "Products/product3.jpg",
-                        Price = 4590,
-                        VendorId = vendor.VendorId,
-                        Vendor = vendor,
-                        VendorName = vendor.VendorName
-                    }
-                ];
                 await context.Products.AddRangeAsync(products);
                 await context.SaveChangesAsync();
             }

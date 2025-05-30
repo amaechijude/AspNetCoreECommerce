@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AspNetCoreEcommerce.Domain.Entities
 {
-    public class Reveiw
+    public class Review
     {
         [Key]
         public Guid Id {get; set;}

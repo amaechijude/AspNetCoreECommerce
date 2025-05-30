@@ -173,8 +173,6 @@ builder.Services.AddOpenApi();
 // --- Build the Application ---
 var app = builder.Build();
 
-// --- Configure the HTTP request pipeline ---
-
 // Custom ExceptionHandling Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -185,20 +183,20 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 
     // Seed db
-    using (var scope = app.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        try
-        {
-            // Seed the database with roles
-            await SeedDatabase.SeedRoleAsync(services, db);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred while seeding the database.");
-        }
-    }
+    // using (var scope = app.Services.CreateScope())
+    // {
+    //     var services = scope.ServiceProvider;
+    //     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    //     try
+    //     {
+    //         // Seed the database with roles
+    //         await SeedDatabase.SeedRoleAsync(services, db);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Log.Error(ex, "An error occurred while seeding the database.");
+    //     }
+    // }
 }
 
 // Image folder storage setup

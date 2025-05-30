@@ -18,15 +18,15 @@ namespace AspNetCoreEcommerce.Domain.Entities
         [Column(TypeName = "decimal(4,2)")]
         public decimal DiscountPercentage {get; set;}
         public required DateTimeOffset CreatedAt {get; set;}
-        public DateTimeOffset UpdateddAt {get; set;}
+        public DateTimeOffset UpdatedAt {get; set;}
         public required Guid VendorId { get; set; }
         public string? VendorName {get; set;}
         public Vendor? Vendor { get; set; }
         public int Rating { get; set; }
-        public int ReveiwCount { get; set; }
+        public int ReviewCount { get; set; }
         public ICollection<CartItem> CartItems { get; set; } = [];
         public ICollection<OrderItem> OrderItems {get; set;} = [];
-        public ICollection<Reveiw> Reveiws { get; set; } = [];
+        public ICollection<Review> Reviews { get; set; } = [];
         public ICollection<ProductTags> Tags { get; set; } = [];
 
         public void UpdateProduct(string? name, string? description, string? imageName, decimal? price)
@@ -43,7 +43,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
             if (price != null)
                 Price = (decimal)price;
 
-            UpdateddAt = DateTimeOffset.UtcNow;
+            UpdatedAt = DateTimeOffset.UtcNow;
         }
     }
 }

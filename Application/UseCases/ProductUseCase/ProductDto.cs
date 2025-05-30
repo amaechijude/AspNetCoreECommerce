@@ -36,6 +36,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         public string? VendorName { get; set; }
         public int Rating { get; set; }
         public int ReveiwCount { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
+        public bool IsNew => DateTimeOffset.UtcNow - CreatedAt < TimeSpan.FromDays(30);
         public ICollection<RelatedProductDto> RelatedProducts { get; set; } = [];
     }
 
