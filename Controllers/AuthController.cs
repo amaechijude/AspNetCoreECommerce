@@ -79,13 +79,16 @@ namespace AspNetCoreEcommerce.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
+            User? user = await _userManager.FindByEmailAsync(loginDto.Email);
+            if (user is null)
                 return BadRequest("Invalid Credentials");
             var verifyPassword = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             if (!verifyPassword)
                 return BadRequest("Invalid Credentials");
-
+            
+            if (!user.EmailConfirmed)
+                return Unauthorized("Email not confirmed");
+                
             var token = _tokenService.CreateAppUsertoken(user);
             var cookieOptions = new CookieOptions
             {

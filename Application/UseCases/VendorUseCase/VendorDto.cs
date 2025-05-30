@@ -55,5 +55,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
         [Required]
         public required string Location { get; set; }
         public IFormFile? Logo { get; set; }
+        public IFormFile? Banner { get; set; }
     }
 }

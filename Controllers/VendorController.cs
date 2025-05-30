@@ -17,8 +17,8 @@ namespace AspNetCoreEcommerce.Controllers
         private readonly IVendorService _vendorService = vendorService;
         private readonly UserManager<User> _userManager = userManager;
 
-        [Authorize(Roles = "User")]
-        [HttpPost("register")]
+        [Authorize]
+        [HttpPost("create")]
         public async Task<IActionResult> SignupVendorAsync([FromForm] CreateVendorDto vendorDto)
         {
             User? user = await _userManager.GetUserAsync(User);
