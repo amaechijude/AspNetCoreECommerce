@@ -96,6 +96,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
         public required string Email { get; set; }
         public required string Name { get; set; }
         public int CartCount { get; set; } = 0;
+        public bool IsVendor { get; set; }
     }
 
 }

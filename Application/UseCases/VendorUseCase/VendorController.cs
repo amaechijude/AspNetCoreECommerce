@@ -1,11 +1,10 @@
 using AspNetCoreEcommerce.Application.Interfaces.Services;
-using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreEcommerce.Controllers
+namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -34,6 +33,17 @@ namespace AspNetCoreEcommerce.Controllers
                 : BadRequest(result.Error);
         }
 
+
+        [Authorize]
+        [HttpPost]
+       public async Task<IActionResult> ActivateVendor([FromBody] ActivateVendorDto activateVendor)
+        {
+            var res = await _vendorService.ActivateVendorAsync(activateVendor, Request);
+            return res.Success
+                ? Ok(res.Data) 
+                : BadRequest(res.Error); 
+        }
+
         [Authorize]
         [HttpPatch("update")]
         public async Task<IActionResult> UpdateVendorAsync([FromForm] UpdateVendorDto updateVendor)
@@ -41,7 +51,7 @@ namespace AspNetCoreEcommerce.Controllers
             User? user = await _userManager.GetUserAsync(User);
             if (user is null) return Unauthorized();
 
-            if (!IsVendorActivated(user))
+            if (!IsVendor(user))
                 return BadRequest("User is not a vendor");
 
             if (!ModelState.IsValid)
@@ -53,23 +63,20 @@ namespace AspNetCoreEcommerce.Controllers
                 : BadRequest(result.Error);
         }
 
-        [Authorize(Roles = "Vendor")]
-        [HttpGet("profile")]
+        [Authorize]
+        [HttpGet("dashboard")]
         public async Task<IActionResult> GetVendorByIdAsync()
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user is null) return Unauthorized();
 
-            if (!IsVendorActivated(user))
-                return BadRequest("User is not a vendor or Activated as vendor");
-
-            var result = await _vendorService.GetVendorByIdAsync(user.VendorId, Request);
+          var result = await _vendorService.GetVendorByIdAsync(user, Request);
             return result.Success
                 ? Ok(result.Data)
                 : BadRequest(result.Error);
         }
 
-        private static bool IsVendorActivated(User user)
+        private static bool IsVendor(User user)
         {
             if (user.Vendor is null || !user.IsVendor)
                 return false;

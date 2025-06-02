@@ -8,7 +8,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Services
     {
         Task<ResultPattern> CreateVendorAsync(User user, CreateVendorDto createVerndor, HttpRequest request);
         Task<ResultPattern> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor, HttpRequest request);
-        Task<ResultPattern> GetVendorByIdAsync(Guid vendorId, HttpRequest request);
-        Task<ResultPattern> ActivateVendorAsync(string email, string code, HttpRequest request);
+        Task<ResultPattern> GetVendorByIdAsync(User user, HttpRequest request);
+        Task<ResultPattern> ActivateVendorAsync(ActivateVendorDto dto, HttpRequest request);
     }
 }

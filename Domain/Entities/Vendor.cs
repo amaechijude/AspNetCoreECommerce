@@ -11,18 +11,18 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public required string VendorName { get; set; }
         public required string VendorEmail { get; set; }
         public string VendorPhone {  get; set; } = string.Empty;
-        public string? VendorBannerUri { get; set; }
+        public string VendorBannerUri { get; set; } = string.Empty;
         public required string Location { get; set; }
-        public string? VerificationCode { get; set; }
+        public string? VerificationCode { get; set; } = string.Empty;
         public bool IsActivated { get; set; } = false;
         [Url]
-        public string? GoogleMapUrl { get; set; }
+        public string GoogleMapUrl { get; set; } = string.Empty;
         [Url]
-        public string? TwitterUrl { get;set; }
+        public string TwitterUrl { get;set; } = string.Empty;
         [Url]
-        public string? InstagramUrl { get; set; }
+        public string InstagramUrl { get; set; } = string.Empty;
         [Url]
-        public string? FacebookUrl { get; set; }
+        public string FacebookUrl { get; set; } = string.Empty;
         public DateTimeOffset DateJoined { get; set; }
         public DateTimeOffset DateUpdated { get; private set; }
         public required Guid UserId { get; set; }

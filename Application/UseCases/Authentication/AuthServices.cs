@@ -72,7 +72,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
             {
                 Email = user.Email,
                 Name = user.FullName,
-                CartCount = user.CartItemsCount
+                CartCount = user.CartItemsCount,
+                IsVendor = user.IsVendor,
             };
             return ResultPattern.SuccessResult(data);
         }

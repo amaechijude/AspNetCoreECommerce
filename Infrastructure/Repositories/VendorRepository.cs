@@ -11,11 +11,11 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
 
         public async Task<bool> CheckUniqueNameEmail(Guid userId, string email, string name)
         {
-            return await _context.Vendors.AnyAsync(
-                v => v.UserId == userId
-                || string.Equals(v.VendorEmail, email, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(v.VendorName, name, StringComparison.OrdinalIgnoreCase)
-                );
+            return await _context.Vendors.AnyAsync(v => 
+            v.UserId == userId 
+            || v.VendorEmail == email 
+            || v.VendorName == name
+            );
         }
 
         public async Task<User?> GetUserByIdAsync(Guid id)

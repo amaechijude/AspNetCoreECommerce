@@ -23,11 +23,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
             if (!result.IsValid)
                 return ResultPattern.FailResult(result.Errors);
 
-            
-            if (user is null)
-                return ResultPattern.FailResult("Creation failed");
             if (await _vendorRepository.CheckUniqueNameEmail(user.Id, createVerndor.Email, createVerndor.Name))
-                return ResultPattern.FailResult("Creation failed");
+                return ResultPattern.FailResult("Creation failed: Possible duplicate request");
 
             var vendor = PrepareVendorSignUp(user, createVerndor);
             vendor.VendorBannerUri = await GlobalConstants.SaveImageAsync(createVerndor.Logo, GlobalConstants.vendorSubPath);
@@ -49,10 +46,10 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
             return ResultPattern.SuccessResult("Successful");
         }
 
-        public async Task<ResultPattern> ActivateVendorAsync(string email, string code, HttpRequest request)
+        public async Task<ResultPattern> ActivateVendorAsync( ActivateVendorDto dto,HttpRequest request)
         {
-            var vendor = await _vendorRepository.GetVendorByEmailAsync(email);
-            if (vendor is null || vendor.VerificationCode != code)
+            var vendor = await _vendorRepository.GetVendorByEmailAsync(dto.Email);
+            if (vendor is null || vendor.VerificationCode != dto.Code)
                 return ResultPattern.FailResult("Verification Failed");
 
             vendor.ActivateVendor();
@@ -70,11 +67,15 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
             return ResultPattern.SuccessResult("Vendor updated successfully");
         }
 
-        public async Task<ResultPattern> GetVendorByIdAsync(Guid vendorId, HttpRequest request)
+        public async Task<ResultPattern> GetVendorByIdAsync(User user, HttpRequest request)
         {
-            var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId);
+            if (!user.IsVendor)
+                return ResultPattern.FailResult("User is not a vendor");
+            var vendor = await _vendorRepository.GetVendorByIdAsync(user.VendorId);
             if (vendor is null)
-                return ResultPattern.FailResult("");
+                return ResultPattern.FailResult("Vendor Information not found");
+            if (!vendor.IsActivated)
+                return ResultPattern.FailResult("Vendor account is not activated yet");
             var vendorView = MapToVendorViewDto(vendor, request);
             return ResultPattern.SuccessResult(vendorView);
         }
@@ -102,14 +103,13 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
-                VendorBannerUrl = GlobalConstants.GetImagetUrl(request,vendor.VendorBannerUri),
+                BannerUrl = GlobalConstants.GetImagetUrl(request,vendor.VendorBannerUri),
                 Location = vendor.Location,
                 GoogleMapUrl = vendor.GoogleMapUrl,
                 TwitterUrl = vendor.TwitterUrl,
                 InstagramUrl = vendor.InstagramUrl,
                 FacebookUrl = vendor.FacebookUrl,
                 DateJoined = vendor.DateJoined,
-                DateUpdated = vendor.DateUpdated,
                 Products = [.. vendor.Products.Select(v => new ProductViewDto {
                     ProductId = v.ProductId,
                     ProductName = v.Name,

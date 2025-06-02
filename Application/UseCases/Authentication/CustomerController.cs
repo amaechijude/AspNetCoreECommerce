@@ -4,7 +4,7 @@ using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreEcommerce.Controllers
+namespace AspNetCoreEcommerce.Application.UseCases.Authentication
 {
     [Route("api/[controller]")]
     [ApiController]

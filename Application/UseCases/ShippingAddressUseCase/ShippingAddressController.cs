@@ -1,11 +1,10 @@
 ﻿using AspNetCoreEcommerce.Application.Interfaces.Services;
-using AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreEcommerce.Controllers
+namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
 {
     [Route("api/[controller]")]
     [ApiController]

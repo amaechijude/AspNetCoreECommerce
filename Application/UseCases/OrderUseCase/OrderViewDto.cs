@@ -13,16 +13,10 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
         public Guid ShippingAddressAddressId { get; set; }
         public required string ReceiverName { get; set; }
         public required string OrderRefrence { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalOrderAmount { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
         public decimal ShippingCost { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalDiscountAmount { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
         public required decimal TotalAmountToBePaid { get; set; }
-
-        [EnumDataType(typeof(OrderStatusEnum), ErrorMessage = "Invalid Order Status")]
         public OrderStatusEnum OrderStatus { get; set; }
         public DateTimeOffset DateCreated { get; set; }
         public DateTimeOffset? DateUpdated { get; set; }

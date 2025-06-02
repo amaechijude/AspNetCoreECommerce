@@ -1,6 +1,5 @@
 using System.Threading.Channels;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
-using AspNetCoreEcommerce.Application.UseCases.Authentication;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Shared;
@@ -8,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreEcommerce.Controllers
+namespace AspNetCoreEcommerce.Application.UseCases.Authentication
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -40,7 +39,7 @@ namespace AspNetCoreEcommerce.Controllers
 
             if (!result.Succeeded)
             {
-                _logger.LogError(result.Errors.ToString());
+                _logger.LogError("User registration failed: {Errors}", result.Errors);
                 return BadRequest();
             }
             

@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
-using AspNetCoreEcommerce.Application.UseCases.PaymentUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Shared;
@@ -8,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreEcommerce.Controllers
+namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
 {
     [ApiController]
     [Route("api/[controller]")]

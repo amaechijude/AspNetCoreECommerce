@@ -88,10 +88,12 @@ builder.Services.AddIdentity<User, UserRole>(options =>
 builder.Services.AddSingleton<TokenProvider>();
 
 // Register JWT
-string jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
-    ?? throw new ArgumentException("JWT_SECRET_KEY", "Jwt secret key is not set in the environment variables.");
-string jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER")
-    ?? throw new ArgumentException("JWT_ISSUER", "Jwt issuer is not set in the environment variables.");
+string? jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+string? jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+
+if (string.IsNullOrWhiteSpace(jwtSecret) || string.IsNullOrWhiteSpace(jwtIssuer))
+    throw new ArgumentException("JWT environment variables are not set.");
+
 
 builder.Services.AddAuthentication(options =>
 {

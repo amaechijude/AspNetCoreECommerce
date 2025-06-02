@@ -21,27 +21,18 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
     public class VendorViewDto
     {
         public Guid VendorId { get; set; }
-        [Required]
-        public string? VendorName { get; set; }
-        [EmailAddress]
-        public string? VendorEmail { get; set; }
-        [StringLength(16)]
-        public string? VendorPhone { get; set; }
-        public string? VendorBannerUrl { get; set; }
-        public string? Location { get; set; }
-        [Url]
-        public string? GoogleMapUrl { get; set; }
-        [Url]
-        public string? TwitterUrl { get; set; }
-        [Url]
-        public string? InstagramUrl { get; set; }
-        [Url]
-        public string? FacebookUrl { get; set; }
+        public required string VendorName { get; set; }
+        public required string VendorEmail { get; set; }
+        public required string VendorPhone { get; set; }
+        public string BannerUrl { get; set; } = string.Empty;
+        public string LogoUrl { get; set; } = string.Empty;
+        public required string Location { get; set; }
+        public string GoogleMapUrl { get; set; } = string.Empty;
+        public string TwitterUrl { get; set; } = string.Empty;
+        public string InstagramUrl { get; set; } = string.Empty;
+        public string FacebookUrl { get; set; } = string.Empty;
         public DateTimeOffset DateJoined { get; set; }
-        public DateTimeOffset? DateUpdated { get; set; }
-        public DateTimeOffset LastLoginDate { get; set; }
-        public ICollection<ProductViewDto>? Products { get; set; }
-
+        public ICollection<ProductViewDto> Products { get; set; } = [];
     }
 
     public class CreateVendorDto
@@ -56,5 +47,13 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
         public required string Location { get; set; }
         public IFormFile? Logo { get; set; }
         public IFormFile? Banner { get; set; }
+    }
+
+    public class ActivateVendorDto
+    {
+        [Required, EmailAddress]
+        public required string Email { get; set; }
+        [Required]
+        public required string Code {get; set; }
     }
 }

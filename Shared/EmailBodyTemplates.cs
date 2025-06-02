@@ -108,7 +108,7 @@ namespace AspNetCoreEcommerce.Shared
             return html.Replace("{{ResetLink}}", resetLink);
         }
 
-        public static string VendorOtpBody(Vendor vendor, string code, HttpRequest httpRequest)
+        public static string VendorOtpBody(Vendor vendor, string code)
         {
             string otpEmailTemplate = @"
 <!DOCTYPE html>

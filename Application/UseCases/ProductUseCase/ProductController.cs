@@ -1,12 +1,11 @@
 ﻿using AspNetCoreEcommerce.Application.Interfaces.Services;
-using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreEcommerce.Controllers
+namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
 {
     [Route("api/[controller]")]
     [ApiController]
