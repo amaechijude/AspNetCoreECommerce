@@ -9,6 +9,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<ShippingAddress> builder)
         {
             builder.HasKey(sa => sa.ShippingAddressId);
+            builder.HasIndex(sa => sa.ShippingAddressId);
             builder.Property(sa => sa.AddressLine1).IsRequired();
 
             // ShippingAddress Order relationship

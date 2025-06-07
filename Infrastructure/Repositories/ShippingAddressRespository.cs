@@ -45,6 +45,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         {
             return await _context.ShippingAddresses
                 .Where(sh => sh.UserId == userId)
+                .OrderByDescending(s  => s.ShippingAddressId)
                 .ToListAsync();
         }
 

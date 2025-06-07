@@ -31,13 +31,13 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
                 : BadRequest(res.Error);
         }
 
-        [Authorize(Roles = "Vendor")]
-        [HttpPatch("update/{productID}")]
+        [Authorize]
+        [HttpPut("update/{productID}")]
         public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productID, [FromForm] UpdateProductDto updateProduct)
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user is null)
-                return Unauthorized();
+                return Unauthorized("Unauthorized");
             if (!user.IsVendor)
                 return Forbid("You are not a vendor yet");
             if (!ModelState.IsValid)
@@ -52,7 +52,13 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         [HttpGet]
         public async Task<IActionResult> GetAllProductAsync([FromQuery] int page = 1, int pageSize = 50)
         {
-            return Ok(await _productService.GetPagedProductsAsync(page, pageSize, Request));
+            var dto = new PagedProductResponseDto
+            {
+                PageNumber = page,
+                PageSize = pageSize,
+                Request = Request
+            };
+            return Ok(await _productService.GetPagedProductsAsync(dto));
         }
 
         [HttpGet("{productId}")]
@@ -67,7 +73,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
                 : NotFound(res.Error);
         }
 
-        [Authorize(Roles = "Vendor")]
+        [Authorize]
         [HttpDelete("delete/{productId}")]
         public async Task<IActionResult> DeleteProductAsync([FromRoute] string productId)
         {

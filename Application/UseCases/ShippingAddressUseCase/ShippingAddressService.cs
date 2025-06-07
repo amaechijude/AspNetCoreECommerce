@@ -2,14 +2,17 @@
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
 {
     public class ShippingAddressService(
-        IShippingAddressRespository shippingAddressRespository
+        IShippingAddressRespository shippingAddressRespository,
+        IMemoryCache memoryCache
         ) : IShippingAddressService
     {
         private readonly IShippingAddressRespository _shippingAddressRespository = shippingAddressRespository;
+        private readonly IMemoryCache _memoryCache = memoryCache;
 
         public async Task<ResultPattern> AddShippingAddressAsync(User user, AddShippingAddressDto shippingAddress)
         {
@@ -33,18 +36,47 @@ namespace AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase
 
         public async Task<IEnumerable<ShippingAddressViewDto>> GetShippingAddressByUserIdAsync(Guid userId)
         {
-            var shippingAddresses = await _shippingAddressRespository
+            string cacheKey = $"ShipListFor_{userId}";
+            bool inCache = _memoryCache.TryGetValue(cacheKey, out IEnumerable<ShippingAddress>? cacheData);
+            if (inCache && cacheData is not null)
+            {
+                return [..cacheData
+                .Select(sh => MapShippingAddress(sh))];
+            }
+            IEnumerable<ShippingAddress> shippingAddresses = await _shippingAddressRespository
                 .GetShippingAddressByUserId(userId);
+
+            // Add to cache
+            _memoryCache.Set(cacheKey, shippingAddresses, new MemoryCacheEntryOptions
+            {
+                SlidingExpiration = TimeSpan.FromSeconds(30),
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
             return [..shippingAddresses
                 .Select(sh => MapShippingAddress(sh))];
         }
 
         public async Task<ResultPattern> GetShippingAddressByIdAsync(Guid customerId, Guid shippingAddId)
         {
-            var shippingAddress = await _shippingAddressRespository
+            string cacheKey = $"Shipping_{shippingAddId}";
+            bool inCache = _memoryCache.TryGetValue(cacheKey, out ShippingAddress? cacheData);
+            if (inCache && cacheData is not null)
+            {
+                return ResultPattern
+                .SuccessResult(
+                    MapShippingAddress(cacheData)
+                 );
+            }
+            ShippingAddress? shippingAddress = await _shippingAddressRespository
                 .GetShippingAddressByIdAsync(customerId, shippingAddId);
+
             if (shippingAddress is null)
                 return ResultPattern.FailResult("Shipping address not found");
+
+            _memoryCache.Set(cacheKey, shippingAddress, new MemoryCacheEntryOptions
+            { 
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20)
+            });
             return ResultPattern
                 .SuccessResult(
                     MapShippingAddress(shippingAddress)

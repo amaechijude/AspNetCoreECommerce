@@ -22,17 +22,29 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         {
             return await _context.Users.FindAsync(id);
         }
+        public async Task<(IEnumerable<Product> Items, int TotalCount)> GetVendorPagedProductAsync(Guid vendorId, int pageNumber, int pageSize)
+        {
+            var query = _context.Products
+                .AsQueryable()
+                .Where(v => v.VendorId == vendorId);
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
 
         public Task<Vendor?> GetVendorByEmailAsync(string email)
         {
             return _context.Vendors.FirstOrDefaultAsync(v => v.VendorEmail == email);
         }
 
-        public async Task<Vendor?> GetVendorByIdAsync(Guid veondorId)
+        public async Task<Vendor?> GetVendorByIdAsync(Guid vendorId)
         {
-            return await _context.Vendors
-                .Include(v => v.Products)
-                .FirstOrDefaultAsync(v => v.VendorId == veondorId);
+            return await _context.Vendors.FindAsync(vendorId);
         }
 
         public async Task SaveChangesAsync()

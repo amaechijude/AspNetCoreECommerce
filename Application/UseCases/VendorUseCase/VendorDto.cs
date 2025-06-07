@@ -32,7 +32,14 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
         public string InstagramUrl { get; set; } = string.Empty;
         public string FacebookUrl { get; set; } = string.Empty;
         public DateTimeOffset DateJoined { get; set; }
-        public ICollection<ProductViewDto> Products { get; set; } = [];
+    }
+
+    public class PagedResponseDto
+    {
+        public required Guid VendorId { get; set; }
+        public required int PageNumber { get; set; } = 1;
+        public required int PageSize { get; set; } = 50;
+        public required HttpRequest Request { get; set; }
     }
 
     public class CreateVendorDto

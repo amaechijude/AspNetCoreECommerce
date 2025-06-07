@@ -40,7 +40,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
             if (!string.IsNullOrWhiteSpace(imageName))
                 ImageUrl = imageName;
 
-            if (price != null)
+            if (price > 0)
                 Price = (decimal)price;
 
             UpdatedAt = DateTimeOffset.UtcNow;

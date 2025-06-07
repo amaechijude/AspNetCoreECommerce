@@ -22,6 +22,12 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         [Required, Range(1.0, 10_000_000)]
         public decimal Price { get; set; }
     }
+    public class PagedProductResponseDto
+    {
+        public required int PageNumber { get; set; } = 1;
+        public required int PageSize { get; set; } = 50;
+        public required HttpRequest Request { get; set; }
+    }
 
     public class ProductViewDto
     {
@@ -56,6 +62,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         public string? Name { get; set; }
         public string? Description { get; set; }
         public IFormFile? Image { get; set; }
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
     }
 }

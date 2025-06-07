@@ -40,7 +40,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBc3BOZXRDb
 GET {{AspNetCoreEcommerce_HostAddress}}/api/product/
 ###
 
-GET {{AspNetCoreEcommerce_HostAddress}}/api/product/0196a187-f7ba-7527-aea7-3b884db4168e/
+GET {{AspNetCoreEcommerce_HostAddress}}/api/product/01971f25-b16f-7023-bf81-97e65f64a6e0
 ###
 
 POST {{AspNetCoreEcommerce_HostAddress}}/api/cart/add/

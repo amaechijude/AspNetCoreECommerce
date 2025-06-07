@@ -92,6 +92,9 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
 
             var totalCount = await query.CountAsync();
             var items = await query
+                .AsNoTracking()
+                .OrderBy(p => p.ProductId)
+                .ThenBy(p => p.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Include(p => p.Reviews)

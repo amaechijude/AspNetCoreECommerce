@@ -2,13 +2,18 @@
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Shared;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
 {
     // Services/ProductService.cs
-    public class ProductService(IProductRepository productRepository) : IProductService
+    public class ProductService(
+        IProductRepository productRepository,
+        IMemoryCache memoryCache
+        ) : IProductService
     {
         private readonly IProductRepository _productRepository = productRepository;
+        private readonly IMemoryCache _memoryCache = memoryCache;
         private const int MaxPageSize = 50;
 
         public async Task<ResultPattern> GetAllProductsAsync(HttpRequest request)
@@ -19,12 +24,24 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
 
         public async Task<ResultPattern> GetProductByIdAsync(Guid productId, HttpRequest request)
         {
+            string cacheKey = $"product_{productId}";
+            bool InCache = _memoryCache.TryGetValue(cacheKey, out Product? cachedProduct);
+            if (InCache && cachedProduct is not null)
+            {
+                return ResultPattern.SuccessResult(MapProductToDto(cachedProduct, request));
+            }
             var product = await _productRepository.GetProductByIdAsync(productId);
 
             if (product is null)
                 return ResultPattern.FailResult("Product not found");
-            
+
+            // store in cache
+            _memoryCache.Set(cacheKey, product, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
             return ResultPattern.SuccessResult(MapProductToDto(product, request));
+              
         }
 
         public async Task<ResultPattern> CreateProductAsync(Guid vendorId, CreateProductDto createProductDto, HttpRequest request)
@@ -73,15 +90,11 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             if (product is null)
                 return ResultPattern.FailResult("Product not found");
 
-            var vendor = await _productRepository.GetVendorByIdAsync(vendorId);
-            if (vendor is null)
-                return ResultPattern.FailResult("Vendor not found"      );
-
-            if (vendor.VendorId != product.VendorId)
+            if (vendorId != product.VendorId)
                 return ResultPattern.FailResult("Vendor does not own this product");
 
             var imageUrl = updateProduct.Image == null
-                ? null
+                ? ""
                 : await GlobalConstants.SaveImageAsync(updateProduct.Image, GlobalConstants.productSubPath);
 
             product.UpdateProduct(updateProduct.Name, updateProduct.Description, imageUrl, updateProduct.Price);
@@ -137,22 +150,23 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             };
         }
 
-        public async Task<PagedResponse<ProductViewDto>> GetPagedProductsAsync(int pageNumber, int pageSize, HttpRequest httpRequest)
+        public async Task<PagedResponse<ProductViewDto>> GetPagedProductsAsync(PagedProductResponseDto dto)
         {
-            pageNumber = pageNumber < 1 ? 1 : pageNumber;
-            pageSize = pageNumber > MaxPageSize ? MaxPageSize : pageSize;
+            int pageNumber = dto.PageNumber < 1 ? 1 : dto.PageNumber;
+            int pageSize = pageNumber > MaxPageSize ? MaxPageSize : dto.PageSize;
 
             var (products, totalCount) = await _productRepository
                 .GetPagedProductAsync(pageNumber, pageSize);
 
-            var productDto = products.Select(p => MapProductToDto(p, httpRequest));
+            var productDto = products.Select(p => MapProductToDto(p, dto.Request));
 
-            return new PagedResponse<ProductViewDto>(
+            var result = new PagedResponse<ProductViewDto>(
                 productDto,
                 pageNumber,
                 pageSize,
                 totalCount
             );
+            return result;
         }
     }
 

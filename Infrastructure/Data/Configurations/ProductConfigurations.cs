@@ -11,6 +11,9 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
             builder.HasKey(p => p.ProductId);
             builder.Property(p => p.Price).HasColumnType("decimal(18,2)");
 
+            builder.HasIndex(p => p.ProductId);
+            builder.HasIndex(p => p.CreatedAt);
+
 
             // Product Vendor relationship
             builder.HasOne(p => p.Vendor)

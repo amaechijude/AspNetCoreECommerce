@@ -76,6 +76,24 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 : BadRequest(result.Error);
         }
 
+        [Authorize]
+        [HttpGet("products")]
+        public async Task<IActionResult> GetPaginatedProdcuts([FromQuery] int page = 1, int pageSize = 30)
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if (user is null) return Unauthorized("You need to login");
+            if (user.IsVendor == false )
+                return BadRequest("You aren not a vendor");
+            PagedResponseDto res = new()
+            {
+                VendorId = user.VendorId,
+                PageNumber = page,
+                PageSize = pageSize,
+                Request = Request
+            };
+            return Ok(await _vendorService.GetVendorPagedProductsAsync(res));
+        }
+
         private static bool IsVendor(User user)
         {
             if (user.Vendor is null || !user.IsVendor)

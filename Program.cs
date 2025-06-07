@@ -11,7 +11,6 @@ using AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase;
 using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.Data;
-using AspNetCoreEcommerce.Infrastructure.Data.Seeders;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Infrastructure.Repositories;
@@ -22,7 +21,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
-using Org.BouncyCastle.Ocsp;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -61,7 +59,6 @@ if (
     string.IsNullOrWhiteSpace(dbPort)
     ) throw new ArgumentException("Database environment variables are not set.");
 
-
 // Construct connection string
 // var environment = builder.Environment;
 string dbConnectionString = $"Host={dbHost};Port={dbPort};Username={dbUser};Password={dbPassword};Database={dbName}";
@@ -91,9 +88,20 @@ builder.Services.AddSingleton<TokenProvider>();
 string? jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
 string? jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
 
-if (string.IsNullOrWhiteSpace(jwtSecret) || string.IsNullOrWhiteSpace(jwtIssuer))
-    throw new ArgumentException("JWT environment variables are not set.");
+if (
+    string.IsNullOrWhiteSpace(jwtSecret) 
+    || string.IsNullOrWhiteSpace(jwtIssuer)
+    )  throw new ArgumentException("JWT environment variables are not set.");
 
+// InMemory Cache
+builder.Services.AddMemoryCache();
+
+// Paystack options
+builder.Services.AddOptions<PayStackOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(PayStackOptions)))
+    .Validate(v => !string.IsNullOrWhiteSpace(v.PayStackSecretKey), "Paystack SecretKey is Missing")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 builder.Services.AddAuthentication(options =>
 {

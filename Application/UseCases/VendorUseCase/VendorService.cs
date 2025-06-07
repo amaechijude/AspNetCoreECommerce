@@ -4,6 +4,7 @@ using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
+using AspNetCoreEcommerce.Infrastructure.Repositories;
 using AspNetCoreEcommerce.Shared;
 
 namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
@@ -15,6 +16,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
     {
         private readonly IVendorRepository _vendorRepository = vendorRepository;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
+        private const int MaxPageSize = 50;
 
         public async Task<ResultPattern> CreateVendorAsync(User user, CreateVendorDto createVerndor, HttpRequest request)
         {
@@ -110,17 +112,47 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 InstagramUrl = vendor.InstagramUrl,
                 FacebookUrl = vendor.FacebookUrl,
                 DateJoined = vendor.DateJoined,
-                Products = [.. vendor.Products.Select(v => new ProductViewDto {
-                    ProductId = v.ProductId,
-                    ProductName = v.Name,
-                    Description = v.Description,
-                    ImageUrl = GlobalConstants.GetImagetUrl(request, v.ImageUrl),
-                    Price = v.Price,
-                    VendorId = v.VendorId,
-                    VendorName = v.VendorName,
-                    Stock = v.StockQuantity
-                })]
             };
         }
+
+        public async Task<PagedResponse<ProductViewDto>> GetVendorPagedProductsAsync(PagedResponseDto r)
+        {
+            int pageNumber = r.PageNumber < 1 ? 1 : r.PageNumber;
+            int pageSize = r.PageSize > MaxPageSize ? MaxPageSize : r.PageSize;
+
+            var (products, totalCount) = await _vendorRepository
+                .GetVendorPagedProductAsync(r.VendorId, pageNumber, pageSize);
+
+            var productDto = products.Select(p => MapProductToDto(p, r.Request));
+
+            return new PagedResponse<ProductViewDto>(
+                productDto,
+                pageNumber,
+                pageSize,
+                totalCount
+            );
+        }
+
+        private static ProductViewDto MapProductToDto(Product product, HttpRequest request)
+        {
+            var img = GlobalConstants.GetImagetUrl(request, product.ImageUrl);
+            return new ProductViewDto
+            {
+                ProductId = product.ProductId,
+                ProductName = product.Name,
+                Price = product.Price,
+                Description = product.Description,
+                ImageUrl = img,
+                Images = [img, img, img, img],
+                VendorId = product.VendorId,
+                VendorName = product.VendorName,
+                Stock = product.StockQuantity,
+                Rating = product.Rating,
+                ReveiwCount = product.ReviewCount,
+                CreatedAt = product.CreatedAt,
+                UpdatedAt = product.UpdatedAt,
+            };
+        }
+
     }
 }
