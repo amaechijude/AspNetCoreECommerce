@@ -4,15 +4,21 @@ using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Domain.Enums;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Shared;
+using Microsoft.Extensions.Options;
 
 namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
 {
-    public class PaymentService(IPaymentRepository paymentRepository , ErcasPay ercasPay) : IPaymentService
+    public class PaymentService(
+        IPaymentRepository paymentRepository,
+        ErcasPay ercasPay,
+        PayStack payStack
+        ) : IPaymentService
     {
         private readonly IPaymentRepository _paymentRepository = paymentRepository; 
         private readonly ErcasPay _ercasPay = ercasPay;
+        private readonly PayStack _payStack = payStack;
 
-        public async Task<object?> InitiateTransaction(User user, PaymentDto dto)
+        public async Task<ResultPattern> InitiateTransaction(User user, PaymentDto dto)
         {
             var order = await _paymentRepository.GetUserOrderById(user.Id, dto.OrderId);
             if (order is null)
@@ -21,27 +27,60 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
             var initiateTransaction = PrepareInitiateTransactionDto(user, order);
 
             var payment = PreparePayment(user, order);
-            _paymentRepository.AddPayment(payment);
-            await _paymentRepository.SaveChangesAsync();
-            return await _ercasPay.InitiateTransaction(initiateTransaction);
+            await _paymentRepository.AddPayment(payment);
+            var (success, error) = await _ercasPay.InitiateTransaction(initiateTransaction);
+
+            if (success is not null)
+                return ResultPattern.SuccessResult(success.responseBody.checkoutUrl);
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            return ResultPattern.FailResult(new
+            {
+                message = error.errorMessage,
+                body = error.responseBody
+            });
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
 
+        public async Task<ResultPattern> InitiatePayStack(User user, PaymentDto dto)
+        {
+            var order = await _paymentRepository.GetUserOrderById(user.Id, dto.OrderId);
+            if (order is null)
+                return ResultPattern.FailResult("Invalid Order");
 
-        private static InitiateTransactionDto PrepareInitiateTransactionDto(User customer, Order order)
+            var initiateTransaction = PrepareInitiateTransactionDto(user, order);
+
+            var payment = PreparePayment(user, order);
+            await _paymentRepository.AddPayment(payment);
+            var (success, error) = await _payStack.InitiateTransaction(initiateTransaction);
+
+            if (success is not null)
+                return ResultPattern.SuccessResult(success.responseBody.checkoutUrl);
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            return ResultPattern.FailResult(new
+            {
+                message = error.errorMessage,
+                body = error.responseBody
+            });
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        private static InitiateTransactionDto PrepareInitiateTransactionDto(User user, Order order)
         {
 #pragma warning disable CS8601 // Possible null reference assignment.
             return new InitiateTransactionDto
             {
                 amount = order.TotalAmountToBePaid,
                 paymentReference = order.OrderRefrence,
-                customerEmail = customer.Email,
-                customerName = $"{customer.FirstName} {customer.LastName}",
+                customerEmail = user.Email,
+                customerName = "FirstName LastName",
                 metadata = new Metadata
                 {
-                    firstname = customer.FirstName,
-                    lastname = customer.LastName,
-                    email = customer.Email
+                    firstname = user.FirstName,
+                    lastname = user.LastName,
+                    email = user.Email
                 }
 
             };

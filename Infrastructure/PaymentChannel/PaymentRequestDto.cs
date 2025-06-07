@@ -32,23 +32,23 @@ namespace AspNetCoreEcommerce.Infrastructure.PaymentChannel
         public bool requestSuccessful { get; set; }
         public string? responseCode { get; set; }
         public string? responseMessage { get; set; }
-        public Responsebody? responseBody { get; set; }
+        public Responsebody responseBody { get; set; } = new();
     }
 
     public class Responsebody
     {
-        public string? paymentReference { get; set; }
-        public string? transactionReference { get; set; }
-        public string? checkoutUrl { get; set; }
+        public string paymentReference { get; set; } = string.Empty;
+        public string transactionReference { get; set; } = string.Empty;
+        public string checkoutUrl { get; set; } = string.Empty;
     }
 
 
     public class InitiateTransactionErrorResponse
     {
         public bool requestSuccessful { get; set; }
-        public string? responseCode { get; set; }
-        public string? errorMessage { get; set; }
-        public object[]? responseBody { get; set; }
+        public string responseCode { get; set; } = string.Empty;
+        public string errorMessage { get; set; } = string.Empty;
+        public List<object> responseBody { get; set; } = [];
     }
 
 

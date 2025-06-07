@@ -6,6 +6,7 @@ using AspNetCoreEcommerce.Domain.Enums;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 
 namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
@@ -13,11 +14,14 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
     public class OrderSevice(
         IOrderRepository orderRepository,
         UserManager<User> userManager,
-        Channel<EmailDto> emailChannel) : IOrderSevice
+        Channel<EmailDto> emailChannel,
+        IMemoryCache memoryCache
+        ) : IOrderSevice
     {
         private readonly IOrderRepository _orderRepository = orderRepository;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
         private readonly UserManager<User> _userManager = userManager;
+        private readonly IMemoryCache _memoryCache = memoryCache;
 
 
         public async Task<ResultPattern> GetOrdersByUserIdAsync(Guid customerId)
@@ -26,11 +30,21 @@ namespace AspNetCoreEcommerce.Application.UseCases.OrderUseCase
             return ResultPattern.SuccessResult(orders.Select(o => MapOrderViewDto(o)));
         }
 
-        public async Task<ResultPattern> GetOrderByOrderIdAsync(Guid customerId, Guid orderId)
+        public async Task<ResultPattern> GetOrderByOrderIdAsync(Guid userId, Guid orderId)
         {
-            var order = await _orderRepository.GetOrderByOrderIdAsync(orderId, customerId);
+            string cacheKey = $"Order_{orderId}_{userId}";
+            bool inCache = _memoryCache.TryGetValue(cacheKey, out Order? cachedOrder);
+            if (inCache && cachedOrder is not null)
+                return ResultPattern.SuccessResult(MapOrderViewDto(cachedOrder));
+
+            var order = await _orderRepository.GetOrderByOrderIdAsync(orderId, userId);
             if (order is null)
                 return ResultPattern.FailResult("Order not found");
+
+            _memoryCache.Set(cacheKey, order, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
             return ResultPattern.SuccessResult(MapOrderViewDto(order));
         }
 

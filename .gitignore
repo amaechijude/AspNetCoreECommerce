@@ -368,6 +368,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # // setting
-appsettings.json
+*appsettings*
 .env
 appsettings.Development.json

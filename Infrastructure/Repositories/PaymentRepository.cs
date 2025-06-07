@@ -28,9 +28,14 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         {
             return await _context.Payments.AnyAsync(p => p.OrderId == orderId);
         }
-        public void AddPayment(Payment payment)
+        public async Task<bool> AddPayment(Payment payment)
         {
+            Payment? currentPayment = _context.Payments.FirstOrDefault(p => p.OrderId == payment.OrderId);
+            if (currentPayment is not null) return false;
+                
             _context.Payments.Add(payment);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task SaveChangesAsync()

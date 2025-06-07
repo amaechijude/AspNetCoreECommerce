@@ -7,7 +7,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task<ShippingAddress?> GetShippingAddressByIdAsync(Guid UserId, Guid ShippingAddressId);
         Task<bool> CheckExistingPaymentAsync(Guid orderId);
         Task<Order?> GetUserOrderById(Guid UserId, Guid OrderId);
-        void AddPayment(Payment payment);
+        Task<bool> AddPayment(Payment payment);
         Task SaveChangesAsync();
     }
 }
