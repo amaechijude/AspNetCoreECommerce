@@ -37,7 +37,6 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("Starting web host...");
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
 
 // Load dotnetenv for database connections
 // Load dotnev
