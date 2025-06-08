@@ -62,5 +62,6 @@ namespace AspNetCoreEcommerce.Application.UseCases.CartUseCase
             return cartview;
         }
 
+
     }
 }

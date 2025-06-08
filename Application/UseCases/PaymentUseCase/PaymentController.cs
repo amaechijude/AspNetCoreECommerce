@@ -48,7 +48,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await _paymentService.InitiateTransaction(user, pto);
+            var response = await _paymentService.InitiatePayStack(user, pto);
 
             return response.Success
                 ? Ok(response.Data)

@@ -7,6 +7,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Services
     public interface IPaymentService
     {
         Task<ResultPattern> InitiateTransaction(User user, PaymentDto dto);
+        Task<ResultPattern> InitiatePayStack(User user, PaymentDto dto);
         // Task<PaymentVerificationResponse?> VerifyTransaction(string paymentReference);
     }
 }

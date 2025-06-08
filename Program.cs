@@ -170,6 +170,7 @@ builder.Services.AddScoped<IOrderSevice, OrderSevice>();
 
 // Payment channel service
 builder.Services.AddScoped<ErcasPay>();
+builder.Services.AddScoped<PayStack>();
 
 // Payment channel service
 builder.Services.AddSingleton<EmailService>(); // Email service

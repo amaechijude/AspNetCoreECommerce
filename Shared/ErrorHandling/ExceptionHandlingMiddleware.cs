@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using AspNetCoreEcommerce.Application.UseCases.Authentication;
+using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Infrastructure.Repositories;
 using Serilog;
 namespace AspNetCoreEcommerce.Shared.ErrorHandling

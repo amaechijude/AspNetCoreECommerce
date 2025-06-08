@@ -24,22 +24,20 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
             if (order is null)
                 return ResultPattern.FailResult("Invalid Order");
 
-            var initiateTransaction = PrepareInitiateTransactionDto(user, order);
-
             var payment = PreparePayment(user, order);
             await _paymentRepository.AddPayment(payment);
+
+            var initiateTransaction = PrepareErcasPayInitiateTransaction(user, order);
             var (success, error) = await _ercasPay.InitiateTransaction(initiateTransaction);
 
             if (success is not null)
                 return ResultPattern.SuccessResult(success.responseBody.checkoutUrl);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             return ResultPattern.FailResult(new
             {
-                message = error.errorMessage,
-                body = error.responseBody
+                message = error?.errorMessage,
+                body = error?.responseBody
             });
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
 
@@ -49,28 +47,30 @@ namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
             if (order is null)
                 return ResultPattern.FailResult("Invalid Order");
 
-            var initiateTransaction = PrepareInitiateTransactionDto(user, order);
-
             var payment = PreparePayment(user, order);
             await _paymentRepository.AddPayment(payment);
-            var (success, error) = await _payStack.InitiateTransaction(initiateTransaction);
 
-            if (success is not null)
-                return ResultPattern.SuccessResult(success.responseBody.checkoutUrl);
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            return ResultPattern.FailResult(new
+            var init = new PayStackRequestBody
             {
-                message = error.errorMessage,
-                body = error.responseBody
-            });
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                email = $"{user.Email}",
+                amount = $"{Math.Round((order.TotalAmountToBePaid * 100), 2)}", // Paystack amount is in kobo
+                currency = "NGN"
+            };
+
+            var (success, error) = await _payStack.InitiatePaystackTransaction(init);
+            if (success is not null && error is null)
+                return ResultPattern.SuccessResult(success.data.authorization_url);
+            
+            if (error is not null)
+            return ResultPattern.FailResult(error.message);
+
+            return ResultPattern.FailResult("Initialisation Failed. Try Paying with ErcasPay");
         }
 
-        private static InitiateTransactionDto PrepareInitiateTransactionDto(User user, Order order)
+        private static InitiateErcasPayTransactionDto PrepareErcasPayInitiateTransaction(User user, Order order)
         {
 #pragma warning disable CS8601 // Possible null reference assignment.
-            return new InitiateTransactionDto
+            return new InitiateErcasPayTransactionDto
             {
                 amount = order.TotalAmountToBePaid,
                 paymentReference = order.OrderRefrence,
