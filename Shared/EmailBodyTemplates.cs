@@ -79,8 +79,6 @@ namespace AspNetCoreEcommerce.Shared
 </html>
 ";
 
-            // Usage example:
-
             var confirmLink = $"{_baseUrl}/confirm-email?email={urlEncodedEmail}&token={urlEncodedToken}";
             string formattedHtml = htmlTemplate
                 .Replace("{{ConfirmationLink}}", confirmLink)

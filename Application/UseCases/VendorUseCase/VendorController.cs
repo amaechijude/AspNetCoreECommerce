@@ -96,7 +96,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
 
         private static bool IsVendor(User user)
         {
-            if (user.Vendor is null || !user.IsVendor)
+            if (!user.IsVendor)
                 return false;
             return true;
         }

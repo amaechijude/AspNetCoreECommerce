@@ -5,9 +5,11 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
 {
     public class UpdateVendorDto
     {
-        public string? VendorPhone { get; set; }
-        public IFormFile? VendorBanner { get; set; }
+        public string? Name { get; set; }
+        public string? Phone { get; set; }
         public string? Location { get; set; }
+        public IFormFile? Logo { get; set; }
+        public IFormFile? Banner { get; set; }
         [Url]
         public string? GoogleMapUrl { get; set; }
         [Url]

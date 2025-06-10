@@ -1,4 +1,5 @@
 using System.Threading.Channels;
+using System.Threading.Tasks;
 using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
@@ -28,35 +29,31 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
             if (await _vendorRepository.CheckUniqueNameEmail(user.Id, createVerndor.Email, createVerndor.Name))
                 return ResultPattern.FailResult("Creation failed: Possible duplicate request");
 
-            var vendor = PrepareVendorSignUp(user, createVerndor);
-            vendor.VendorBannerUri = await GlobalConstants.SaveImageAsync(createVerndor.Logo, GlobalConstants.vendorSubPath);
-            vendor.VerificationCode = GlobalConstants.GenerateVerificationCode();
+            var vendor = await PrepareVendorSignUp(user, createVerndor);
             _vendorRepository.CreateVendor(vendor);
             user.Vendor = vendor;
             user.VendorId = vendor.VendorId;
             user.IsVendor = true;
+
+            var codes = new VendorVerificationCode(vendor);
+
             await _vendorRepository.SaveChangesAsync();
             await _emailChannel
                 .Writer.WriteAsync(new EmailDto
                 {
                     Name = vendor.VendorName,
                     EmailTo = vendor.VendorEmail,
-                    Subject = "Vendor Account Created",
-                    Body = $"Hello {vendor.VendorName}, your account has been created successfully." +
-                    $"Your verification code is {vendor.VerificationCode}"
+                    Subject = "Verify Your Vendor Account",
+                    Body = EmailBodyTemplates.ConfirmEmailBody(codes.VerificationCode, vendor.VendorEmail)
+
                 });
             return ResultPattern.SuccessResult("Successful");
         }
 
         public async Task<ResultPattern> ActivateVendorAsync( ActivateVendorDto dto,HttpRequest request)
         {
-            var vendor = await _vendorRepository.GetVendorByEmailAsync(dto.Email);
-            if (vendor is null || vendor.VerificationCode != dto.Code)
-                return ResultPattern.FailResult("Verification Failed");
-
-            vendor.ActivateVendor();
-            await _vendorRepository.SaveChangesAsync();
-            return ResultPattern.SuccessResult("Vendor account activated successfully");
+            await Task.Delay(1000);
+            return ResultPattern.SuccessResult("");
         }
 
         public async Task<ResultPattern> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor, HttpRequest request)
@@ -66,7 +63,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 return ResultPattern.FailResult("Update failed");
             await vendor.UpdateVendor(updateVendor);
             await _vendorRepository.SaveChangesAsync();
-            return ResultPattern.SuccessResult("Vendor updated successfully");
+            var vendorView = MapToVendorViewDto(vendor, request);
+            return ResultPattern.SuccessResult(vendorView);
         }
 
         public async Task<ResultPattern> GetVendorByIdAsync(User user, HttpRequest request)
@@ -82,18 +80,20 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
             return ResultPattern.SuccessResult(vendorView);
         }
 
-        private static Vendor PrepareVendorSignUp(User user, CreateVendorDto vendorDto)
+        private static async Task<Vendor> PrepareVendorSignUp(User user, CreateVendorDto dto)
         {
             return new Vendor
             {
                 User = user,
                 UserId = user.Id,
                 VendorId = Guid.CreateVersion7(),
-                VendorName = vendorDto.Name,
-                VendorEmail = vendorDto.Email,
-                VendorPhone = vendorDto.Phone,
-                Location = vendorDto.Location,
-                DateJoined = DateTimeOffset.UtcNow
+                VendorName = dto.Name,
+                VendorEmail = dto.Email,
+                VendorPhone = dto.Phone,
+                Location = dto.Location,
+                DateJoined = DateTimeOffset.UtcNow,
+                VendorLogoUri = await GlobalConstants.SaveImageAsync(dto.Logo, GlobalConstants.vendorSubPath),
+                VendorBannerUri = await GlobalConstants.SaveImageAsync(dto.Logo, GlobalConstants.vendorSubPath)
             };
         }
 
@@ -105,6 +105,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 VendorName = vendor.VendorName,
                 VendorEmail = vendor.VendorEmail,
                 VendorPhone = vendor.VendorPhone,
+                LogoUrl = GlobalConstants.GetImagetUrl(request, vendor.VendorLogoUri),
                 BannerUrl = GlobalConstants.GetImagetUrl(request,vendor.VendorBannerUri),
                 Location = vendor.Location,
                 GoogleMapUrl = vendor.GoogleMapUrl,

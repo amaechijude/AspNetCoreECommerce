@@ -15,7 +15,7 @@ namespace AspNetCoreEcommerce.Shared
 
         public static async Task<string> SaveImageAsync(IFormFile? imageFile, string subPath)
         {
-            if (imageFile is null || imageFile.Length == 0)
+            if (imageFile is null || imageFile.Length <= 0)
                 return "";
 
             List<string> allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", "webp"];

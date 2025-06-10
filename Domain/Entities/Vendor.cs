@@ -11,9 +11,10 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public required string VendorName { get; set; }
         public required string VendorEmail { get; set; }
         public string VendorPhone {  get; set; } = string.Empty;
+        public string VendorLogoUri { get; set; } = string.Empty;
         public string VendorBannerUri { get; set; } = string.Empty;
+        public VendorVerificationCode? VendorVerificationCode { get; set; }
         public required string Location { get; set; }
-        public string? VerificationCode { get; set; } = string.Empty;
         public bool IsActivated { get; set; } = false;
         [Url]
         public string GoogleMapUrl { get; set; } = string.Empty;
@@ -24,17 +25,17 @@ namespace AspNetCoreEcommerce.Domain.Entities
         [Url]
         public string FacebookUrl { get; set; } = string.Empty;
         public DateTimeOffset DateJoined { get; set; }
-        public DateTimeOffset DateUpdated { get; private set; }
+        public DateTimeOffset DateUpdated { get; private set; } = DateTimeOffset.UtcNow;
         public required Guid UserId { get; set; }
         public required User User { get; set; }
         public ICollection<Product> Products { get; set; } = [];
 
         public async Task UpdateVendor(UpdateVendorDto update)
         {
-            if (update.VendorBanner != null)
-                VendorBannerUri = await GlobalConstants.SaveImageAsync(update.VendorBanner, GlobalConstants.vendorSubPath);
-            if (!string.IsNullOrWhiteSpace(update.VendorPhone))
-                VendorPhone = update.VendorPhone;
+            if (update.Banner is not null && update.Banner.Length > 0)
+                VendorBannerUri = await GlobalConstants.SaveImageAsync(update.Banner, GlobalConstants.vendorSubPath);
+            if (!string.IsNullOrWhiteSpace(update.Phone))
+                VendorPhone = update.Phone;
             if (!string.IsNullOrWhiteSpace(update.Location))
                 Location = update.Location;
             if (!string.IsNullOrWhiteSpace(update.GoogleMapUrl))
@@ -48,25 +49,5 @@ namespace AspNetCoreEcommerce.Domain.Entities
 
             DateUpdated = DateTimeOffset.UtcNow;
         }
-
-        public void ActivateVendor()
-        {
-            IsActivated = true;
-            VerificationCode = string.Empty;
-        }
-
-        public VerificationCode CreateVerificationCode(Vendor vendor)
-        {
-            return new VerificationCode
-            {
-                MinutesToExpire = 20,
-                Code = GlobalConstants.GenerateVerificationCode(), // Generate a unique code
-                Email = vendor.VendorEmail, // Use the vendor's email
-                VendorId = vendor.VendorId, // Associate with the vendor
-                Vendor = vendor, // Set the vendor reference
-                ExpiresIn = DateTime.UtcNow.AddMinutes(20) // Set expiration to 20 minutes from now
-            };
-        }
-
     }
 }

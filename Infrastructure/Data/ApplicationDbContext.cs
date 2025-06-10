@@ -15,7 +15,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ShippingAddress> ShippingAddresses { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
-        public DbSet<VerificationCode> VerificationCodes { get; set; }
+        public DbSet<VendorVerificationCode> VendorVerificationCodes{ get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
