@@ -34,6 +34,8 @@ namespace AspNetCoreEcommerce.Domain.Entities
         {
             if (update.Banner is not null && update.Banner.Length > 0)
                 VendorBannerUri = await GlobalConstants.SaveImageAsync(update.Banner, GlobalConstants.vendorSubPath);
+            if (update.Logo is not null && update.Logo.Length > 0)
+                VendorLogoUri = await GlobalConstants.SaveImageAsync(update.Logo, GlobalConstants.vendorSubPath);
             if (!string.IsNullOrWhiteSpace(update.Phone))
                 VendorPhone = update.Phone;
             if (!string.IsNullOrWhiteSpace(update.Location))

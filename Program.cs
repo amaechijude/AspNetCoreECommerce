@@ -11,6 +11,7 @@ using AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase;
 using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.Data;
+using AspNetCoreEcommerce.Infrastructure.Data.Seeders;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Infrastructure.Repositories;
@@ -137,12 +138,16 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // --- CORS Configuration ---
+string? fronendUrl = Environment.GetEnvironmentVariable("FrontendUrl");
+if (string.IsNullOrEmpty(fronendUrl))
+    throw new ArgumentException(nameof(fronendUrl));
+
 const string CorsPolicyName = "AllowFrontEnd";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsPolicyName, policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(fronendUrl)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -193,20 +198,20 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 
     // Seed db
-    // using (var scope = app.Services.CreateScope())
-    // {
-    //     var services = scope.ServiceProvider;
-    //     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    //     try
-    //     {
-    //         // Seed the database with roles
-    //         await SeedDatabase.SeedRoleAsync(services, db);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Log.Error(ex, "An error occurred while seeding the database.");
-    //     }
-    // }
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        try
+        {
+            // Seed the database with roles
+            await SeedDatabase.SeedRoleAsync(services, db);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "An error occurred while seeding the database.");
+        }
+    }
 }
 
 // Image folder storage setup

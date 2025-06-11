@@ -32,7 +32,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
+            User? us = await _userManager.FindByEmailAsync(registerDto.Email);
+            if (us is not null)
+                return BadRequest("Registration failed: Try other credentials");
             var user = new User(registerDto.Email, registerDto.PhoneNumber, DateTimeOffset.UtcNow);
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
@@ -40,7 +42,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
             if (!result.Succeeded)
             {
                 _logger.LogError("User registration failed: {Errors}", result.Errors);
-                return BadRequest();
+                return BadRequest("Registration failed");
             }
             
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);

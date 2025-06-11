@@ -34,8 +34,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
         }
 
 
-        [Authorize]
-        [HttpPost]
+        //[Authorize]
+        [HttpPost("activate")]
        public async Task<IActionResult> ActivateVendor([FromBody] ActivateVendorDto activateVendor)
         {
             var res = await _vendorService.ActivateVendorAsync(activateVendor, Request);

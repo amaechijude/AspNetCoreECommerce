@@ -1,4 +1,5 @@
 using AspNetCoreEcommerce.Application.Interfaces.Repositories;
+using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,19 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
         public void CreateVendor(Vendor vendor)
         {
             _context.Vendors.Add(vendor);
+        }
+
+        public async Task<bool> CheckVendorVerificationCodeAsync(Guid vendorId)
+        {
+            var vf = await _context.VendorVerificationCodes
+                .FirstOrDefaultAsync(c => c.VendorId == vendorId);
+            if (vf is not null && !vf.IsExpired)
+            {
+                _context.Remove(vf);
+                return true;
+            }
+
+            return false;
         }
     }
 }

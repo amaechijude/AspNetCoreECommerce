@@ -61,8 +61,10 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
     public class ActivateVendorDto
     {
         [Required, EmailAddress]
-        public required string Email { get; set; }
-        [Required]
-        public required string Code {get; set; }
+        public string VendorEmail { get; set; } = string.Empty;
+        [Required, EmailAddress]
+        public string UserEmail { get; set; } = string.Empty;
+        [Required, MinLength(5)]
+        public string Code { get; set; } = string.Empty;
     }
 }

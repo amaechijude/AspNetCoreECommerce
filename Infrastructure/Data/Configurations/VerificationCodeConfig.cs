@@ -9,7 +9,7 @@ namespace AspNetCoreEcommerce.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<VendorVerificationCode> builder)
         {
             builder.HasKey(vc => vc.Id);
-            builder.HasIndex(vc => vc.Id);
+            builder.HasIndex(vc => vc.VendorId);
 
             builder.HasOne(vc => vc.Vendor)
                 .WithOne(vd => vd.VendorVerificationCode);

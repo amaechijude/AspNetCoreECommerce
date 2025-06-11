@@ -1,3 +1,4 @@
+using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 
 namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
@@ -9,6 +10,7 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task<(IEnumerable<Product> Items, int TotalCount)> GetVendorPagedProductAsync(Guid vendorId, int pageNumber, int pageSize);
         Task<Vendor?> GetVendorByEmailAsync(string email);
         Task<bool> CheckUniqueNameEmail(Guid userId, string email, string name);
+        Task<bool> CheckVendorVerificationCodeAsync(Guid vendorId);
         Task SaveChangesAsync();
     }
 }

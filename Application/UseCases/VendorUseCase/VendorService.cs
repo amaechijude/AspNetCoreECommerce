@@ -7,35 +7,54 @@ using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Infrastructure.Repositories;
 using AspNetCoreEcommerce.Shared;
+using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
 {
     public class VendorService(
         IVendorRepository vendorRepository,
-        Channel<EmailDto> emailChannel
+        Channel<EmailDto> emailChannel,
+        UserManager<User> userManager
             ) : IVendorService
     {
         private readonly IVendorRepository _vendorRepository = vendorRepository;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
+        private readonly UserManager<User> _userManager = userManager;
         private const int MaxPageSize = 50;
 
-        public async Task<ResultPattern> CreateVendorAsync(User user, CreateVendorDto createVerndor, HttpRequest request)
+        public async Task<ResultPattern> CreateVendorAsync(User user, CreateVendorDto dto, HttpRequest request)
         {
             var validator = new CreateVendorValidator();
-            var result = await validator.ValidateAsync(createVerndor);
-            if (!result.IsValid)
+            var result = await validator.ValidateAsync(dto);
+            if (!result.IsValid || string.IsNullOrEmpty(user.Email))
                 return ResultPattern.FailResult(result.Errors);
 
-            if (await _vendorRepository.CheckUniqueNameEmail(user.Id, createVerndor.Email, createVerndor.Name))
+            if (await _vendorRepository.CheckUniqueNameEmail(user.Id, dto.Email, dto.Name))
                 return ResultPattern.FailResult("Creation failed: Possible duplicate request");
 
-            var vendor = await PrepareVendorSignUp(user, createVerndor);
+            var vendor = PrepareVendorSignUp(user, dto);
+            if (dto.Logo is not null)
+            {
+                vendor.VendorLogoUri = await GlobalConstants
+                    .SaveImageAsync(dto.Logo, GlobalConstants.vendorSubPath);
+            }
+            if (dto.Banner is not null)
+            {
+
+                vendor.VendorBannerUri = await GlobalConstants
+                    .SaveImageAsync(dto.Banner, GlobalConstants.vendorSubPath);
+            }
             _vendorRepository.CreateVendor(vendor);
             user.Vendor = vendor;
             user.VendorId = vendor.VendorId;
             user.IsVendor = true;
 
-            var codes = new VendorVerificationCode(vendor);
+            var codes = new VendorVerificationCode
+            {
+                Id = Guid.NewGuid(),
+                Vendor = vendor,
+                VendorId = vendor.VendorId
+            };
 
             await _vendorRepository.SaveChangesAsync();
             await _emailChannel
@@ -44,16 +63,28 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                     Name = vendor.VendorName,
                     EmailTo = vendor.VendorEmail,
                     Subject = "Verify Your Vendor Account",
-                    Body = EmailBodyTemplates.ConfirmEmailBody(codes.VerificationCode, vendor.VendorEmail)
-
+                    Body = EmailBodyTemplates.
+                    ConfirmVendorRegistration(codes.Code, vendor.VendorEmail, user.Email)
                 });
             return ResultPattern.SuccessResult("Successful");
         }
 
-        public async Task<ResultPattern> ActivateVendorAsync( ActivateVendorDto dto,HttpRequest request)
+        public async Task<ResultPattern> ActivateVendorAsync(ActivateVendorDto dto,HttpRequest request)
         {
-            await Task.Delay(1000);
-            return ResultPattern.SuccessResult("");
+            User? user = await _userManager.FindByEmailAsync(dto.UserEmail);
+            if (user is null)
+                return ResultPattern.FailResult("User does not exist");
+            var vendor = await _vendorRepository.GetVendorByEmailAsync(dto.VendorEmail);
+            if (vendor is null || user.VendorId != vendor.VendorId)
+                return ResultPattern.FailResult("Vendor not found");
+            if (vendor.IsActivated)
+                return ResultPattern.SuccessResult("Already Activated");
+            var isValid = await _vendorRepository.CheckVendorVerificationCodeAsync(vendor.VendorId);
+            if (!isValid)
+                ResultPattern.FailResult("Code expired or does not exist");
+            vendor.IsActivated = true;
+            await _vendorRepository.SaveChangesAsync();
+            return ResultPattern.SuccessResult("Activation successfull");
         }
 
         public async Task<ResultPattern> UpdateVendorAsync(Guid vendorId, UpdateVendorDto updateVendor, HttpRequest request)
@@ -80,7 +111,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
             return ResultPattern.SuccessResult(vendorView);
         }
 
-        private static async Task<Vendor> PrepareVendorSignUp(User user, CreateVendorDto dto)
+        private static Vendor PrepareVendorSignUp(User user, CreateVendorDto dto)
         {
             return new Vendor
             {
@@ -91,9 +122,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
                 VendorEmail = dto.Email,
                 VendorPhone = dto.Phone,
                 Location = dto.Location,
-                DateJoined = DateTimeOffset.UtcNow,
-                VendorLogoUri = await GlobalConstants.SaveImageAsync(dto.Logo, GlobalConstants.vendorSubPath),
-                VendorBannerUri = await GlobalConstants.SaveImageAsync(dto.Logo, GlobalConstants.vendorSubPath)
+                DateJoined = DateTimeOffset.UtcNow
             };
         }
 
