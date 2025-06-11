@@ -45,10 +45,9 @@ namespace AspNetCoreEcommerce.Infrastructure.PaymentChannel
     public class PayStack(IOptions<PayStackOptions> payStackOptions)
     {
         private readonly IOptions<PayStackOptions> _paystackOptions = payStackOptions;
-        //private readonly string _baseURL = "https://api.paystack.co/transaction/initialize";
-
         public async Task<(PaystackSuccessResponse?, PaystackErrorResponse?)> InitiatePaystackTransaction(PayStackRequestBody dto)
         {
+            var key = _paystackOptions.Value;
             var url = "https://api.paystack.co/transaction/initialize";
             string jsonBody = JsonSerializer.Serialize(dto);
 
@@ -56,7 +55,7 @@ namespace AspNetCoreEcommerce.Infrastructure.PaymentChannel
             StringContent content = new(jsonBody, Encoding.UTF8, "application/json");
 
             using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _paystackOptions.Value.PayStackSecretKey);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", key.PayStackSecretKey);
 
             HttpResponseMessage response = await client.PostAsync(url, content);
 
