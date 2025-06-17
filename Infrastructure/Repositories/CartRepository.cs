@@ -1,5 +1,4 @@
 using AspNetCoreEcommerce.Application.Interfaces.Repositories;
-using AspNetCoreEcommerce.Application.UseCases.CartUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;

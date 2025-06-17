@@ -1,6 +1,3 @@
-using System.Net;
-using AspNetCoreEcommerce.Domain.Entities;
-
 namespace AspNetCoreEcommerce.Shared
 {
     public static class EmailBodyTemplates

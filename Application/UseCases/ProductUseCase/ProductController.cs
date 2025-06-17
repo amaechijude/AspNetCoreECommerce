@@ -1,6 +1,5 @@
 ﻿using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Domain.Entities;
-using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         private readonly IProductService _productService = productService;
         private readonly UserManager<User> _userManager = userManager;
 
-        [Authorize(Roles = "Vendor")] 
+        [Authorize] 
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {

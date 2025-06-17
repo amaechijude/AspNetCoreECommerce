@@ -1,11 +1,9 @@
 using System.Threading.Channels;
-using System.Threading.Tasks;
 using AspNetCoreEcommerce.Application.Interfaces.Repositories;
 using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
-using AspNetCoreEcommerce.Infrastructure.Repositories;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Identity;
 

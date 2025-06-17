@@ -4,7 +4,6 @@ using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Domain.Enums;
 using AspNetCoreEcommerce.Infrastructure.PaymentChannel;
 using AspNetCoreEcommerce.Shared;
-using Microsoft.Extensions.Options;
 
 namespace AspNetCoreEcommerce.Application.UseCases.PaymentUseCase
 {

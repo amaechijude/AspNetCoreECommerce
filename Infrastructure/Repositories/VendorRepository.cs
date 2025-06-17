@@ -1,5 +1,4 @@
 using AspNetCoreEcommerce.Application.Interfaces.Repositories;
-using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

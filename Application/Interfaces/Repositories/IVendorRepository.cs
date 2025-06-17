@@ -1,4 +1,3 @@
-using AspNetCoreEcommerce.Application.UseCases.VendorUseCase;
 using AspNetCoreEcommerce.Domain.Entities;
 
 namespace AspNetCoreEcommerce.Application.Interfaces.Repositories

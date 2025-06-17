@@ -154,6 +154,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 // --- Dependency Injection (Repositories & Services) ---
 // Repositories
 builder.Services.AddScoped<ICartRepository, CartRepository>();

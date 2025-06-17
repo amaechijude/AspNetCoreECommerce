@@ -9,7 +9,7 @@ namespace AspNetCoreEcommerce.Domain.Entities
         public Guid ProductId {get; set;}
         public required string Name { get; set; }
         public string Description { get; set; } = string.Empty;
-        public string? ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
         public int StockQuantity {get; set;}
@@ -44,6 +44,11 @@ namespace AspNetCoreEcommerce.Domain.Entities
                 Price = (decimal)price;
 
             UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void AddReview(Review review)
+        {
+            Reviews.Add(review);
         }
     }
 }

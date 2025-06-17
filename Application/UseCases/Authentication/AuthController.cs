@@ -1,9 +1,9 @@
 using System.Threading.Channels;
-using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Domain.Entities;
 using AspNetCoreEcommerce.Infrastructure.EmailInfrastructure;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,19 +13,19 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
     [Route("api/[controller]")]
     public class AuthController(
         UserManager<User> userManager,
-        SignInManager<User> signInManager,
         TokenProvider tokenService,
         Channel<EmailDto> emailChannel,
         AuthServices authServices,
+        IHostEnvironment hostEnvironment,
         ILogger<AuthController> logger
             ) : ControllerBase
     {
         private readonly UserManager<User> _userManager = userManager;
-        private readonly SignInManager<User> _signInManager = signInManager;
         private readonly TokenProvider _tokenService = tokenService;
         private readonly Channel<EmailDto> _emailChannel = emailChannel;
         private readonly ILogger<AuthController> _logger = logger;
         private readonly AuthServices _authServices = authServices;
+        private readonly IHostEnvironment _hostEnvironment = hostEnvironment;
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -34,9 +34,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
                 return BadRequest(ModelState);
             User? us = await _userManager.FindByEmailAsync(registerDto.Email);
             if (us is not null)
-                return BadRequest("Registration failed: Try other credentials");
-            var user = new User(registerDto.Email, registerDto.PhoneNumber, DateTimeOffset.UtcNow);
+                return BadRequest("Registration failed: Possible duplicate request");
 
+            var user = new User(registerDto.Email, registerDto.PhoneNumber, DateTimeOffset.UtcNow);
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded)
@@ -91,16 +91,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
                 return Unauthorized("Email not confirmed");
                 
             var token = _tokenService.CreateAppUsertoken(user);
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Unspecified,
-                Path = "/",
-                Domain = "localhost",
-                // Secure = true, // Set to true in production
-                MaxAge = TimeSpan.FromDays(1),
-                Expires = DateTimeOffset.Now.AddHours(24),
-            };
+            var cookieOptions = GetCookieOptions();
 
             Response.Cookies.Append("X-Access-Token", token, cookieOptions);
             return Ok();
@@ -109,7 +100,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
         public IActionResult Logout()
         {
             Response.Cookies.Delete("X-Access-Token");
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("forgot-password")]
@@ -185,6 +176,37 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
             return response.Success
                 ? Ok(response.Data)
                 : BadRequest(response.Error);
+        }
+
+        private CookieOptions GetCookieOptions()
+        {
+            DotNetEnv.Env.TraversePath();
+            string? domainUrl = Environment.GetEnvironmentVariable("Domain");
+            if (_hostEnvironment.IsDevelopment())
+            {
+                return new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Unspecified,
+                    Path = "/",
+                    Domain = "localhost",
+                    // Secure = true, // Set to true in production
+                    MaxAge = TimeSpan.FromDays(1),
+                    Expires = DateTimeOffset.Now.AddHours(24),
+                };
+            }
+
+            // Add a fallback or production configuration if needed
+            return new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict,
+                Path = "/",
+                Domain = domainUrl,
+                Secure = true,
+                MaxAge = TimeSpan.FromDays(1),
+                Expires = DateTimeOffset.Now.AddHours(24),
+            };
         }
     }
 

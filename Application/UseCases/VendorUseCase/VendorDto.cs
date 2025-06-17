@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AspNetCoreEcommerce.Application.UseCases.ProductUseCase;
 
 namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
 {
@@ -46,7 +45,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
 
     public class CreateVendorDto
     {
-        [Required(ErrorMessage = "Vendor name is required")]
+        [Required, MinLength(3)]
         public required string Name { get; set; }
         [Required, EmailAddress]
         public required string Email { get; set; }
@@ -54,7 +53,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.VendorUseCase
         public required string Phone { get; set; }
         [Required]
         public required string Location { get; set; }
+        [Required]
         public IFormFile? Logo { get; set; }
+        [Required]
         public IFormFile? Banner { get; set; }
     }
 

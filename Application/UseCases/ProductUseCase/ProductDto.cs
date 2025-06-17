@@ -11,16 +11,26 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         public decimal Price { get; set; }
         public Guid VendorId { get; set; }
     }
+
     public class CreateProductDto
     {
+        [Required, MinLength(3), StringLength(200)]
+        public required string Name { get; set; }
+
+        [StringLength(1000)]
+        public string Description { get; set; } = string.Empty;
         [Required]
-        public string? Name { get; set; }
-        [Required]
-        public string? Description { get; set; }
-        [Required(ErrorMessage = "Image Required")]
         public IFormFile? Image { get; set; }
-        [Required, Range(1.0, 10_000_000)]
+
+        [Required, Range(0.01, 1_000_000_000_000_000, ErrorMessage = "Price must be greater than 0")]
         public decimal Price { get; set; }
+
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Stock quantity cannot be negative")]
+        public int StockQuantity { get; set; }
+
+        [Range(0, 100, ErrorMessage = "Discount percentage must be between 0 and 100")]
+        public decimal DiscountPercentage { get; set; } = 0;
     }
     public class PagedProductResponseDto
     {

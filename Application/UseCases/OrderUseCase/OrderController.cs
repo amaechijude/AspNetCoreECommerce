@@ -1,6 +1,5 @@
 ﻿using AspNetCoreEcommerce.Application.Interfaces.Services;
 using AspNetCoreEcommerce.Domain.Entities;
-using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
