@@ -15,5 +15,6 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Services
             User user, Guid productId, AddProductReveiwDto reveiwDto
             );
         Task<ResultPattern> UpdateProductAsync(Guid vendorId, Guid productId, UpdateProductDto updateProduct, HttpRequest request);
+        Task<IEnumerable<ProductViewDto>> GetTrendingProducts(HttpRequest request);
     }
 }

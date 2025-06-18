@@ -4,25 +4,26 @@ using AspNetCoreEcommerce.Infrastructure.Data;
 using AspNetCoreEcommerce.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace AspNetCoreEcommerce.Application.UseCases.Authentication
 {
     public class AuthServices(
         UserManager<User> userManager,
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        IMemoryCache memoryCache
         )
     {
         private readonly UserManager<User> _userManager = userManager;
         private readonly ApplicationDbContext _context = context;
+        private readonly IMemoryCache _memoryCache = memoryCache;
 
-        public async Task<ResultPattern> GetUserProfile(string userId)
+        public async Task<ResultPattern> GetUserProfile(User user)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return ResultPattern.FailResult("User Profile Not found");
             var userInfo = MapUserInfo(user);
 
             var recentOrders = await _context.Orders
+                .AsNoTracking()
                 .Where(o => o.UserId == user.Id)
                 .OrderDescending()
                 .Take(5)
@@ -37,21 +38,23 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
                 .ToListAsync();
 
             var addresses = await _context.ShippingAddresses
+                .AsNoTracking()
                 .Where(sh => sh.UserId == user.Id)
                 .Select(sh => MapShippingAddress(sh))
                 .ToListAsync();
 
             var reviews = await _context.Reviews
-            .Where(r => r.UserId == user.Id)
-            .Select(r => new ReviewDto {
-                Id = r.Id,
-                ProductId = r.ProductId,
-                ProductName = r.Product.Name,
-                Comment = r.Comment,
-                Rating = r.Rating,
-                ReviewedAt = r.CreatedAt
-            })
-            .ToArrayAsync();
+                .AsNoTracking()
+                .Where(r => r.UserId == user.Id)
+                .Select(r => new ReviewDto {
+                    Id = r.Id,
+                    ProductId = r.ProductId,
+                    ProductName = r.Product.Name,
+                    Comment = r.Comment,
+                    Rating = r.Rating,
+                    ReviewedAt = r.CreatedAt
+                })
+                .ToArrayAsync();
 
             return ResultPattern.SuccessResult(new UserProfileDto
             {
@@ -62,19 +65,17 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
             });
         }
 
-        public async Task<ResultPattern> FetchUserAsync(string userId)
+        public ResultPattern FetchUserAsync(User user)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null || string.IsNullOrEmpty(user.Email))
-                return ResultPattern.FailResult("User not found");
-            var data = new FetchUserDto
+#pragma warning disable CS8601 // Possible null reference assignment.
+            return ResultPattern.SuccessResult(new FetchUserDto
             {
                 Email = user.Email,
                 Name = user.FullName,
                 CartCount = user.CartItemsCount,
                 IsVendor = user.IsVendor,
-            };
-            return ResultPattern.SuccessResult(data);
+            });
+#pragma warning restore CS8601 // Possible null reference assignment.
         }
 
         private static UserInfoDto MapUserInfo(User user)

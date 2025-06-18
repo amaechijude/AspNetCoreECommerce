@@ -15,5 +15,6 @@ namespace AspNetCoreEcommerce.Application.Interfaces.Repositories
         Task<bool> CreateReviewAsync(Review review);
         Task SaveChangesAsync();
         Task<bool> CheckExistingReviewAsync(Guid productId, Guid userId);
+        Task<IEnumerable<ProductViewDto>> GetTrendingProducts(HttpRequest request);
     }
 }

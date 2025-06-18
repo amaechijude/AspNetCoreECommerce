@@ -117,5 +117,25 @@ namespace AspNetCoreEcommerce.Infrastructure.Repositories
                 return false;
             }
         }
+
+        public async Task<IEnumerable<ProductViewDto>> GetTrendingProducts(HttpRequest request)
+        {
+            return await _context.Products
+                .AsNoTracking()
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(8)
+                .Select(p => new ProductViewDto
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.Name,
+                    Description = p.Description,
+                    ImageUrl = GlobalConstants.GetImagetUrl(request, p.ImageUrl),
+                    Price = p.Price,
+                    VendorId = p.VendorId,
+                    VendorName = p.VendorName,
+                    Stock = p.StockQuantity
+                })
+                .ToListAsync();
+        }
     }
 }

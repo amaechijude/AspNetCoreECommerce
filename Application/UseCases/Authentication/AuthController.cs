@@ -154,7 +154,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
 
             try
             {
-                var result = await _authServices.GetUserProfile(user.Id.ToString());
+                var result = await _authServices.GetUserProfile(user);
                 return result.Success
                     ? Ok(result.Data)
                     : BadRequest(result.Error);
@@ -172,7 +172,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
             User? user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized("Login again");
-            var response = await _authServices.FetchUserAsync(user.Id.ToString());
+            var response = _authServices.FetchUserAsync(user);
             return response.Success
                 ? Ok(response.Data)
                 : BadRequest(response.Error);

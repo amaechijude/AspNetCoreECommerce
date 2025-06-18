@@ -13,7 +13,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
         private readonly IProductService _productService = productService;
         private readonly UserManager<User> _userManager = userManager;
 
-        [Authorize] 
+        [Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductAsync([FromForm] CreateProductDto createProduct)
         {
@@ -67,8 +67,8 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             if (!isValidGuid)
                 return NotFound();
             var res = await _productService.GetProductByIdAsync(pid, Request);
-            return res.Success 
-                ? Ok(res.Data) 
+            return res.Success
+                ? Ok(res.Data)
                 : NotFound(res.Error);
         }
 
@@ -92,7 +92,7 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
 
         [Authorize]
         [HttpPost("reveiw/{pid}")]
-        public async Task<IActionResult> ReviewAsync([FromRoute]Guid pid, [FromBody]AddProductReveiwDto dto)
+        public async Task<IActionResult> ReviewAsync([FromRoute] Guid pid, [FromBody] AddProductReveiwDto dto)
         {
             User? user = await _userManager.GetUserAsync(User);
             if (user is null)
@@ -101,6 +101,12 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
                 return BadRequest(ModelState);
             var res = await _productService.AddProductReviewAsync(user, pid, dto);
             return res.Success ? Ok(res.Data) : NotFound(res.Error);
+        }
+
+        [HttpGet("trending")]
+        public async Task<IActionResult> GetTrendingProductsAsync()
+        {
+            return Ok(await _productService.GetTrendingProducts(Request));
         }
     }
 }

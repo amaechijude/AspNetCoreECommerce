@@ -168,6 +168,23 @@ namespace AspNetCoreEcommerce.Application.UseCases.ProductUseCase
             );
             return result;
         }
+
+        public Task<IEnumerable<ProductViewDto>> GetTrendingProducts(HttpRequest request)
+        {
+            string cacheKey = "trending_products";
+            bool inCache = _memoryCache.TryGetValue(cacheKey, out IEnumerable<ProductViewDto>? cachedProducts);
+            if (inCache && cachedProducts is not null)
+            {
+                return Task.FromResult(cachedProducts);
+            }
+
+            var data = _productRepository.GetTrendingProducts(request);
+            _memoryCache.Set(cacheKey, data, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
+            return data;
+        }
     }
 
     public record AddProductReveiwDto(int StarRating, string Comment);
