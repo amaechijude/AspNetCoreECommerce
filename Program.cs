@@ -81,6 +81,15 @@ builder.Services.AddIdentity<User, UserRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// InMemory Cache
+builder.Services.AddMemoryCache();
+
+// Paystack options
+builder.Services.AddOptions<PayStackOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(PayStackOptions)))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 // Register the token provider
 builder.Services.AddSingleton<TokenProvider>();
 
@@ -92,16 +101,6 @@ if (
     string.IsNullOrWhiteSpace(jwtSecret) 
     || string.IsNullOrWhiteSpace(jwtIssuer)
     )  throw new ArgumentException("JWT environment variables are not set.");
-
-// InMemory Cache
-builder.Services.AddMemoryCache();
-
-// Paystack options
-builder.Services.AddOptions<PayStackOptions>()
-    .Bind(builder.Configuration.GetSection(nameof(PayStackOptions)))
-    .Validate(v => !string.IsNullOrWhiteSpace(v.PayStackSecretKey), "Paystack SecretKey is Missing")
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -140,7 +139,7 @@ builder.Services.AddAuthorization();
 // --- CORS Configuration ---
 string? fronendUrl = Environment.GetEnvironmentVariable("FrontendUrl");
 if (string.IsNullOrEmpty(fronendUrl))
-    throw new ArgumentException(nameof(fronendUrl));
+    throw new ArgumentException("Frontend url is not set");
 
 const string CorsPolicyName = "AllowFrontEnd";
 builder.Services.AddCors(options =>

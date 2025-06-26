@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using AspNetCoreEcommerce.Application.UseCases.ShippingAddressUseCase;
 
 namespace AspNetCoreEcommerce.Application.UseCases.Authentication

@@ -7,9 +7,9 @@ namespace AspNetCoreEcommerce.Application.UseCases.Authentication
     [ApiController]
     public class FormController : ControllerBase
     {
-        [DisableCors, DisableHttpMetrics, DisableRequestSizeLimit]
+        [DisableCors]
         [HttpPost]
-        public IActionResult GetForm(Names name)
+        public IActionResult GetForm([FromBody]Names name)
         {
             Console.WriteLine(name);
 
